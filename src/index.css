@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #000000;
+  --surface-grouped: #1c1c1e;
+  --surface-elevated: #2c2c2e;
+  --surface-hover: #3a3a3c;
+  --separator: rgba(255, 255, 255, 0.15);
+  --separator-subtle: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e93;
+  --text-tertiary: #636366;
+  --accent: #007aff;
+  --accent-subtle: rgba(0, 122, 255, 0.15);
+  --accent-active: #0062cc;
+  --success: #30d158;
+  --danger: #ff453a;
+  --warning: #ffd60a;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+}
+
+[data-theme="light"] {
+  --bg: #f2f2f7;
+  --surface-grouped: #ffffff;
+  --surface-elevated: #e5e5ea;
+  --surface-hover: #d1d1d6;
+  --separator: rgba(60, 60, 67, 0.2);
+  --separator-subtle: rgba(60, 60, 67, 0.1);
+  --text-primary: #000000;
+  --text-secondary: #6c6c70;
+  --text-tertiary: #8e8e93;
+  --accent: #007aff;
+  --accent-subtle: rgba(0, 122, 255, 0.12);
+  --accent-active: #0056b3;
+}
+
+[data-accent="indigo"] {
+  --accent: #5856d6;
+  --accent-subtle: rgba(88, 86, 214, 0.15);
+  --accent-active: #4745b5;
+}
+
+[data-theme="light"][data-accent="indigo"] {
+  --accent: #5856d6;
+  --accent-subtle: rgba(88, 86, 214, 0.12);
+  --accent-active: #3e3ca0;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

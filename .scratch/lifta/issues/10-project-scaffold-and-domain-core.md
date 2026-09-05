@@ -1,7 +1,7 @@
 # 10 - Project Scaffold and Domain Core
 
 Type: task
-Status: ready-for-agent
+Status: resolved
 Blocked by: 
 
 ## Goal
@@ -11,19 +11,20 @@ Inicializar a base de código do projeto Lifta (Solid-js + Vite + TypeScript + T
 ## Deliverables
 
 1. **Scaffold do Projeto**:
-   - `package.json` configurado com scripts `dev`, `build`, `test` (Vitest), `typecheck`.
+   - `package.json` configurado com scripts `dev`, `build`, `test` (Vitest), `typecheck` e gerenciado com `pnpm`.
    - Setup do Solid-js com TypeScript (`tsconfig.json` estrito).
-   - Setup do Tailwind CSS v4 com design tokens do iOS (paletas Dark OLED `#000000` e Light `#f2f2f7`, cores de destaque Azul `#007aff` e Roxo Índigo `#5856d6`).
+   - Setup do Tailwind CSS v4 com design tokens do iOS (`src/index.css`: Dark OLED `#000000`, Light `#f2f2f7`, Azul `#007aff` e Roxo Índigo `#5856d6`).
 2. **Modelos de Domínio com Effect Schema**:
-   - `Routine`: id, name, description, scheduledDays (`Weekday[]`), exercises, createdAt, updatedAt.
-   - `WorkoutSession`: id, routineId, startedAt, endedAt, sets, estimatedCaloriesBurned, notes.
-   - `ActiveSession`: singleton com exercício atual, timestamp de início, séries concluídas e estado do timer.
-   - `ResistanceSet` e `CardioSet` (polimorfismo discriminado).
-   - `Exercise`: id, name, muscleGroup, secondaryMuscles, equipment, gifUrl, instructions.
-3. **Cálculo Determinístico de Calorias (MET)**:
-   - Função pura `calculateCaloriesBurned({ bodyWeightKg, durationMinutes, metValue, sets })`.
-   - Tabelas de MET para musculação moderada/pesada e cardio (esteira/bicicleta).
+   - `Routine`: id, name, description, scheduledDays (`Weekday[]`), exercises, createdAt, updatedAt (`src/domain/routine.ts`).
+   - `WorkoutSession` e `ActiveSession` singleton (`src/domain/session.ts`).
+   - `ResistanceSet` e `CardioSet` em união discriminada (`src/domain/set.ts`).
+   - `Exercise`: id, name, primaryMuscles, secondaryMuscles, equipment, instructions (`src/domain/exercise.ts`).
+3. **Cálculo Determinístico de Calorias (MET) & Volume**:
+   - Funções puras `calculateEstimatedCalories` e `calculateTotalVolumeKg` (`src/domain/calories.ts`).
 4. **Testes Unitários (Vitest)**:
-   - Validação de invariantes (`weightKg >= 0`, `reps >= 1`, data final posterior à inicial).
-   - Testes de decodificação e serialização via `@effect/schema`.
-   - Testes dos cálculos calóricos contra valores de referência clínicos.
+   - 19 testes unitários passando em `src/domain/__tests__/domain.test.ts` e `src/domain/__tests__/calories.test.ts`.
+   - Typecheck estrito (`tsc --noEmit`) e build de produção Vite (`pnpm build`) passando com bundle de 6.87 kB.
+
+## Answer
+
+Ticket 10 concluído com sucesso. O projeto está scaffolded com Solid-js + Vite + TypeScript + Tailwind v4 + Effect-TS usando `pnpm`, e o núcleo de domínio com 19 testes automatizados está 100% verde.
