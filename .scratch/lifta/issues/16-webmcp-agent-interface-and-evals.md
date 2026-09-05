@@ -1,7 +1,7 @@
 # 16 - WebMCP Agent Interface and Evals
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 11, 15
 
 ## Goal
