@@ -1,7 +1,7 @@
 # 14 - Exercise Carousel and Fluid Sheet
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 13
 
 ## Goal
