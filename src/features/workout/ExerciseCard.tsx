@@ -3,6 +3,7 @@ import type { LoggedExercise } from '../../domain/session';
 import { SetRow } from './SetRow';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
 import { getExerciseById, EXERCISE_CATALOG } from '../../catalog/exercises';
+import { formatMuscleName, formatEquipmentName } from '../../catalog/muscles';
 
 export interface ExerciseCardProps {
   exerciseIndex: number;
@@ -36,25 +37,25 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
 
   return (
     <div
-      class="flex flex-col w-full max-w-md mx-auto bg-neutral-900/70 border border-neutral-800/80 rounded-2xl overflow-hidden shadow-lg select-none"
+      class="flex flex-col w-full max-w-md mx-auto bg-theme-surface border border-theme-separator rounded-2xl overflow-hidden shadow-lg select-none theme-transition mb-4"
       data-testid={`exercise-card-${props.exerciseIndex}`}
     >
       {/* Exercise Header */}
-      <div class="p-4 border-b border-neutral-800/70">
+      <div class="p-4 border-b border-theme-subtle">
         <div class="flex items-start justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs font-mono font-bold text-neutral-400">
+              <span class="text-xs font-mono font-bold text-theme-secondary">
                 {props.exerciseIndex + 1} de {props.totalExercises}
               </span>
               <Show when={catalogDetails()?.equipment}>
-                <span class="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-neutral-800 text-neutral-400">
-                  {catalogDetails()?.equipment}
+                <span class="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-theme-elevated text-theme-secondary">
+                  {formatEquipmentName(catalogDetails()?.equipment)}
                 </span>
               </Show>
             </div>
             <h2
-              class="text-lg font-bold text-neutral-100 tracking-tight"
+              class="text-lg font-bold text-theme-primary tracking-tight"
               data-testid="exercise-title"
             >
               {props.exercise.exerciseName ?? props.exercise.exerciseId}
@@ -64,7 +65,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
           <button
             type="button"
             onClick={() => setShowAnatomy(!showAnatomy())}
-            class="h-9 px-2.5 rounded-lg bg-neutral-800/80 text-neutral-300 hover:text-white active:bg-neutral-700 text-xs font-medium flex items-center gap-1.5 transition-colors"
+            class="h-9 px-2.5 rounded-lg bg-theme-elevated text-theme-secondary hover:text-theme-primary active:scale-95 text-xs font-medium flex items-center gap-1.5 transition-all"
             title="Exibir mapa anatômico dos músculos ativados"
             data-testid="btn-toggle-anatomy"
           >
@@ -79,15 +80,15 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
         <div class="flex flex-wrap gap-1.5 mt-2.5">
           <For each={catalogDetails()?.primaryMuscles ?? []}>
             {(muscle) => (
-              <span class="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                {muscle}
+              <span class="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30">
+                {formatMuscleName(muscle)}
               </span>
             )}
           </For>
           <For each={catalogDetails()?.secondaryMuscles ?? []}>
             {(muscle) => (
-              <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-750">
-                {muscle}
+              <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-theme-elevated text-theme-secondary border border-theme-subtle">
+                {formatMuscleName(muscle)}
               </span>
             )}
           </For>
@@ -95,7 +96,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
 
         {/* Collapsible Anatomy Vector View */}
         <Show when={showAnatomy()}>
-          <div class="mt-3 p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex justify-center animate-in fade-in duration-200">
+          <div class="mt-3 p-3 rounded-xl bg-theme-bg border border-theme-subtle flex justify-center animate-in fade-in duration-200">
             <BodyHighlighter
               primaryMuscles={catalogDetails()?.primaryMuscles}
               secondaryMuscles={catalogDetails()?.secondaryMuscles}
@@ -107,7 +108,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
       </div>
 
       {/* Sets Table Header */}
-      <div class="grid grid-cols-4 px-3 py-2 bg-neutral-950/40 text-[10px] font-mono uppercase tracking-wider text-neutral-400 border-b border-neutral-800/60 text-center">
+      <div class="grid grid-cols-4 px-3 py-2 bg-theme-elevated/40 text-[10px] font-mono uppercase tracking-wider text-theme-secondary border-b border-theme-subtle text-center">
         <span class="text-left pl-2">Série</span>
         <span>Carga (kg)</span>
         <span>Reps</span>
@@ -115,7 +116,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
       </div>
 
       {/* Sets List */}
-      <div class="divide-y divide-neutral-800/40">
+      <div class="divide-y divide-theme-subtle">
         <For each={props.exercise.sets}>
           {(set, idx) => (
             <SetRow
@@ -134,11 +135,11 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
       </div>
 
       {/* Add Set Button */}
-      <div class="p-3 border-t border-neutral-850 bg-neutral-950/30 flex justify-center">
+      <div class="p-3 border-t border-theme-subtle bg-theme-elevated/20 flex justify-center">
         <button
           type="button"
           onClick={props.onAddSet}
-          class="w-full py-2.5 rounded-xl border border-dashed border-neutral-700/80 hover:border-neutral-500 active:bg-neutral-800/40 text-xs font-semibold text-neutral-300 flex items-center justify-center gap-1.5 transition-colors"
+          class="w-full py-2.5 rounded-xl border border-dashed border-theme-separator hover:border-theme-primary active:bg-theme-elevated text-xs font-semibold text-theme-secondary hover:text-theme-primary flex items-center justify-center gap-1.5 transition-all"
           data-testid="btn-add-set"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +150,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
       </div>
 
       {/* Primary Giant Thumb-Friendly Action Button */}
-      <div class="p-3.5 bg-neutral-950 border-t border-neutral-800/80">
+      <div class="p-3.5 bg-theme-surface border-t border-theme-subtle">
         <Show
           when={!allSetsCompleted()}
           fallback={

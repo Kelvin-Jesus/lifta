@@ -23,9 +23,9 @@ export const BodyHighlighter: Component<BodyHighlighterProps> = (props) => {
   const primarySet = () => new Set(props.primaryMuscles ?? []);
   const secondarySet = () => new Set(props.secondaryMuscles ?? []);
 
-  const accentColor = () => props.accentColor ?? 'var(--color-accent, #3b82f6)';
-  const neutralColor = () => props.neutralColor ?? 'rgba(255, 255, 255, 0.12)';
-  const strokeColor = () => props.strokeColor ?? 'rgba(0, 0, 0, 0.5)';
+  const accentColor = () => props.accentColor ?? 'var(--accent, #007aff)';
+  const neutralColor = () => props.neutralColor ?? 'var(--surface-elevated, #2c2c2e)';
+  const strokeColor = () => props.strokeColor ?? 'var(--separator, rgba(128, 128, 128, 0.25))';
 
   const getHighlightState = (
     group?: MuscleGroup

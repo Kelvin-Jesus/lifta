@@ -107,23 +107,23 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                 <For
                   each={props.routines}
                   fallback={
-                    <div class="py-8 text-center text-xs text-neutral-500 font-mono">
+                    <div class="py-8 text-center text-xs text-theme-tertiary font-mono">
                       Nenhuma rotina criada ainda.
                     </div>
                   }
                 >
                   {(routine) => (
                     <div
-                      class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 flex items-center justify-between"
+                      class="p-3.5 rounded-2xl bg-theme-elevated border border-theme-subtle flex items-center justify-between"
                       data-testid={`routine-item-${routine.id}`}
                     >
                       <div>
-                        <h4 class="text-sm font-bold text-neutral-100">{routine.name}</h4>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-neutral-400 font-mono">
+                        <h4 class="text-sm font-bold text-theme-primary">{routine.name}</h4>
+                        <div class="flex items-center gap-2 mt-1 text-xs text-theme-secondary font-mono">
                           <span>{routine.exercises.length} exercícios</span>
                           <Show when={routine.scheduledDays && routine.scheduledDays.length > 0}>
                             <span>•</span>
-                            <span class="text-blue-400">
+                            <span class="text-blue-500 font-medium">
                               {routine.scheduledDays!.map((d) => d.slice(0, 3)).join(', ')}
                             </span>
                           </Show>
@@ -133,11 +133,14 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                       <button
                         type="button"
                         onClick={() => handleDeleteRoutine(routine.id)}
-                        class="w-8 h-8 rounded-lg text-rose-400 hover:bg-rose-950/40 flex items-center justify-center text-xs transition-colors"
+                        class="w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-500/10 active:scale-95 flex items-center justify-center transition-all"
                         title="Excluir rotina"
+                        aria-label="Excluir rotina"
                         data-testid={`btn-delete-routine-${routine.id}`}
                       >
-                        🗑
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
                     </div>
                   )}
@@ -147,7 +150,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
               <button
                 type="button"
                 onClick={() => setIsCreating(true)}
-                class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition-all"
+                class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition-all cursor-pointer"
                 data-testid="btn-open-create-routine"
               >
                 + Criar Nova Rotina
@@ -158,7 +161,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
           {/* Create Routine Form */}
           <div class="space-y-3">
             <div>
-              <label class="text-[10px] uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+              <label class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary block mb-1">
                 Nome da Rotina
               </label>
               <input
@@ -166,14 +169,14 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                 placeholder="Ex: Treino A - Peito e Tríceps"
                 value={name()}
                 onInput={(e) => setName(e.currentTarget.value)}
-                class="w-full h-11 px-3 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-blue-500"
+                class="w-full h-11 px-3 rounded-xl bg-theme-elevated border border-theme-subtle text-sm text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-blue-500"
                 data-testid="input-routine-name"
               />
             </div>
 
             {/* Scheduled Days Selector */}
             <div>
-              <label class="text-[10px] uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+              <label class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary block mb-1">
                 Dias Programados na Semana
               </label>
               <div class="grid grid-cols-7 gap-1">
@@ -185,7 +188,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                       class={`h-9 rounded-lg text-xs font-mono font-bold transition-all ${
                         selectedDays().includes(item.key)
                           ? 'bg-blue-500 text-white'
-                          : 'bg-neutral-950 border border-neutral-800 text-neutral-400'
+                          : 'bg-theme-elevated border border-theme-subtle text-theme-secondary'
                       }`}
                     >
                       {item.label}
@@ -197,14 +200,14 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
 
             {/* Selected Exercises in Routine */}
             <div>
-              <label class="text-[10px] uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+              <label class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary block mb-1">
                 Exercícios Selecionados ({selectedExercises().length})
               </label>
               <div class="space-y-1.5 max-h-40 overflow-y-auto mb-2">
                 <For
                   each={selectedExercises()}
                   fallback={
-                    <div class="p-3 rounded-lg bg-neutral-950 text-neutral-500 text-xs font-mono text-center">
+                    <div class="p-3 rounded-lg bg-theme-elevated text-theme-tertiary text-xs font-mono text-center">
                       Nenhum exercício adicionado ainda.
                     </div>
                   }
@@ -212,20 +215,23 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                   {(re, idx) => {
                     const ex = EXERCISE_CATALOG.find((e) => e.id === re.exerciseId);
                     return (
-                      <div class="p-2 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-between text-xs">
-                        <span class="text-neutral-200 font-medium">
+                      <div class="p-2 rounded-lg bg-theme-elevated border border-theme-subtle flex items-center justify-between text-xs">
+                        <span class="text-theme-primary font-medium">
                           {ex?.name ?? re.exerciseId}
                         </span>
                         <div class="flex items-center gap-2">
-                          <span class="text-neutral-500 font-mono">
+                          <span class="text-theme-secondary font-mono">
                             {re.targetSets} séries
                           </span>
                           <button
                             type="button"
                             onClick={() => removeExercise(idx())}
-                            class="text-rose-400 hover:text-rose-300 px-1"
+                            class="text-rose-500 hover:opacity-80 active:scale-95 p-1"
+                            aria-label="Remover exercício"
                           >
-                            ✕
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                           </button>
                         </div>
                       </div>
@@ -237,7 +243,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
 
             {/* Catalog Picker */}
             <div>
-              <label class="text-[10px] uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+              <label class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary block mb-1">
                 Adicionar Exercício do Catálogo
               </label>
               <input
@@ -245,19 +251,19 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                 placeholder="Buscar exercício..."
                 value={exerciseSearch()}
                 onInput={(e) => setExerciseSearch(e.currentTarget.value)}
-                class="w-full h-9 px-3 rounded-lg bg-neutral-950 border border-neutral-800 text-xs text-neutral-100 placeholder-neutral-500 mb-2 focus:outline-none"
+                class="w-full h-9 px-3 rounded-lg bg-theme-elevated border border-theme-subtle text-xs text-theme-primary placeholder-theme-tertiary mb-2 focus:outline-none"
               />
-              <div class="max-h-36 overflow-y-auto divide-y divide-neutral-850 bg-neutral-950 rounded-xl border border-neutral-800">
+              <div class="max-h-36 overflow-y-auto divide-y divide-theme-subtle bg-theme-elevated rounded-xl border border-theme-subtle">
                 <For each={filteredCatalog()}>
                   {(ex) => (
                     <button
                       type="button"
                       onClick={() => addExercise(ex.id)}
-                      class="w-full p-2 text-left hover:bg-neutral-800/40 text-xs flex items-center justify-between"
+                      class="w-full p-2 text-left hover:bg-theme-surface text-xs flex items-center justify-between"
                       data-testid={`catalog-item-${ex.id}`}
                     >
-                      <span class="text-neutral-200 font-medium">{ex.name}</span>
-                      <span class="text-[10px] font-mono text-blue-400">+ Adicionar</span>
+                      <span class="text-theme-primary font-medium">{ex.name}</span>
+                      <span class="text-[10px] font-mono text-blue-500 font-semibold">+ Adicionar</span>
                     </button>
                   )}
                 </For>
@@ -269,7 +275,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
               <button
                 type="button"
                 onClick={resetForm}
-                class="flex-1 h-11 rounded-xl bg-neutral-800 text-neutral-300 text-xs font-semibold"
+                class="flex-1 h-11 rounded-xl bg-theme-elevated text-theme-secondary hover:text-theme-primary text-xs font-semibold"
               >
                 Cancelar
               </button>

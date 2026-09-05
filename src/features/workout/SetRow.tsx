@@ -42,13 +42,13 @@ export const SetRow: Component<SetRowProps> = (props) => {
       case 'failure':
         return 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
       default:
-        return 'bg-neutral-800 text-neutral-300 border border-neutral-700/50';
+        return 'bg-theme-elevated text-theme-secondary border border-theme-subtle';
     }
   };
 
   return (
     <div
-      class={`flex items-center justify-between py-2 px-3 transition-colors duration-150 border-b border-neutral-800/60 select-none ${
+      class={`flex items-center justify-between py-2 px-3 transition-colors duration-150 border-b border-theme-subtle select-none ${
         props.set.completed ? 'bg-emerald-950/15' : 'bg-transparent'
       }`}
       data-testid={`set-row-${props.setIndex}`}
@@ -71,7 +71,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
         <button
           type="button"
           onClick={() => props.onAdjustWeight(-2.5)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-neutral-400 active:text-white active:bg-neutral-800 rounded-md font-bold text-sm"
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-md font-bold text-sm"
           aria-label="Diminuir 2.5 kg"
           data-testid={`btn-weight-minus-${props.setIndex}`}
         >
@@ -85,14 +85,14 @@ export const SetRow: Component<SetRowProps> = (props) => {
               type="button"
               onDblClick={() => setIsEditingWeight(true)}
               onClick={() => setIsEditingWeight(true)}
-              class="w-16 h-11 flex flex-col items-center justify-center rounded bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 active:border-blue-500"
+              class="w-16 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-blue-500 transition-colors"
               title="Toque para digitar carga"
               data-testid={`weight-display-${props.setIndex}`}
             >
-              <span class="text-sm font-semibold text-neutral-100 tabular-nums">
+              <span class="text-sm font-semibold text-theme-primary tabular-nums">
                 {rSet()?.weightKg ?? 0}
               </span>
-              <span class="text-[9px] uppercase tracking-wider text-neutral-500 font-mono">kg</span>
+              <span class="text-[9px] uppercase tracking-wider text-theme-secondary font-mono">kg</span>
             </button>
           }
         >
@@ -114,14 +114,14 @@ export const SetRow: Component<SetRowProps> = (props) => {
                 setIsEditingWeight(false);
               }
             }}
-            class="w-16 h-11 text-center bg-neutral-900 text-white rounded border border-blue-500 font-semibold text-sm outline-none"
+            class="w-16 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-blue-500 font-semibold text-sm outline-none"
           />
         </Show>
 
         <button
           type="button"
           onClick={() => props.onAdjustWeight(2.5)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-neutral-400 active:text-white active:bg-neutral-800 rounded-md font-bold text-sm"
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
           aria-label="Aumentar 2.5 kg"
           data-testid={`btn-weight-plus-${props.setIndex}`}
         >
@@ -134,7 +134,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
         <button
           type="button"
           onClick={() => props.onAdjustReps(-1)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-neutral-400 active:text-white active:bg-neutral-800 rounded-md font-bold text-sm"
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
           aria-label="Diminuir 1 repetição"
           data-testid={`btn-reps-minus-${props.setIndex}`}
         >
@@ -148,14 +148,14 @@ export const SetRow: Component<SetRowProps> = (props) => {
               type="button"
               onDblClick={() => setIsEditingReps(true)}
               onClick={() => setIsEditingReps(true)}
-              class="w-14 h-11 flex flex-col items-center justify-center rounded bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 active:border-blue-500"
+              class="w-14 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-blue-500 transition-colors"
               title="Toque para digitar reps"
               data-testid={`reps-display-${props.setIndex}`}
             >
-              <span class="text-sm font-semibold text-neutral-100 tabular-nums">
+              <span class="text-sm font-semibold text-theme-primary tabular-nums">
                 {rSet()?.reps ?? 0}
               </span>
-              <span class="text-[9px] uppercase tracking-wider text-neutral-500 font-mono">reps</span>
+              <span class="text-[9px] uppercase tracking-wider text-theme-secondary font-mono">reps</span>
             </button>
           }
         >
@@ -176,14 +176,14 @@ export const SetRow: Component<SetRowProps> = (props) => {
                 setIsEditingReps(false);
               }
             }}
-            class="w-14 h-11 text-center bg-neutral-900 text-white rounded border border-blue-500 font-semibold text-sm outline-none"
+            class="w-14 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-blue-500 font-semibold text-sm outline-none"
           />
         </Show>
 
         <button
           type="button"
           onClick={() => props.onAdjustReps(1)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-neutral-400 active:text-white active:bg-neutral-800 rounded-md font-bold text-sm"
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
           aria-label="Aumentar 1 repetição"
           data-testid={`btn-reps-plus-${props.setIndex}`}
         >
@@ -191,28 +191,37 @@ export const SetRow: Component<SetRowProps> = (props) => {
         </button>
       </div>
 
-      {/* Status Checkbox Circle (44x44px touch target) */}
-      <button
-        type="button"
-        onClick={props.onToggleComplete}
-        class={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center active:scale-90 transition-all ${
-          props.set.completed
-            ? 'bg-emerald-500 text-neutral-950 shadow-md shadow-emerald-950/40'
-            : 'border-2 border-neutral-700 text-transparent hover:border-neutral-500'
-        }`}
-        aria-label={props.set.completed ? 'Desmarcar série' : 'Concluir série'}
-        data-testid={`btn-complete-set-${props.setIndex}`}
-      >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="3"
+      {/* Completion Toggle Status Button (44px target) */}
+      <div class="flex justify-end pr-1">
+        <button
+          type="button"
+          onClick={props.onToggleComplete}
+          class={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+            props.set.completed
+              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 scale-105'
+              : 'bg-theme-elevated border border-theme-subtle text-theme-secondary hover:border-theme-separator active:scale-95'
+          }`}
+          aria-label={
+            props.set.completed
+              ? 'Desmarcar série'
+              : `Concluir série ${props.setIndex + 1}`
+          }
+          data-testid={`btn-complete-set-${props.setIndex}`}
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-      </button>
+          <Show
+            when={props.set.completed}
+            fallback={
+              <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            }
+          >
+            <svg class="w-5 h-5 text-white stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </Show>
+        </button>
+      </div>
     </div>
   );
 };

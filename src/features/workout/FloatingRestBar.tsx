@@ -23,7 +23,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
   return (
     <Show when={props.timer.active}>
       <div
-        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-full bg-neutral-900/90 border border-neutral-750 backdrop-blur-xl shadow-2xl shadow-black/80 px-4 py-2.5 flex items-center justify-between transition-all animate-in fade-in slide-in-from-bottom-4 duration-200 select-none"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-full bg-theme-surface/95 border border-theme-separator backdrop-blur-xl shadow-2xl px-4 py-2.5 flex items-center justify-between transition-all animate-in fade-in slide-in-from-bottom-4 duration-200 select-none theme-transition"
         data-testid="floating-rest-bar"
       >
         {/* Left: Timer Display */}
@@ -36,7 +36,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
                 r="13"
                 stroke="currentColor"
                 stroke-width="2.5"
-                class="text-neutral-800"
+                class="text-theme-elevated"
                 fill="none"
               />
               <circle
@@ -45,7 +45,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
                 r="13"
                 stroke="currentColor"
                 stroke-width="2.5"
-                class="text-emerald-400 transition-all duration-300 ease-linear"
+                class="text-emerald-500 transition-all duration-300 ease-linear"
                 fill="none"
                 stroke-dasharray="81.68"
                 stroke-dashoffset={81.68 - (81.68 * progressPercent()) / 100}
@@ -56,11 +56,11 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
           </div>
 
           <div class="flex flex-col">
-            <span class="text-[10px] tracking-wider uppercase text-neutral-400 font-mono font-medium">
+            <span class="text-[10px] tracking-wider uppercase text-theme-secondary font-mono font-medium">
               Descanso
             </span>
             <span
-              class="text-base font-bold text-neutral-100 font-mono tracking-tight tabular-nums"
+              class="text-base font-bold text-theme-primary font-mono tracking-tight tabular-nums"
               data-testid="rest-timer-countdown"
             >
               {formatTime(props.timer.remainingSeconds)}
@@ -73,7 +73,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
           <button
             type="button"
             onClick={() => props.onAddSeconds(30)}
-            class="h-9 px-3 min-w-[44px] rounded-full bg-neutral-800/80 hover:bg-neutral-700/80 active:scale-95 text-neutral-200 text-xs font-semibold tracking-wide border border-neutral-700/50 transition-all"
+            class="h-9 px-3 min-w-[44px] rounded-full bg-theme-elevated hover:opacity-90 active:scale-95 text-theme-primary text-xs font-semibold tracking-wide border border-theme-subtle transition-all"
             data-testid="btn-add-rest-30s"
           >
             +30s
@@ -82,7 +82,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
           <button
             type="button"
             onClick={props.onSkip}
-            class="h-9 px-3 min-w-[44px] rounded-full bg-neutral-800/80 hover:bg-neutral-700/80 active:scale-95 text-neutral-400 active:text-white text-xs font-semibold tracking-wide border border-neutral-700/50 transition-all"
+            class="h-9 px-3 min-w-[44px] rounded-full bg-theme-elevated hover:opacity-90 active:scale-95 text-theme-secondary active:text-theme-primary text-xs font-semibold tracking-wide border border-theme-subtle transition-all"
             data-testid="btn-skip-rest"
           >
             Pular

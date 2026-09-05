@@ -114,7 +114,7 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
       container
     );
 
-    expect(container.textContent).toContain('chest');
+    expect(container.textContent).toContain('Peitoral');
 
     const substituteBtn = container.querySelector('[data-testid="btn-substitute-trigger"]') as HTMLButtonElement;
     expect(substituteBtn).not.toBeNull();

@@ -3,6 +3,7 @@ import type { Routine } from '../../domain/routine';
 import type { MuscleGroup, Weekday } from '../../domain/types';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
 import { getExerciseById, EXERCISE_CATALOG } from '../../catalog/exercises';
+import { formatMuscleName } from '../../catalog/muscles';
 
 export interface HeroWorkoutCardProps {
   routines: readonly Routine[];
@@ -79,13 +80,13 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
 
   return (
     <div
-      class="w-full bg-gradient-to-b from-neutral-900/90 to-neutral-900/50 border border-neutral-800 rounded-3xl p-5 shadow-2xl shadow-black/60 select-none"
+      class="w-full bg-theme-surface border border-theme-separator rounded-3xl p-5 shadow-2xl theme-transition select-none"
       data-testid="hero-workout-card"
     >
       <Show
         when={currentRoutine()}
         fallback={
-          <div class="py-12 text-center text-neutral-500 font-mono text-xs">
+          <div class="py-12 text-center text-theme-secondary font-mono text-xs">
             Nenhuma rotina cadastrada. Crie uma rotina para começar.
           </div>
         }
@@ -94,8 +95,8 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
           <>
             {/* Top Tag & Routine Selector Chips */}
             <div class="flex items-center justify-between gap-2 mb-3">
-              <span class="text-[10px] uppercase font-mono font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              <span class="text-[10px] uppercase font-mono font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                 Treino Sugerido
               </span>
 
@@ -108,8 +109,8 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
                       onClick={() => props.onSelectRoutine(r)}
                       class={`px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
                         routine().id === r.id
-                          ? 'bg-blue-500 text-white shadow-sm'
-                          : 'bg-neutral-800 text-neutral-400 hover:text-neutral-200'
+                          ? 'bg-theme-accent text-white shadow-sm'
+                          : 'bg-theme-elevated text-theme-secondary hover:text-theme-primary'
                       }`}
                       data-testid={`routine-chip-${r.id}`}
                     >
@@ -122,22 +123,22 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
 
             {/* Title & Metadata */}
             <h2
-              class="text-xl font-black text-neutral-100 tracking-tight mb-1"
+              class="text-xl font-black text-theme-primary tracking-tight mb-1"
               data-testid="hero-routine-name"
             >
               {routine().name}
             </h2>
 
-            <div class="flex items-center gap-3 text-xs text-neutral-400 font-mono mb-4">
+            <div class="flex items-center gap-3 text-xs text-theme-secondary font-mono mb-4">
               <span class="flex items-center gap-1">
-                <svg class="w-4 h-4 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 {routine().exercises.length} exercícios
               </span>
               <span>•</span>
               <span class="flex items-center gap-1">
-                <svg class="w-4 h-4 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 ~{estimatedDuration()} min
@@ -145,30 +146,30 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
             </div>
 
             {/* Anatomical Routine Coverage Preview */}
-            <div class="w-full bg-neutral-950/70 border border-neutral-850 rounded-2xl p-3 flex items-center justify-between gap-4 mb-5">
+            <div class="w-full bg-theme-elevated border border-theme-subtle rounded-2xl p-3 flex items-center justify-between gap-4 mb-5">
               <div class="flex-1">
-                <span class="text-[10px] uppercase font-mono tracking-wider text-neutral-400 font-bold block mb-1">
+                <span class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary font-bold block mb-1">
                   Grupos Musculares Ativados
                 </span>
                 <div class="flex flex-wrap gap-1 mb-2">
                   <For each={muscles().primary}>
                     {(m) => (
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 capitalize">
-                        {m}
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30 font-medium">
+                        {formatMuscleName(m)}
                       </span>
                     )}
                   </For>
                   <For each={muscles().secondary}>
                     {(m) => (
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-750 capitalize">
-                        {m}
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-theme-surface text-theme-secondary border border-theme-subtle">
+                        {formatMuscleName(m)}
                       </span>
                     )}
                   </For>
                 </div>
               </div>
 
-              <div class="w-20 h-24 flex items-center justify-center p-1 bg-neutral-900/60 rounded-xl border border-neutral-800/80 flex-shrink-0">
+              <div class="w-20 h-24 flex items-center justify-center p-1 bg-theme-surface rounded-xl border border-theme-subtle flex-shrink-0">
                 <BodyHighlighter
                   primaryMuscles={muscles().primary}
                   secondaryMuscles={muscles().secondary}
@@ -182,7 +183,7 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
             <button
               type="button"
               onClick={() => props.onStartWorkout(routine())}
-              class="w-full h-13 rounded-2xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-base tracking-wide shadow-xl shadow-blue-950/60 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              class="w-full h-13 rounded-2xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-base tracking-wide shadow-xl shadow-blue-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
               data-testid="btn-start-hero-workout"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

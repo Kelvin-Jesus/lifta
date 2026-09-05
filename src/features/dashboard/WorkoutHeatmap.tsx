@@ -77,15 +77,15 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
   const getCellColorClass = (level: number) => {
     switch (level) {
       case 1:
-        return 'bg-emerald-950 border-emerald-800/50';
+        return 'bg-emerald-950/80 border-emerald-800/50';
       case 2:
-        return 'bg-emerald-750 border-emerald-600/60';
+        return 'bg-emerald-700/80 border-emerald-600/60';
       case 3:
-        return 'bg-emerald-550 border-emerald-400/70';
+        return 'bg-emerald-500 border-emerald-400/70';
       case 4:
         return 'bg-emerald-400 border-emerald-300 shadow-sm shadow-emerald-400/30';
       default:
-        return 'bg-neutral-900/90 border-neutral-800/60 hover:border-neutral-700';
+        return 'bg-theme-elevated/80 border-theme-subtle hover:border-theme-separator';
     }
   };
 
@@ -93,11 +93,11 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
 
   return (
     <div
-      class="w-full bg-neutral-900/50 border border-neutral-800/80 rounded-2xl p-4 select-none"
+      class="w-full bg-theme-surface border border-theme-separator rounded-2xl p-4 select-none theme-transition"
       data-testid="workout-heatmap"
     >
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold flex items-center gap-1.5">
+        <h3 class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
@@ -105,10 +105,10 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
         </h3>
 
         {/* Legend */}
-        <div class="flex items-center gap-1 text-[10px] text-neutral-500 font-mono">
+        <div class="flex items-center gap-1 text-[10px] text-theme-tertiary font-mono">
           <span>Menos</span>
-          <div class="w-2.5 h-2.5 rounded-xs bg-neutral-900 border border-neutral-800" />
-          <div class="w-2.5 h-2.5 rounded-xs bg-emerald-950 border border-emerald-800" />
+          <div class="w-2.5 h-2.5 rounded-xs bg-theme-elevated border border-theme-subtle" />
+          <div class="w-2.5 h-2.5 rounded-xs bg-emerald-950/80 border border-emerald-800" />
           <div class="w-2.5 h-2.5 rounded-xs bg-emerald-700 border border-emerald-600" />
           <div class="w-2.5 h-2.5 rounded-xs bg-emerald-500 border border-emerald-400" />
           <div class="w-2.5 h-2.5 rounded-xs bg-emerald-400 border border-emerald-300" />
@@ -120,7 +120,7 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
       <div class="overflow-x-auto pb-1">
         <div class="inline-flex items-center gap-1.5">
           {/* Day of week labels */}
-          <div class="flex flex-col gap-1 text-[9px] font-mono text-neutral-400 pr-1 select-none">
+          <div class="flex flex-col gap-1 text-[9px] font-mono text-theme-tertiary pr-1 select-none">
             <For each={dayLabels}>
               {(label) => <span class="w-3 h-3 flex items-center justify-center leading-none">{label}</span>}
             </For>
@@ -145,7 +145,7 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
                           cell.level
                         )} ${
                           selectedCell()?.dateStr === cell.dateStr
-                            ? 'ring-2 ring-white scale-125 z-10'
+                            ? 'ring-2 ring-theme-primary scale-125 z-10'
                             : ''
                         }`}
                         title={`${cell.dateStr}: ${cell.calories} kcal (${cell.sessions.length} treino)`}
@@ -165,21 +165,21 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
       {/* Selected Date Details Pill */}
       <Show when={selectedCell()}>
         <div
-          class="mt-3 p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs flex items-center justify-between animate-in fade-in duration-150"
+          class="mt-3 p-2.5 rounded-xl bg-theme-elevated border border-theme-subtle text-xs flex items-center justify-between animate-in fade-in duration-150"
           data-testid="heatmap-detail-card"
         >
           <div>
-            <span class="font-mono text-neutral-400 text-[10px] block">
+            <span class="font-mono text-theme-secondary text-[10px] block">
               {selectedCell()?.dateStr}
             </span>
             <Show
               when={selectedCell()!.sessions.length > 0}
-              fallback={<span class="text-neutral-500 font-mono">Descanso / Sem treino registrado</span>}
+              fallback={<span class="text-theme-tertiary font-mono">Descanso / Sem treino registrado</span>}
             >
-              <span class="font-bold text-neutral-100">
+              <span class="font-bold text-theme-primary">
                 {selectedCell()!.sessions[0].routineName ?? 'Treino Realizado'}
               </span>
-              <span class="text-neutral-400 text-[11px] ml-2">
+              <span class="text-theme-secondary text-[11px] ml-2">
                 • {selectedCell()!.sessions[0].durationMinutes} min
               </span>
             </Show>
@@ -189,7 +189,7 @@ export const WorkoutHeatmap: Component<WorkoutHeatmapProps> = (props) => {
             <span class="text-emerald-400 font-mono font-bold text-sm">
               {selectedCell()?.calories} kcal
             </span>
-            <span class="text-[9px] uppercase font-mono text-neutral-500 block">estimadas</span>
+            <span class="text-[9px] uppercase font-mono text-theme-tertiary block">estimadas</span>
           </div>
         </div>
       </Show>

@@ -111,7 +111,7 @@ export const BottomSheet: Component<BottomSheetProps> = (props) => {
         {/* Sheet Container with iOS curved corners and border */}
         <div
           ref={sheetRef}
-          class="relative w-full max-w-lg bg-neutral-900 border-t border-x border-neutral-750 rounded-t-3xl shadow-2xl shadow-black flex flex-col z-10 overflow-hidden"
+          class="relative w-full max-w-lg bg-theme-surface border-t border-x border-theme-separator rounded-t-3xl shadow-2xl text-theme-primary flex flex-col z-10 overflow-hidden theme-transition"
           style={{
             'max-height': props.maxHeight ?? '85dvh',
             transform: `translateY(${translateY()}px)`,
@@ -131,22 +131,24 @@ export const BottomSheet: Component<BottomSheetProps> = (props) => {
             onPointerCancel={handlePointerUp}
             data-testid="sheet-grabber"
           >
-            <div class="w-9 h-1.5 rounded-full bg-neutral-600 hover:bg-neutral-500 transition-colors" />
+            <div class="w-9 h-1.5 rounded-full bg-theme-secondary/40 transition-colors" />
           </div>
 
           {/* Optional Title Header */}
           <Show when={props.title}>
-            <div class="px-5 pb-2 flex items-center justify-between border-b border-neutral-800">
-              <h3 class="text-base font-bold text-neutral-100 tracking-tight">
+            <div class="px-5 pb-2 flex items-center justify-between border-b border-theme-subtle">
+              <h3 class="text-base font-bold text-theme-primary tracking-tight">
                 {props.title}
               </h3>
               <button
                 type="button"
                 onClick={props.onClose}
-                class="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white flex items-center justify-center text-xs"
+                class="w-8 h-8 rounded-full bg-theme-elevated text-theme-secondary hover:text-theme-primary flex items-center justify-center transition-all active:scale-95"
                 aria-label="Fechar"
               >
-                ✕
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </Show>

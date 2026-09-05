@@ -68,17 +68,17 @@ export const WeeklyAgenda: Component<WeeklyAgendaProps> = (props) => {
 
   return (
     <div
-      class="w-full bg-neutral-900/50 border border-neutral-800/80 rounded-2xl p-4 select-none"
+      class="w-full bg-theme-surface border border-theme-separator rounded-2xl p-4 select-none theme-transition"
       data-testid="weekly-agenda"
     >
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <h3 class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           Agenda Semanal
         </h3>
-        <span class="text-[10px] font-mono text-neutral-500">Semana Atual</span>
+        <span class="text-[10px] font-mono text-theme-tertiary">Semana Atual</span>
       </div>
 
       <div class="space-y-2">
@@ -87,8 +87,8 @@ export const WeeklyAgenda: Component<WeeklyAgendaProps> = (props) => {
             <div
               class={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
                 item.isToday
-                  ? 'bg-neutral-850/80 border-blue-500/40 ring-1 ring-blue-500/20'
-                  : 'bg-neutral-950/40 border-neutral-850/70 hover:border-neutral-800'
+                  ? 'bg-theme-elevated border-blue-500/50 ring-1 ring-blue-500/30'
+                  : 'bg-theme-surface border-theme-subtle hover:border-theme-separator'
               }`}
               data-testid={`agenda-day-${item.key}`}
             >
@@ -97,46 +97,36 @@ export const WeeklyAgenda: Component<WeeklyAgendaProps> = (props) => {
                 <div
                   class={`w-8 h-8 rounded-lg flex flex-col items-center justify-center font-mono ${
                     item.isToday
-                      ? 'bg-blue-500 text-white font-bold'
-                      : 'bg-neutral-800 text-neutral-300'
+                      ? 'bg-blue-500 text-white font-bold shadow-sm'
+                      : 'bg-theme-elevated text-theme-secondary'
                   }`}
                 >
+                  <span class="text-[9px] uppercase leading-none">{item.name.slice(0, 1)}</span>
                   <span class="text-xs font-bold leading-none">{item.dayNumber}</span>
-                  <span class="text-[8px] uppercase tracking-tighter text-neutral-400 mt-0.5">
-                    {item.name.slice(0, 3)}
-                  </span>
                 </div>
 
                 <div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-xs font-semibold text-neutral-200">
-                      {item.name}
-                    </span>
-                    <Show when={item.isToday}>
-                      <span class="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                        Hoje
-                      </span>
-                    </Show>
-                  </div>
-
+                  <span class={`text-xs font-semibold block ${item.isToday ? 'text-theme-primary' : 'text-theme-secondary'}`}>
+                    {item.name}
+                  </span>
                   <Show
                     when={item.completedSession}
                     fallback={
                       <Show
                         when={item.scheduledRoutine}
                         fallback={
-                          <span class="text-[11px] text-neutral-500 font-mono">
+                          <span class="text-[11px] text-theme-tertiary font-mono">
                             Descanso planejado
                           </span>
                         }
                       >
-                        <span class="text-[11px] text-blue-400/90 font-medium">
+                        <span class="text-[11px] text-blue-500 font-medium">
                           {item.scheduledRoutine!.name}
                         </span>
                       </Show>
                     }
                   >
-                    <span class="text-[11px] text-emerald-400 font-medium">
+                    <span class="text-[11px] text-emerald-500 font-medium">
                       {item.completedSession!.routineName ?? 'Treino Concluído'} •{' '}
                       {item.completedSession!.durationMinutes} min
                     </span>
@@ -153,7 +143,7 @@ export const WeeklyAgenda: Component<WeeklyAgendaProps> = (props) => {
                       <button
                         type="button"
                         onClick={() => props.onStartRoutine!(item.scheduledRoutine!)}
-                        class="h-7 px-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-[11px] font-semibold text-blue-400 border border-neutral-700 transition-all"
+                        class="h-7 px-2.5 rounded-lg bg-theme-elevated hover:opacity-90 active:scale-95 text-[11px] font-semibold text-blue-500 border border-theme-subtle transition-all"
                         data-testid={`btn-start-scheduled-${item.key}`}
                       >
                         Treinar

@@ -18,13 +18,13 @@ test.describe('Lifta Mobile E2E (iPhone 15)', () => {
     await expect(page.getByTestId('deck-carousel')).toBeVisible();
 
     // 4. Adjust weight with tactile stepper (+2.5 kg)
-    const weightBefore = await page.getByTestId('weight-display-0').textContent();
-    await page.getByTestId('btn-weight-plus-0').click();
-    const weightAfter = await page.getByTestId('weight-display-0').textContent();
+    const weightBefore = await page.getByTestId('weight-display-0').first().textContent();
+    await page.getByTestId('btn-weight-plus-0').first().click();
+    const weightAfter = await page.getByTestId('weight-display-0').first().textContent();
     expect(weightAfter).not.toBe(weightBefore);
 
     // 5. Complete first set via 1-tap thumb button
-    await page.getByTestId('btn-complete-next-set').click();
+    await page.getByTestId('btn-complete-next-set').first().click();
 
     // 6. Verify Dynamic Island floating rest bar pops up
     await expect(page.getByTestId('floating-rest-bar')).toBeVisible();
@@ -51,8 +51,8 @@ test.describe('Lifta Mobile E2E (iPhone 15)', () => {
     await context.setOffline(true);
 
     // Perform operations offline
-    await page.getByTestId('btn-weight-plus-0').click();
-    await page.getByTestId('btn-complete-next-set').click();
+    await page.getByTestId('btn-weight-plus-0').first().click();
+    await page.getByTestId('btn-complete-next-set').first().click();
     await expect(page.getByTestId('floating-rest-bar')).toBeVisible();
 
     // Restore network
@@ -65,7 +65,7 @@ test.describe('Lifta Mobile E2E (iPhone 15)', () => {
     await expect(page.getByTestId('workout-deck')).toBeVisible();
 
     // Complete set 0
-    await page.getByTestId('btn-complete-next-set').click();
+    await page.getByTestId('btn-complete-next-set').first().click();
 
     // Simulate tab reload / browser termination
     await page.reload();
@@ -78,7 +78,7 @@ test.describe('Lifta Mobile E2E (iPhone 15)', () => {
     await expect(page.getByTestId('workout-deck')).toBeVisible();
 
     // Verify completed set is still checked
-    const set0Check = page.getByTestId('btn-complete-set-0');
+    const set0Check = page.getByTestId('btn-complete-set-0').first();
     await expect(set0Check).toHaveAttribute('aria-label', 'Desmarcar série');
   });
 

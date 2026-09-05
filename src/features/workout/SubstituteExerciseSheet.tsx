@@ -1,6 +1,7 @@
 import { For, Show, createSignal, type Component } from 'solid-js';
 import { BottomSheet } from '../../components/BottomSheet';
 import { EXERCISE_CATALOG, filterExercisesByMuscle, getExerciseById } from '../../catalog/exercises';
+import { formatMuscleName } from '../../catalog/muscles';
 import type { Exercise } from '../../domain/exercise';
 
 export interface SubstituteExerciseSheetProps {
@@ -39,9 +40,9 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
       title="Substituir Aparelho Ocupado"
     >
       <div class="flex flex-col gap-3 py-1" data-testid="substitute-exercise-sheet">
-        <p class="text-xs text-neutral-400">
+        <p class="text-xs text-theme-secondary">
           Aparelho ou banco ocupado? Selecione um exercício equivalente para o mesmo grupo muscular:{' '}
-          <span class="text-blue-400 font-semibold uppercase">{primaryMuscle()}</span>.
+          <span class="text-blue-500 font-semibold">{formatMuscleName(primaryMuscle())}</span>.
         </p>
 
         {/* Search filter input */}
@@ -51,11 +52,11 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
             placeholder="Filtrar por nome do exercício..."
             value={searchQuery()}
             onInput={(e) => setSearchQuery(e.currentTarget.value)}
-            class="w-full h-10 px-3 pl-9 rounded-xl bg-neutral-950 border border-neutral-800 text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-blue-500"
+            class="w-full h-10 px-3 pl-9 rounded-xl bg-theme-elevated border border-theme-subtle text-xs text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-blue-500"
             data-testid="input-substitute-search"
           />
           <svg
-            class="w-4 h-4 absolute left-3 top-3 text-neutral-500"
+            class="w-4 h-4 absolute left-3 top-3 text-theme-tertiary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -65,11 +66,11 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
         </div>
 
         {/* Exercise candidates list */}
-        <div class="divide-y divide-neutral-800/60 max-h-80 overflow-y-auto">
+        <div class="divide-y divide-theme-subtle max-h-80 overflow-y-auto">
           <For
             each={candidateExercises()}
             fallback={
-              <div class="py-6 text-center text-xs text-neutral-500 font-mono">
+              <div class="py-6 text-center text-xs text-theme-tertiary font-mono">
                 Nenhum exercício substituto encontrado.
               </div>
             }
@@ -81,24 +82,24 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
                   props.onSelectSubstitute(ex.id);
                   props.onClose();
                 }}
-                class="w-full py-3 px-2 flex items-center justify-between hover:bg-neutral-800/40 active:bg-neutral-800 rounded-lg text-left transition-colors"
+                class="w-full py-3 px-2 flex items-center justify-between hover:bg-theme-surface active:bg-theme-elevated rounded-lg text-left transition-colors"
                 data-testid={`substitute-item-${ex.id}`}
               >
                 <div>
-                  <h4 class="text-xs font-bold text-neutral-100">{ex.name}</h4>
+                  <h4 class="text-xs font-bold text-theme-primary">{ex.name}</h4>
                   <div class="flex items-center gap-1.5 mt-0.5">
-                    <span class="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-neutral-800 text-neutral-400">
+                    <span class="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-theme-surface text-theme-secondary border border-theme-subtle">
                       {ex.equipment}
                     </span>
                     <Show when={ex.instructions}>
-                      <span class="text-[10px] text-neutral-400 truncate max-w-[200px]">
+                      <span class="text-[10px] text-theme-secondary truncate max-w-[200px]">
                         {ex.instructions}
                       </span>
                     </Show>
                   </div>
                 </div>
 
-                <span class="text-xs font-bold text-blue-400 flex items-center gap-1">
+                <span class="text-xs font-bold text-blue-500 flex items-center gap-1">
                   Selecionar
                   <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
