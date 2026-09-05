@@ -1,7 +1,7 @@
 # 15 - Home Dashboard Heatmap and Agenda
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 11, 12
 
 ## Goal
