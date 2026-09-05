@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Lifta</title>
+  <style>
+    /* iOS System Design Tokens */
+    :root {
+      --bg: #000000;
+      --surface-grouped: #1c1c1e;
+      --surface-elevated: #2c2c2e;
+      --surface-hover: #3a3a3c;
+      --separator: rgba(255, 255, 255, 0.12);
+      --separator-subtle: rgba(255, 255, 255, 0.06);
+      
+      --accent: #0a84ff;
+      --accent-active: #0066cc;
+      --success: #30d158;
+      --destructive: #ff453a;
+      
+      --text-primary: #ffffff;
+      --text-secondary: #8e8e93;
+      --text-tertiary: #636366;
+
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      
+      --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+      --duration-fast: 150ms;
+    }
+
+    [data-theme="light"] {
+      --bg: #f2f2f7;
+      --surface-grouped: #ffffff;
+      --surface-elevated: #e5e5ea;
+      --surface-hover: #d1d1d6;
+      --separator: rgba(60, 60, 67, 0.2);
+      --separator-subtle: rgba(60, 60, 67, 0.08);
+      
+      --accent: #007aff;
+      --accent-active: #0056b3;
+      --success: #34c759;
+      --destructive: #ff3b30;
+      
+      --text-primary: #000000;
+      --text-secondary: #6c6c70;
+      --text-tertiary: #8e8e93;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 200ms ease, color 200ms ease;
+    }
+
+    /* Native iPhone Shell Frame */
+    .app-shell {
+      width: 100vw;
+      height: 100dvh;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-color: var(--bg);
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
+
+    @media (min-width: 600px) {
+      .app-shell {
+        height: 890px;
+        max-height: 92vh;
+        border-radius: 48px;
+        border: 1px solid var(--separator);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    /* Native Top Navigation Bar */
+    .nav-bar {
+      height: 52px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 0.5px solid var(--separator-subtle);
+      flex-shrink: 0;
+    }
+
+    .nav-left-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-back-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--surface-grouped);
+      border: 0.5px solid var(--separator-subtle);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .nav-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+    }
+
+    .nav-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+
+    .nav-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-theme-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--surface-grouped);
+      border: 0.5px solid var(--separator-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .nav-theme-btn svg { width: 16px; height: 16px; stroke-width: 2; }
+
+    .nav-timer {
+      font-variant-numeric: tabular-nums;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(10, 132, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Segmented Dots Progress Indicator */
+    .progress-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px 8px;
+      flex-shrink: 0;
+    }
+
+    .progress-segment {
+      height: 3px;
+      flex: 1;
+      border-radius: 1.5px;
+      background: var(--surface-elevated);
+      transition: background 200ms var(--ease-apple);
+    }
+
+    .progress-segment.active {
+      background: var(--text-primary);
+    }
+
+    .progress-segment.completed {
+      background: var(--success);
+    }
+
+    /* Scroll Snap Deck */
+    .deck {
+      flex: 1;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+    .deck::-webkit-scrollbar { display: none; }
+
+    .exercise-view {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 16px 16px;
+      overflow-y: auto;
+      gap: 12px;
+    }
+
+    /* Exercise Metadata Header */
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 0;
+    }
+
+    .exercise-heading {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 2px;
+    }
+
+    .exercise-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .btn-text-action {
+      background: var(--surface-grouped);
+      border: 0.5px solid var(--separator-subtle);
+      border-radius: 10px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px 10px;
+      transition: opacity var(--duration-fast), background var(--duration-fast);
+      flex-shrink: 0;
+    }
+    .btn-text-action:active {
+      opacity: 0.7;
+      background: var(--surface-elevated);
+    }
+
+    /* Prominent Anatomical Muscle Card */
+    .muscle-focus-card {
+      background: var(--surface-grouped);
+      border-radius: 16px;
+      border: 0.5px solid var(--separator-subtle);
+      padding: 12px 14px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      transition: background var(--duration-fast);
+    }
+    .muscle-focus-card:active {
+      background: var(--surface-elevated);
+    }
+
+    .muscle-diagram-box {
+      width: 68px;
+      height: 126px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border: 0.5px solid var(--separator-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      padding: 6px 4px 4px;
+      overflow: hidden;
+    }
+    [data-theme="light"] .muscle-diagram-box {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .muscle-svg-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .anatomy-tag {
+      position: absolute;
+      bottom: 4px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .muscle-info-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .muscle-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .primary-muscle-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .muscle-meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+      margin-bottom: 3px;
+    }
+
+    .pill-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(10, 132, 255, 0.12);
+      color: var(--accent);
+    }
+
+    .pill-badge.subtle {
+      background: var(--surface-elevated);
+      color: var(--text-secondary);
+    }
+
+    .synergist-text {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .synergist-text strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Benchmark Banner (Objective) */
+    .target-banner {
+      background: var(--surface-grouped);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+
+    .target-banner .label {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .target-banner .value {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* iOS Inset Grouped Table for Sets */
+    .grouped-table {
+      background: var(--surface-grouped);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+
+    .table-header {
+      display: grid;
+      grid-template-columns: 44px 1fr 1fr 48px;
+      padding: 8px 14px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border-bottom: 0.5px solid var(--separator-subtle);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 44px 1fr 1fr 48px;
+      padding: 10px 14px;
+      align-items: center;
+      border-bottom: 0.5px solid var(--separator-subtle);
+      transition: background var(--duration-fast);
+      min-height: 56px;
+    }
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row.active {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .table-row.completed {
+      background: rgba(48, 209, 88, 0.04);
+    }
+
+    .cell-set-num {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+    .table-row.active .cell-set-num {
+      color: var(--accent);
+    }
+
+    /* Numeric Adjustment Control */
+    .num-stepper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stepper-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface-elevated);
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 100ms var(--ease-apple), background 100ms;
+    }
+    .stepper-btn:active {
+      transform: scale(0.92);
+      background: var(--surface-hover);
+    }
+
+    .stepper-val {
+      font-size: 1rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      min-width: 48px;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    .stepper-unit {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-left: 1px;
+    }
+
+    /* Check Button */
+    .btn-check {
+      width: 44px;
+      height: 44px;
+      border-radius: 22px;
+      border: 1.5px solid var(--separator);
+      background: transparent;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 120ms var(--ease-apple), background 120ms, border-color 120ms;
+    }
+    .btn-check:active {
+      transform: scale(0.94);
+    }
+
+    .btn-check.checked {
+      background: var(--success);
+      border-color: var(--success);
+      color: #000000;
+    }
+
+    .btn-check svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2.6;
+    }
+
+    /* Primary Bottom Action (Thumb-reachable) */
+    .bottom-bar {
+      padding: 10px 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      border-top: 0.5px solid var(--separator-subtle);
+    }
+
+    .btn-primary {
+      height: 50px;
+      width: 100%;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 120ms var(--ease-apple), background 120ms, opacity 120ms;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+      background: var(--accent-active);
+    }
+    .btn-primary:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Floating Rest Bar (iOS Dynamic Island Style) */
+    .rest-pill {
+      height: 48px;
+      background: var(--surface-elevated);
+      border: 0.5px solid var(--separator);
+      border-radius: 24px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: restEntrance 200ms var(--ease-apple);
+    }
+    @keyframes restEntrance {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .rest-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .rest-clock {
+      font-variant-numeric: tabular-nums;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .rest-caption {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .rest-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-pill-small {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 15px;
+      background: var(--surface-hover);
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity var(--duration-fast);
+    }
+    .btn-pill-small:active { opacity: 0.6; }
+    .btn-pill-small.destructive { color: var(--destructive); }
+
+    /* Modal Sheet for Execution Guide */
+    .sheet-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+    .sheet-scrim.open { display: flex; }
+
+    .sheet-card {
+      background: var(--surface-grouped);
+      width: 100%;
+      max-width: 430px;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 12px 20px calc(var(--safe-bottom) + 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: sheetUp 250ms var(--ease-apple);
+      will-change: transform;
+      user-select: none;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle-area {
+      width: 100%;
+      padding: 4px 0 10px;
+      display: flex;
+      justify-content: center;
+      cursor: grab;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sheet-handle-area:active {
+      cursor: grabbing;
+    }
+
+    .sheet-handle {
+      width: 38px;
+      height: 5px;
+      border-radius: 2.5px;
+      background: var(--separator);
+      transition: background 150ms var(--ease-apple), transform 150ms var(--ease-apple);
+    }
+    .sheet-handle-area:active .sheet-handle,
+    .sheet-header:active ~ .sheet-handle-area .sheet-handle {
+      background: var(--text-tertiary);
+      transform: scaleX(1.15);
+    }
+
+    .sheet-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .sheet-body {
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .sheet-media-box {
+      height: 180px;
+      background: var(--bg);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0.5px solid var(--separator-subtle);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, .progress-segment, .btn-primary, .btn-check, .sheet-card {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <main class="app-shell" role="main">
+    <!-- Top Nav -->
+    <header class="nav-bar">
+      <div class="nav-left-group">
+        <button class="nav-back-btn" onclick="window.location.href='app-overview.html'" aria-label="Voltar para a Visão Geral" title="Voltar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="nav-title-group">
+          <h1 class="nav-title">Treino A</h1>
+          <span class="nav-subtitle">Peitoral e Tríceps • <span id="exercise-idx">1</span> de 3</span>
+        </div>
+      </div>
+      <div class="nav-right-actions">
+        <!-- Theme Toggle -->
+        <button class="nav-theme-btn" onclick="toggleTheme()" aria-label="Alternar tema claro/escuro" title="Tema">
+          <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <div class="nav-timer" aria-label="Tempo de treino ativo">
+          <span id="elapsed-time">28:45</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="progress-bar" role="progressbar" aria-label="Progresso de exercícios">
+      <div class="progress-segment active" onclick="jumpTo(0)"></div>
+      <div class="progress-segment" onclick="jumpTo(1)"></div>
+      <div class="progress-segment" onclick="jumpTo(2)"></div>
+    </div>
+
+    <!-- Carousel of Exercises (Full-screen viewport) -->
+    <div class="deck" id="deck">
+      
+      <!-- EXERCISE 1: Supino Reto -->
+      <section class="exercise-view" id="view-0" aria-label="Supino Reto com Barra">
+        <!-- Header -->
+        <div class="exercise-header">
+          <div>
+            <h2 class="exercise-heading">Supino Reto</h2>
+            <p class="exercise-sub">Barra Olímpica • 3 séries</p>
+          </div>
+          <button class="btn-text-action" onclick="openExerciseSheet('Supino Reto com Barra', 'Peitoral Maior', 'Tríceps Braquial, Deltoide Anterior', 'Mantenha escápulas aduzidas e os pés firmes no chão. Desça a barra de forma controlada até o terço médio do peitoral e empurre estendendo os cotovelos sem perder a estabilidade dos ombros.')" aria-label="Ver instruções e anatomia completa">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Instruções</span>
+          </button>
+        </div>
+
+        <!-- Prominent Muscle Focus Card (Músculo Mais Treinado) -->
+        <div class="muscle-focus-card" onclick="openExerciseSheet('Supino Reto com Barra', 'Peitoral Maior', 'Tríceps Braquial, Deltoide Anterior', 'Mantenha escápulas aduzidas e os pés firmes no chão. Desça a barra de forma controlada até o terço médio do peitoral e empurre estendendo os cotovelos sem perder a estabilidade dos ombros.', ['chest'], ['triceps', 'front-deltoids'])" title="Toque para ver anatomia detalhada">
+          <!-- Real Anatomical Model (Chest Focus) -->
+          <div class="muscle-diagram-box">
+            <div class="muscle-svg-container" id="model-ex-0"></div>
+            <span class="anatomy-tag">Anatomia</span>
+          </div>
+
+          <!-- Muscle Details -->
+          <div class="muscle-info-col">
+            <div class="muscle-eyebrow">
+              <span class="eyebrow-indicator"></span>
+              <span>Músculo Mais Treinado</span>
+            </div>
+            <h3 class="primary-muscle-title">Peitoral Maior</h3>
+            <div class="muscle-meta-pills">
+              <span class="pill-badge">Foco Primário</span>
+              <span class="pill-badge subtle">Ativação 95%</span>
+            </div>
+            <p class="synergist-text">
+              Sinergistas: <strong>Tríceps Braquial</strong>, <strong>Deltoide Ant.</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Progression Banner -->
+        <div class="target-banner">
+          <span class="label">Meta de progressão</span>
+          <span class="value">82.5 kg × 10 reps (Ant: 80.0 kg × 10)</span>
+        </div>
+
+        <!-- Inset Table -->
+        <div class="grouped-table">
+          <div class="table-header">
+            <span>Série</span>
+            <span>Carga</span>
+            <span>Reps</span>
+            <span style="text-align: right;">Status</span>
+          </div>
+
+          <!-- Set 1 (Done) -->
+          <div class="table-row completed">
+            <span class="cell-set-num">1</span>
+            <div class="num-stepper">
+              <span class="stepper-val">82.5<span class="stepper-unit">kg</span></span>
+            </div>
+            <div class="num-stepper">
+              <span class="stepper-val">10<span class="stepper-unit">r</span></span>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-check checked" onclick="toggleSet(0, 0)" aria-label="Série 1 concluída">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Set 2 (Active) -->
+          <div class="table-row active">
+            <span class="cell-set-num">2</span>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('w2', -2.5)" aria-label="Diminuir peso em 2.5kg">−</button>
+              <span class="stepper-val" id="w2">82.5<span class="stepper-unit">kg</span></span>
+              <button class="stepper-btn" onclick="stepVal('w2', 2.5)" aria-label="Aumentar peso em 2.5kg">+</button>
+            </div>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('r2', -1)" aria-label="Diminuir 1 repetição">−</button>
+              <span class="stepper-val" id="r2">10<span class="stepper-unit">r</span></span>
+              <button class="stepper-btn" onclick="stepVal('r2', 1)" aria-label="Aumentar 1 repetição">+</button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-check" id="check-0-1" onclick="toggleSet(0, 1)" aria-label="Concluir série 2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Set 3 (Planned) -->
+          <div class="table-row">
+            <span class="cell-set-num">3</span>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('w3', -2.5)" aria-label="Diminuir peso">−</button>
+              <span class="stepper-val" id="w3">80.0<span class="stepper-unit">kg</span></span>
+              <button class="stepper-btn" onclick="stepVal('w3', 2.5)" aria-label="Aumentar peso">+</button>
+            </div>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('r3', -1)" aria-label="Diminuir repetição">−</button>
+              <span class="stepper-val" id="r3">8<span class="stepper-unit">r</span></span>
+              <button class="stepper-btn" onclick="stepVal('r3', 1)" aria-label="Aumentar repetição">+</button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-check" id="check-0-2" onclick="toggleSet(0, 2)" aria-label="Concluir série 3">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXERCISE 2: Crucifixo Inclinado -->
+      <section class="exercise-view" id="view-1" aria-label="Crucifixo Inclinado com Halteres">
+        <div class="exercise-header">
+          <div>
+            <h2 class="exercise-heading">Crucifixo Inclinado</h2>
+            <p class="exercise-sub">Halteres • Banco a 30°</p>
+          </div>
+          <button class="btn-text-action" onclick="openExerciseSheet('Crucifixo Inclinado com Halteres', 'Peitoral Superior (Clavicular)', 'Deltoide Anterior', 'Ajuste o banco em 30 graus. Mantenha ligeira flexão nos cotovelos. Abra os braços sentindo o alongamento do peitoral e feche concentrando na contração da porção clavicular superior.', ['chest'], ['front-deltoids'])" aria-label="Ver instruções de execução">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Instruções</span>
+          </button>
+        </div>
+
+        <!-- Prominent Muscle Focus Card -->
+        <div class="muscle-focus-card" onclick="openExerciseSheet('Crucifixo Inclinado com Halteres', 'Peitoral Superior (Clavicular)', 'Deltoide Anterior', 'Ajuste o banco em 30 graus. Mantenha ligeira flexão nos cotovelos. Abra os braços sentindo o alongamento do peitoral e feche concentrando na contração da porção clavicular superior.', ['chest'], ['front-deltoids'])">
+          <div class="muscle-diagram-box">
+            <div class="muscle-svg-container" id="model-ex-1"></div>
+            <span class="anatomy-tag">Anatomia</span>
+          </div>
+
+          <div class="muscle-info-col">
+            <div class="muscle-eyebrow">
+              <span class="eyebrow-indicator"></span>
+              <span>Músculo Mais Treinado</span>
+            </div>
+            <h3 class="primary-muscle-title">Peitoral Superior</h3>
+            <div class="muscle-meta-pills">
+              <span class="pill-badge">Foco Primário</span>
+              <span class="pill-badge subtle">Isolamento Alto</span>
+            </div>
+            <p class="synergist-text">
+              Sinergistas: <strong>Deltoide Anterior</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="target-banner">
+          <span class="label">Meta de progressão</span>
+          <span class="value">24.0 kg × 12 reps (Ant: 22.0 kg × 12)</span>
+        </div>
+
+        <div class="grouped-table">
+          <div class="table-header">
+            <span>Série</span>
+            <span>Carga</span>
+            <span>Reps</span>
+            <span style="text-align: right;">Status</span>
+          </div>
+
+          <div class="table-row active">
+            <span class="cell-set-num">1</span>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('cw1', -2)" aria-label="Diminuir carga">−</button>
+              <span class="stepper-val" id="cw1">24.0<span class="stepper-unit">kg</span></span>
+              <button class="stepper-btn" onclick="stepVal('cw1', 2)" aria-label="Aumentar carga">+</button>
+            </div>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('cr1', -1)" aria-label="Diminuir reps">−</button>
+              <span class="stepper-val" id="cr1">12<span class="stepper-unit">r</span></span>
+              <button class="stepper-btn" onclick="stepVal('cr1', 1)" aria-label="Aumentar reps">+</button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-check" id="check-1-0" onclick="toggleSet(1, 0)" aria-label="Concluir série 1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXERCISE 3: Esteira (Cardio) -->
+      <section class="exercise-view" id="view-2" aria-label="Esteira pós-treino">
+        <div class="exercise-header">
+          <div>
+            <h2 class="exercise-heading">Esteira</h2>
+            <p class="exercise-sub">Aeróbico • 15 min</p>
+          </div>
+          <button class="btn-text-action" onclick="openExerciseSheet('Esteira Contínua', 'Cardio & Quadríceps', 'Panturrilhas, Glúteos', 'Mantenha postura ereta e passadas coordenadas. Mantenha os batimentos na faixa aeróbica regenerativa para acelerar a recuperação metabólica.', ['quadriceps', 'calves'], ['knees', 'abductors'])" aria-label="Ver instruções">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Instruções</span>
+          </button>
+        </div>
+
+        <!-- Prominent Muscle Focus Card (Cardio) -->
+        <div class="muscle-focus-card" onclick="openExerciseSheet('Esteira Contínua', 'Cardio & Quadríceps', 'Panturrilhas, Glúteos', 'Mantenha postura ereta e passadas coordenadas. Mantenha os batimentos na faixa aeróbica regenerativa para acelerar a recuperação metabólica.', ['quadriceps', 'calves'], ['knees', 'abductors'])">
+          <div class="muscle-diagram-box">
+            <div class="muscle-svg-container" id="model-ex-2"></div>
+            <span class="anatomy-tag">Anatomia</span>
+          </div>
+
+          <div class="muscle-info-col">
+            <div class="muscle-eyebrow">
+              <span class="eyebrow-indicator"></span>
+              <span>Foco Mais Ativado</span>
+            </div>
+            <h3 class="primary-muscle-title">Cardio & Quadríceps</h3>
+            <div class="muscle-meta-pills">
+              <span class="pill-badge">Aeróbico</span>
+              <span class="pill-badge subtle">Gasto Calórico</span>
+            </div>
+            <p class="synergist-text">
+              Sinergistas: <strong>Panturrilhas</strong>, <strong>Glúteos</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="target-banner">
+          <span class="label">Objetivo</span>
+          <span class="value">15 min • Ritmo 10.0 km/h</span>
+        </div>
+
+        <div class="grouped-table">
+          <div class="table-header">
+            <span>Bloco</span>
+            <span>Tempo</span>
+            <span>Velocidade</span>
+            <span style="text-align: right;">Status</span>
+          </div>
+
+          <div class="table-row active">
+            <span class="cell-set-num">1</span>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('cd1', -1)" aria-label="Diminuir tempo">−</button>
+              <span class="stepper-val" id="cd1">15<span class="stepper-unit">m</span></span>
+              <button class="stepper-btn" onclick="stepVal('cd1', 1)" aria-label="Aumentar tempo">+</button>
+            </div>
+            <div class="num-stepper">
+              <button class="stepper-btn" onclick="stepVal('cs1', -0.5)" aria-label="Diminuir velocidade">−</button>
+              <span class="stepper-val" id="cs1">10.5<span class="stepper-unit">km/h</span></span>
+              <button class="stepper-btn" onclick="stepVal('cs1', 0.5)" aria-label="Aumentar velocidade">+</button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-check" id="check-2-0" onclick="toggleSet(2, 0)" aria-label="Concluir esteira">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Bottom Thumb Action Area -->
+    <footer class="bottom-bar">
+      <!-- Rest Indicator (when running) -->
+      <div class="rest-pill" id="rest-pill" style="display: none;" role="timer" aria-live="polite">
+        <div class="rest-meta">
+          <span class="rest-clock" id="rest-display">01:30</span>
+          <span class="rest-caption">Descanso</span>
+        </div>
+        <div class="rest-actions">
+          <button class="btn-pill-small" onclick="addRest(30)" aria-label="Adicionar 30 segundos">+30s</button>
+          <button class="btn-pill-small destructive" onclick="skipRest()" aria-label="Pular descanso">Pular</button>
+        </div>
+      </div>
+
+      <!-- Main Action -->
+      <button class="btn-primary" id="main-action-btn" onclick="handlePrimaryAction()">
+        <span>Concluir Série 2</span>
+      </button>
+    </footer>
+  </main>
+
+  <!-- iOS Sheet Modal for Exercise Instructions and Full Anatomical Diagram -->
+  <aside class="sheet-scrim" id="sheet-scrim" onclick="closeSheet(event)" aria-modal="true" role="dialog">
+    <div class="sheet-card" onclick="event.stopPropagation()">
+      <div class="sheet-handle-area" id="sheet-drag-handle" title="Arraste para baixo para fechar">
+        <div class="sheet-handle"></div>
+      </div>
+      <div class="sheet-header" id="sheet-drag-header" style="display: flex; justify-content: space-between; align-items: baseline; cursor: grab; user-select: none;">
+        <h3 class="sheet-title" id="sheet-title">Instruções</h3>
+        <span id="sheet-primary-tag" style="font-size: 0.75rem; font-weight: 700; color: var(--accent);"></span>
+      </div>
+
+      <!-- Large Anatomical Viewport (Side by Side Front & Back) -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 32px; background: var(--bg); border-radius: 16px; padding: 14px 20px; border: 0.5px solid var(--separator-subtle);">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+          <div id="sheet-model-front" style="width: 78px; height: 140px;"></div>
+          <span style="font-size: 0.68rem; color: var(--text-tertiary); font-weight: 600;">Frente</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+          <div id="sheet-model-back" style="width: 78px; height: 140px;"></div>
+          <span style="font-size: 0.68rem; color: var(--text-tertiary); font-weight: 600;">Costas</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">Músculos Recrutados</span>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <span class="pill-badge" id="sheet-pill-primary">Primário</span>
+          <span class="pill-badge subtle" id="sheet-pill-secondary">Secundário</span>
+        </div>
+      </div>
+
+      <p class="sheet-body" id="sheet-desc"></p>
+      <button class="btn-primary" onclick="closeSheet()" style="margin-top: 4px;">Concluído</button>
+    </div>
+  </aside>
+
+  <script>
+    // Industry-standard anatomical polygon data from body-highlighter
+    const ANATOMY = {
+      anterior: [
+        { muscle: 'head', points: ['42.4489796 2.85714286 40 11.8367347 42.0408163 19.5918367 46.122449 23.2653061 49.7959184 25.3061224 54.6938776 22.4489796 57.5510204 19.1836735 59.1836735 10.2040816 57.1428571 2.44897959 49.7959184 0'] },
+        { muscle: 'neck', points: ['55.5102041 23.6734694 50.6122449 33.4693878 50.6122449 39.1836735 61.6326531 40 70.6122449 44.8979592 69.3877551 36.7346939 63.2653061 35.1020408 58.3673469 30.6122449', '28.9795918 44.8979592 30.2040816 37.1428571 36.3265306 35.1020408 41.2244898 30.2040816 44.4897959 24.4897959 48.9795918 33.877551 48.5714286 39.1836735 37.9591837 39.5918367'] },
+        { muscle: 'front-deltoids', points: ['78.3673469 53.0612245 79.5918367 47.755102 79.1836735 41.2244898 75.9183673 37.9591837 71.0204082 36.3265306 72.244898 42.8571429 71.4285714 47.3469388', '28.1632653 47.3469388 21.2244898 53.0612245 20 47.755102 20.4081633 40.8163265 24.4897959 37.1428571 28.5714286 37.1428571 26.9387755 43.2653061'] },
+        { muscle: 'chest', points: ['51.8367347 41.6326531 51.0204082 55.1020408 57.9591837 57.9591837 67.755102 55.5102041 70.6122449 47.3469388 62.0408163 41.6326531', '29.7959184 46.5306122 31.4285714 55.5102041 40.8163265 57.9591837 48.1632653 55.1020408 47.755102 42.0408163 37.5510204 42.0408163'] },
+        { muscle: 'biceps', points: ['16.7346939 68.1632653 17.9591837 71.4285714 22.8571429 66.122449 28.9795918 53.877551 27.755102 49.3877551 20.4081633 55.9183673', '71.4285714 49.3877551 70.2040816 54.6938776 76.3265306 66.122449 81.6326531 71.8367347 82.8571429 68.9795918 78.7755102 55.5102041'] },
+        { muscle: 'triceps', points: ['69.3877551 55.5102041 69.3877551 61.6326531 75.9183673 72.6530612 77.5510204 70.2040816 75.5102041 67.3469388', '22.4489796 69.3877551 29.7959184 55.5102041 29.7959184 60.8163265 22.8571429 73.0612245'] },
+        { muscle: 'forearm', points: ['6.12244898 88.5714286 10.2040816 75.1020408 14.6938776 70.2040816 16.3265306 74.2857143 19.1836735 73.4693878 4.48979592 97.5510204 0 100', '84.4897959 69.7959184 83.2653061 73.4693878 80 73.0612245 95.1020408 98.3673469 100 100.408163 93.4693878 89.3877551 89.7959184 76.3265306', '77.5510204 72.244898 77.5510204 77.5510204 80.4081633 84.0816327 85.3061224 89.7959184 92.244898 101.22449 94.6938776 99.5918367', '6.93877551 101.22449 13.4693878 90.6122449 18.7755102 84.0816327 21.6326531 77.1428571 21.2244898 71.8367347 4.89795918 98.7755102'] },
+        { muscle: 'obliques', points: ['68.5714286 63.2653061 67.3469388 57.1428571 58.7755102 59.5918367 60 64.0816327 60.4081633 83.2653061 65.7142857 78.7755102 66.5306122 69.7959184', '33.877551 78.3673469 33.0612245 71.8367347 31.0204082 63.2653061 32.244898 57.1428571 40.8163265 59.1836735 39.1836735 63.2653061 39.1836735 83.6734694'] },
+        { muscle: 'abs', points: ['56.3265306 59.1836735 57.9591837 64.0816327 58.3673469 77.9591837 58.3673469 92.6530612 56.3265306 98.3673469 55.1020408 104.081633 51.4285714 107.755102 51.0204082 84.4897959 50.6122449 67.3469388 51.0204082 57.1428571', '43.6734694 58.7755102 48.5714286 57.1428571 48.9795918 67.3469388 48.5714286 84.4897959 48.1632653 107.346939 44.4897959 103.673469 40.8163265 91.4285714 40.8163265 78.3673469 41.2244898 64.4897959'] },
+        { muscle: 'abductors', points: ['52.6530612 110.204082 54.2857143 124.897959 60 110.204082 62.0408163 100 64.8979592 94.2857143 60 92.6530612 56.7346939 104.489796', '47.755102 110.612245 44.8979592 125.306122 42.0408163 115.918367 40.4081633 113.061224 39.5918367 107.346939 37.9591837 102.44898 34.6938776 93.877551 39.5918367 92.244898 41.6326531 99.1836735 43.6734694 105.306122'] },
+        { muscle: 'quadriceps', points: ['34.6938776 98.7755102 37.1428571 108.163265 37.1428571 127.755102 34.2857143 137.142857 31.0204082 132.653061 29.3877551 120 28.1632653 111.428571 29.3877551 100.816327 32.244898 94.6938776', '63.2653061 105.714286 64.4897959 100 66.9387755 94.6938776 70.2040816 101.22449 71.0204082 111.836735 68.1632653 133.061224 65.3061224 137.55102 62.4489796 128.571429 62.0408163 111.428571', '38.7755102 129.387755 38.3673469 112.244898 41.2244898 118.367347 44.4897959 129.387755 42.8571429 135.102041 40 146.122449 36.3265306 146.530612 35.5102041 140', '59.5918367 145.714286 55.5102041 128.979592 60.8163265 113.877551 61.2244898 130.204082 64.0816327 139.591837 62.8571429 146.530612', '32.6530612 138.367347 26.5306122 145.714286 25.7142857 136.734694 25.7142857 127.346939 26.9387755 114.285714 29.3877551 133.469388', '71.8367347 113.061224 73.877551 124.081633 73.877551 140.408163 72.6530612 145.714286 66.5306122 138.367347 70.2040816 133.469388'] },
+        { muscle: 'knees', points: ['33.877551 140 34.6938776 143.265306 35.5102041 147.346939 36.3265306 151.020408 35.1020408 156.734694 29.7959184 156.734694 27.3469388 152.653061 27.3469388 147.346939 30.2040816 144.081633', '65.7142857 140 72.244898 147.755102 72.244898 152.244898 69.7959184 157.142857 64.8979592 156.734694 62.8571429 151.020408'] },
+        { muscle: 'calves', points: ['71.4285714 160.408163 73.4693878 153.469388 76.7346939 161.22449 79.5918367 167.755102 78.3673469 187.755102 79.5918367 195.510204 74.6938776 195.510204', '24.8979592 194.693878 27.755102 164.897959 28.1632653 160.408163 26.122449 154.285714 24.8979592 157.55102 22.4489796 161.632653 20.8163265 167.755102 22.0408163 188.163265 20.8163265 195.510204', '72.6530612 195.102041 69.7959184 159.183673 65.3061224 158.367347 64.0816327 162.44898 64.0816327 165.306122 65.7142857 177.142857', '35.5102041 158.367347 35.9183673 162.44898 35.9183673 166.938776 35.1020408 172.244898 35.1020408 176.734694 32.244898 182.040816 30.6122449 187.346939 26.9387755 194.693878 27.3469388 187.755102 28.1632653 180.408163 28.5714286 175.510204 28.9795918 169.795918 29.7959184 164.081633 30.2040816 158.77551'] }
+      ],
+      posterior: [
+        { muscle: 'head', points: ['50.6382979 0 45.9574468 0.85106383 40.8510638 5.53191489 40.4255319 12.7659574 45.106383 20 55.7446809 20 59.1489362 13.6170213 59.5744681 4.68085106 55.7446809 1.27659574'] },
+        { muscle: 'trapezius', points: ['44.6808511 21.7021277 47.6595745 21.7021277 47.2340426 38.2978723 47.6595745 64.6808511 38.2978723 53.1914894 35.3191489 40.8510638 31.0638298 36.5957447 39.1489362 33.1914894 43.8297872 27.2340426', '52.3404255 21.7021277 55.7446809 21.7021277 56.5957447 27.2340426 60.8510638 32.7659574 68.9361702 36.5957447 64.6808511 40.4255319 61.7021277 53.1914894 52.3404255 64.6808511 53.1914894 38.2978723'] },
+        { muscle: 'back-deltoids', points: ['29.3617021 37.0212766 22.9787234 39.1489362 17.4468085 44.2553191 18.2978723 53.6170213 24.2553191 49.3617021 27.2340426 46.3829787', '71.0638298 37.0212766 78.2978723 39.5744681 82.5531915 44.6808511 81.7021277 53.6170213 74.893617 48.9361702 72.3404255 45.106383'] },
+        { muscle: 'upper-back', points: ['31.0638298 38.7234043 28.0851064 48.9361702 28.5106383 55.3191489 34.0425532 75.3191489 47.2340426 71.0638298 47.2340426 66.3829787 36.5957447 54.0425532 33.6170213 41.2765957', '68.9361702 38.7234043 71.9148936 49.3617021 71.4893617 56.1702128 65.9574468 75.3191489 52.7659574 71.0638298 52.7659574 66.3829787 63.4042553 54.4680851 66.3829787 41.7021277'] },
+        { muscle: 'triceps', points: ['26.8085106 49.787234 17.8723404 55.7446809 14.4680851 72.3404255 16.5957447 81.7021277 21.7021277 63.8297872 26.8085106 55.7446809', '73.6170213 50.212766 82.1276596 55.7446809 85.9574468 73.1914894 83.4042553 82.1276596 77.8723404 62.9787234 73.1914894 55.7446809', '26.8085106 58.2978723 26.8085106 68.5106383 22.9787234 75.3191489 19.1489362 77.4468085 22.5531915 65.5319149', '72.7659574 58.2978723 77.0212766 64.6808511 80.4255319 77.4468085 76.5957447 75.3191489 72.7659574 68.9361702'] },
+        { muscle: 'lower-back', points: ['47.6595745 72.7659574 34.4680851 77.0212766 35.3191489 83.4042553 49.3617021 102.12766 46.8085106 82.9787234', '52.3404255 72.7659574 65.5319149 77.0212766 64.6808511 83.4042553 50.6382979 102.12766 53.1914894 83.8297872'] },
+        { muscle: 'forearm', points: ['86.3829787 75.7446809 91.0638298 83.4042553 93.1914894 94.0425532 100 106.382979 96.1702128 104.255319 88.0851064 89.3617021 84.2553191 83.8297872', '13.6170213 75.7446809 8.93617021 83.8297872 6.80851064 93.6170213 0 106.382979 3.82978723 104.255319 12.3404255 88.5106383 15.7446809 82.9787234', '81.2765957 79.5744681 77.4468085 77.8723404 79.1489362 84.6808511 91.0638298 103.829787 93.1914894 108.93617 94.4680851 104.680851', '18.7234043 79.5744681 22.1276596 77.8723404 20.8510638 84.2553191 9.36170213 102.978723 6.80851064 108.510638 5.10638298 104.680851'] },
+        { muscle: 'gluteal', points: ['44.6808511 99.5744681 30.212766 108.510638 29.787234 118.723404 31.4893617 125.957447 47.2340426 121.276596 49.3617021 114.893617', '55.3191489 99.1489362 51.0638298 114.468085 52.3404255 120.851064 68.0851064 125.957447 69.787234 119.148936 69.3617021 108.510638'] },
+        { muscle: 'abductor', points: ['48.0851064 122.978723 44.6808511 122.978723 41.2765957 125.531915 45.106383 144.255319 48.5106383 135.744681 48.9361702 129.361702', '51.9148936 122.553191 55.7446809 123.404255 59.1489362 125.957447 54.893617 144.255319 51.9148936 136.170213 51.0638298 129.361702'] },
+        { muscle: 'hamstring', points: ['28.9361702 122.12766 31.0638298 129.361702 36.5957447 125.957447 35.3191489 135.319149 34.4680851 150.212766 29.3617021 158.297872 28.9361702 146.808511 27.6595745 141.276596 27.2340426 131.489362', '71.4893617 121.702128 69.3617021 128.93617 63.8297872 125.957447 65.5319149 136.595745 66.3829787 150.212766 71.0638298 158.297872 71.4893617 147.659574 72.7659574 142.12766 73.6170213 131.914894', '38.7234043 125.531915 44.2553191 145.957447 40.4255319 166.808511 36.1702128 152.765957 37.0212766 135.319149', '61.7021277 125.531915 63.4042553 136.170213 64.2553191 153.191489 60 166.808511 56.1702128 146.382979'] },
+        { muscle: 'knees', points: ['34.4680851 153.191489 31.0638298 159.148936 33.6170213 166.382979 37.4468085 162.553191', '66.3829787 153.617021 62.9787234 162.978723 66.8085106 166.382979 69.3617021 159.148936'] },
+        { muscle: 'calves', points: ['29.3617021 160.425532 28.5106383 167.234043 24.6808511 179.574468 23.8297872 192.765957 25.5319149 197.021277 28.5106383 193.191489 29.787234 180 31.9148936 171.06383 31.9148936 166.808511', '37.4468085 165.106383 35.3191489 167.659574 33.1914894 171.914894 31.0638298 180.425532 30.212766 191.914894 34.0425532 200 38.7234043 190.638298 39.1489362 168.93617', '62.9787234 165.106383 61.2765957 168.510638 61.7021277 190.638298 66.3829787 199.574468 70.6382979 191.914894 68.9361702 179.574468 66.8085106 170.212766', '70.6382979 160.425532 72.3404255 168.510638 75.7446809 179.148936 76.5957447 192.765957 74.4680851 196.595745 72.3404255 193.617021 70.6382979 179.574468 68.0851064 168.085106'] },
+        { muscle: 'soleus', points: ['28.5106383 195.744681 30.212766 195.744681 33.6170213 201.702128 30.6382979 220 28.5106383 213.617021 26.8085106 198.297872', '69.787234 195.744681 71.9148936 195.744681 73.6170213 198.297872 71.9148936 213.191489 70.212766 219.574468 67.2340426 202.12766'] }
+      ]
+    };
+
+    function renderBodySVG({ primary = [], secondary = [], isPosterior = false }) {
+      const modelData = isPosterior ? ANATOMY.posterior : ANATOMY.anterior;
+      let polygonsHtml = '';
+
+      for (const item of modelData) {
+        const isPri = primary.includes(item.muscle);
+        const isSec = secondary.includes(item.muscle);
+        let fill = 'var(--surface-elevated)';
+        let opacity = '0.9';
+        let stroke = 'var(--bg)';
+        let strokeWidth = '0.6';
+
+        if (isPri) {
+          fill = 'var(--accent)';
+          opacity = '1';
+        } else if (isSec) {
+          fill = 'var(--accent)';
+          opacity = '0.42';
+        }
+
+        for (const pts of item.points) {
+          polygonsHtml += `<polygon points="${pts}" fill="${fill}" opacity="${opacity}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round" />`;
+        }
+      }
+
+      return `<svg viewBox="0 0 100 205" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display: block;">${polygonsHtml}</svg>`;
+    }
+
+    // Initialize all anatomical models on load
+    function initAnatomyModels() {
+      const m0 = document.getElementById('model-ex-0');
+      if (m0) m0.innerHTML = renderBodySVG({ primary: ['chest'], secondary: ['triceps', 'front-deltoids'] });
+
+      const m1 = document.getElementById('model-ex-1');
+      if (m1) m1.innerHTML = renderBodySVG({ primary: ['chest'], secondary: ['front-deltoids'] });
+
+      const m2 = document.getElementById('model-ex-2');
+      if (m2) m2.innerHTML = renderBodySVG({ primary: ['quadriceps', 'calves'], secondary: ['knees', 'abductors'] });
+    }
+    initAnatomyModels();
+
+    let restTimer = null;
+    let restRemaining = 90;
+
+    function stepVal(id, delta) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      let val = parseFloat(el.textContent);
+      val = Math.max(0, val + delta);
+      const isInteger = Number.isInteger(val);
+      const unit = el.querySelector('.stepper-unit')?.outerHTML || '';
+      el.innerHTML = (isInteger ? val : val.toFixed(1)) + unit;
+    }
+
+    function toggleSet(exIdx, setIdx) {
+      const checkBtn = document.getElementById(`check-${exIdx}-${setIdx}`);
+      if (!checkBtn) return;
+      const isDone = checkBtn.classList.toggle('checked');
+      const row = checkBtn.closest('.table-row');
+      if (row) row.classList.toggle('completed', isDone);
+
+      if (isDone) {
+        startRest(90);
+      }
+    }
+
+    function handlePrimaryAction() {
+      toggleSet(0, 1);
+    }
+
+    function startRest(seconds) {
+      clearInterval(restTimer);
+      restRemaining = seconds;
+      const pill = document.getElementById('rest-pill');
+      pill.style.display = 'flex';
+      updateRestText();
+
+      restTimer = setInterval(() => {
+        restRemaining--;
+        if (restRemaining <= 0) {
+          clearInterval(restTimer);
+          pill.style.display = 'none';
+          if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+        updateRestText();
+      }, 1000);
+    }
+
+    function updateRestText() {
+      const m = Math.floor(restRemaining / 60);
+      const s = restRemaining % 60;
+      document.getElementById('rest-display').textContent = 
+        `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function addRest(secs) {
+      restRemaining += secs;
+      updateRestText();
+    }
+
+    function skipRest() {
+      clearInterval(restTimer);
+      document.getElementById('rest-pill').style.display = 'none';
+    }
+
+    function openExerciseSheet(title, primaryMuscle, secondaryMuscles, desc, primaryKeys = ['chest'], secondaryKeys = []) {
+      document.getElementById('sheet-title').textContent = title;
+      document.getElementById('sheet-primary-tag').textContent = `Alvo: ${primaryMuscle}`;
+      document.getElementById('sheet-pill-primary').textContent = `Primário: ${primaryMuscle}`;
+      document.getElementById('sheet-pill-secondary').textContent = `Sinergistas: ${secondaryMuscles}`;
+      document.getElementById('sheet-desc').textContent = desc;
+
+      document.getElementById('sheet-model-front').innerHTML = renderBodySVG({ primary: primaryKeys, secondary: secondaryKeys, isPosterior: false });
+      document.getElementById('sheet-model-back').innerHTML = renderBodySVG({ primary: primaryKeys, secondary: secondaryKeys, isPosterior: true });
+
+      const scrim = document.getElementById('sheet-scrim');
+      const card = document.querySelector('.sheet-card');
+      card.style.transform = '';
+      card.style.transition = '';
+      card.style.animation = 'sheetUp 250ms var(--ease-apple)';
+      scrim.style.background = '';
+      scrim.classList.add('open');
+    }
+
+    function closeSheet() {
+      const scrim = document.getElementById('sheet-scrim');
+      const card = document.querySelector('.sheet-card');
+      card.style.transition = 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)';
+      scrim.style.transition = 'background 220ms ease-out';
+      card.style.transform = 'translateY(100%)';
+      scrim.style.background = 'rgba(0, 0, 0, 0)';
+
+      setTimeout(() => {
+        scrim.classList.remove('open');
+        card.style.transform = '';
+        card.style.transition = '';
+        scrim.style.background = '';
+        scrim.style.transition = '';
+      }, 220);
+    }
+
+    // iOS Fluid Drag-to-Dismiss Gesture Controller for Bottom Sheet
+    const sheetScrim = document.getElementById('sheet-scrim');
+    const sheetCard = document.querySelector('.sheet-card');
+    const sheetHandleArea = document.getElementById('sheet-drag-handle');
+    const sheetHeader = document.getElementById('sheet-drag-header');
+
+    let isDraggingSheet = false;
+    let startY = 0;
+    let currentY = 0;
+    let lastTime = 0;
+    let velocityY = 0;
+
+    function rubberBand(offset, dimension = 320, constant = 0.55) {
+      return (1.0 - (1.0 / ((offset * constant / dimension) + 1.0))) * dimension;
+    }
+
+    function startSheetDrag(e) {
+      if (e.target.closest('button')) return;
+      isDraggingSheet = true;
+      startY = e.clientY;
+      currentY = e.clientY;
+      lastTime = performance.now();
+      velocityY = 0;
+      
+      sheetCard.setPointerCapture(e.pointerId);
+      sheetCard.style.animation = 'none';
+      sheetCard.style.transition = 'none';
+      sheetScrim.style.transition = 'none';
+    }
+
+    function moveSheetDrag(e) {
+      if (!isDraggingSheet) return;
+      const now = performance.now();
+      const dt = now - lastTime;
+      if (dt > 0) {
+        velocityY = (e.clientY - currentY) / dt;
+      }
+      currentY = e.clientY;
+      lastTime = now;
+
+      const deltaY = currentY - startY;
+      let displayY = 0;
+
+      if (deltaY < 0) {
+        // Dragging UP: apply Apple physical rubber-banding resistance
+        displayY = -rubberBand(-deltaY);
+      } else {
+        // Dragging DOWN: 1:1 direct tracking
+        displayY = deltaY;
+      }
+
+      sheetCard.style.transform = `translateY(${displayY}px)`;
+
+      // Reactive scrim fade as sheet is dragged downward
+      if (deltaY > 0) {
+        const height = sheetCard.offsetHeight || 500;
+        const progress = Math.max(0, 1 - (deltaY / height) * 0.9);
+        sheetScrim.style.background = `rgba(0, 0, 0, ${0.6 * progress})`;
+      } else {
+        sheetScrim.style.background = 'rgba(0, 0, 0, 0.6)';
+      }
+    }
+
+    function endSheetDrag(e) {
+      if (!isDraggingSheet) return;
+      isDraggingSheet = false;
+      const deltaY = currentY - startY;
+
+      // Dismiss if pulled down > 110px or fast downward flick (velocity > 0.42 px/ms)
+      const shouldDismiss = deltaY > 110 || (deltaY > 35 && velocityY > 0.42);
+
+      if (shouldDismiss) {
+        closeSheet();
+      } else {
+        // Snap back to 0 with Apple spring feel
+        sheetCard.style.transition = 'transform 280ms cubic-bezier(0.2, 0.9, 0.3, 1.0)';
+        sheetScrim.style.transition = 'background 280ms ease-out';
+        sheetCard.style.transform = 'translateY(0)';
+        sheetScrim.style.background = 'rgba(0, 0, 0, 0.6)';
+
+        setTimeout(() => {
+          if (!isDraggingSheet) {
+            sheetCard.style.transform = '';
+            sheetCard.style.transition = '';
+            sheetCard.style.animation = '';
+          }
+        }, 280);
+      }
+    }
+
+    [sheetHandleArea, sheetHeader].forEach(target => {
+      if (target) {
+        target.addEventListener('pointerdown', startSheetDrag);
+        target.addEventListener('pointermove', moveSheetDrag);
+        target.addEventListener('pointerup', endSheetDrag);
+        target.addEventListener('pointercancel', endSheetDrag);
+      }
+    });
+
+    // Theme Toggle (Light / Dark)
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.getElementById('theme-icon');
+      if (isDark) {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+      initAnatomyModels();
+    }
+
+    // Deck Scroll Sync
+    const deck = document.getElementById('deck');
+    const segments = document.querySelectorAll('.progress-segment');
+    const idxLabel = document.getElementById('exercise-idx');
+
+    deck.addEventListener('scroll', () => {
+      const idx = Math.round(deck.scrollLeft / deck.offsetWidth);
+      segments.forEach((seg, i) => {
+        seg.className = i === idx ? 'progress-segment active' : (i < idx ? 'progress-segment completed' : 'progress-segment');
+      });
+      idxLabel.textContent = (idx + 1).toString();
+    });
+
+    function jumpTo(idx) {
+      deck.scrollTo({ left: idx * deck.offsetWidth, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

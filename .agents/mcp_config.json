@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "ai-memory": {
+      "command": "ai-memory",
+      "args": ["mcp"],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "codebase-memory": {
+      "command": "npx",
+      "args": ["-y", "@deusdata/codebase-memory-mcp"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

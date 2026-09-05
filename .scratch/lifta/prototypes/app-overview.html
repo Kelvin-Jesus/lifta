@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Lifta — Visão Geral do App</title>
+  <style>
+    /* Dynamic Theme Tokens (Light & Dark) */
+    :root {
+      --bg: #000000;
+      --surface-grouped: #1c1c1e;
+      --surface-elevated: #2c2c2e;
+      --surface-hover: #3a3a3c;
+      --separator: rgba(255, 255, 255, 0.12);
+      --separator-subtle: rgba(255, 255, 255, 0.06);
+      
+      --accent: #0a84ff;
+      --accent-active: #0066cc;
+      --success: #30d158;
+      --warning: #ffd60a;
+      
+      --text-primary: #ffffff;
+      --text-secondary: #8e8e93;
+      --text-tertiary: #636366;
+
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      
+      --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+      --duration-fast: 150ms;
+    }
+
+    [data-theme="light"] {
+      --bg: #f2f2f7;
+      --surface-grouped: #ffffff;
+      --surface-elevated: #e5e5ea;
+      --surface-hover: #d1d1d6;
+      --separator: rgba(60, 60, 67, 0.2);
+      --separator-subtle: rgba(60, 60, 67, 0.08);
+      
+      --accent: #007aff;
+      --accent-active: #0056b3;
+      --success: #34c759;
+      
+      --text-primary: #000000;
+      --text-secondary: #6c6c70;
+      --text-tertiary: #8e8e93;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 200ms ease, color 200ms ease;
+    }
+
+    /* Native iPhone Shell Frame */
+    .app-shell {
+      width: 100vw;
+      height: 100dvh;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-color: var(--bg);
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      overflow: hidden;
+    }
+
+    @media (min-width: 600px) {
+      .app-shell {
+        height: 890px;
+        max-height: 92vh;
+        border-radius: 48px;
+        border: 1px solid var(--separator);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    /* Header Bar */
+    .header-bar {
+      height: 52px;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 0.5px solid var(--separator-subtle);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      background: var(--surface-grouped);
+      border: 0.5px solid var(--separator-subtle);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform var(--duration-fast), background var(--duration-fast);
+    }
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: var(--surface-elevated);
+    }
+    .icon-btn svg { width: 18px; height: 18px; stroke-width: 2; }
+
+    /* Main Tab Scroll Container */
+    .tab-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* GitHub-style Workout Heatmap Card & Agenda Expansion */
+    .heatmap-card {
+      background: var(--surface-grouped);
+      border-radius: 18px;
+      padding: 16px 18px;
+      border: 0.5px solid var(--separator-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .heatmap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .heatmap-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .heatmap-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .heatmap-meta {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .view-toggle-btn {
+      background: var(--surface-elevated);
+      border: 0.5px solid var(--separator-subtle);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background var(--duration-fast);
+    }
+    .view-toggle-btn:active { background: var(--surface-hover); }
+
+    /* Weekly Agenda View */
+    .weekly-agenda {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeIn 200ms ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .agenda-day-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 0.82rem;
+    }
+    .agenda-day-row.today {
+      background: rgba(10, 132, 255, 0.08);
+      border-left: 2px solid var(--accent);
+    }
+    .agenda-day-name {
+      font-weight: 700;
+      width: 44px;
+    }
+    .agenda-routine-tag {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      flex: 1;
+      margin-left: 8px;
+    }
+    .agenda-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+    }
+    .agenda-status.done { color: var(--success); }
+
+    /* Anatomical Muscle Map SVG component */
+    .muscle-preview-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 4px;
+    }
+    [data-theme="light"] .muscle-preview-box {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .muscle-svg-wrapper {
+      width: 78px;
+      height: 116px;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      border: 0.5px solid var(--separator-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+    [data-theme="light"] .muscle-svg-wrapper {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .muscle-target-tags {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+    .target-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .target-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .muscle-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(10, 132, 255, 0.12);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    /* Heatmap Grid (Weeks x Days) */
+    .heatmap-grid {
+      display: grid;
+      grid-template-rows: repeat(7, 12px);
+      grid-auto-flow: column;
+      grid-auto-columns: 12px;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .heatmap-grid::-webkit-scrollbar { display: none; }
+
+    .heat-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2.5px;
+      background: var(--surface-elevated);
+      transition: transform 100ms;
+    }
+    .heat-cell:hover { transform: scale(1.2); }
+
+    /* Intensity tiers based on estimated calories */
+    .heat-cell.l1 { background: rgba(48, 209, 88, 0.25); }  /* ~150-250 kcal */
+    .heat-cell.l2 { background: rgba(48, 209, 88, 0.45); }  /* ~250-400 kcal */
+    .heat-cell.l3 { background: rgba(48, 209, 88, 0.75); }  /* ~400-600 kcal */
+    .heat-cell.l4 { background: #30d158; }                  /* >600 kcal */
+
+    .heatmap-legend {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+    }
+    .legend-box { width: 9px; height: 9px; border-radius: 2px; }
+
+    /* Start Workout Hero CTA */
+    .hero-routine-card {
+      background: var(--surface-grouped);
+      border-radius: 20px;
+      padding: 18px 20px;
+      border: 0.5px solid var(--separator-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero-routine-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .routine-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 3px;
+    }
+
+    .routine-sub {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .btn-start-hero {
+      height: 50px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 120ms var(--ease-apple), background 120ms;
+    }
+    .btn-start-hero:active {
+      transform: scale(0.98);
+      background: var(--accent-active);
+    }
+
+    /* List of Routines / Quick Actions */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 4px;
+    }
+
+    .inset-list {
+      background: var(--surface-grouped);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 0.5px solid var(--separator-subtle);
+    }
+
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid var(--separator-subtle);
+      cursor: pointer;
+      transition: background var(--duration-fast);
+    }
+    .list-row:last-child { border-bottom: none; }
+    .list-row:active { background: var(--surface-hover); }
+
+    .row-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .row-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .row-arrow {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+
+    /* Bottom Navigation Tab Bar (iOS Native Style) */
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(56px + var(--safe-bottom));
+      background: rgba(28, 28, 30, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 0.5px solid var(--separator);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+      z-index: 50;
+    }
+
+    [data-theme="light"] .tab-bar {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-tertiary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color var(--duration-fast);
+    }
+    .tab-item.active {
+      color: var(--accent);
+    }
+    .tab-item svg { width: 22px; height: 22px; stroke-width: 2.2; }
+    .tab-label { font-size: 0.65rem; font-weight: 600; letter-spacing: -0.01em; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, .btn-start-hero, .icon-btn, .tab-item {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <main class="app-shell" role="main">
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="brand-title">Lifta</div>
+      <div class="header-actions">
+        <!-- Theme Toggle Button (Light/Dark) -->
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Alternar tema claro/escuro" title="Tema">
+          <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+
+        <!-- Assistant / Settings Button -->
+        <button class="icon-btn" onclick="alert('Assistente Lifta / Configurações')" aria-label="Abrir Assistente" title="Assistente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Tab View -->
+    <div class="tab-content" id="tab-container">
+      
+      <!-- TAB 1: TREINAR (Home) -->
+      <div id="view-train" style="display: flex; flex-direction: column; gap: 18px;">
+        
+        <!-- GitHub-style Calories Heatmap & Agenda Card -->
+        <div class="heatmap-card">
+          <div class="heatmap-header">
+            <div class="heatmap-title-group">
+              <span class="heatmap-title" id="stats-header-title">Frequência e Intensidade</span>
+              <span class="heatmap-meta" id="stats-header-meta">4 treinos • ~1.820 kcal</span>
+            </div>
+            <button class="view-toggle-btn" onclick="toggleAgendaView()" id="toggle-agenda-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Agenda</span>
+            </button>
+          </div>
+
+          <!-- 12-week generated grid -->
+          <div id="heatmap-view-wrapper">
+            <div class="heatmap-grid" id="heatmap-grid" aria-label="Histórico de treinos e calorias"></div>
+
+            <div class="heatmap-legend" style="margin-top: 8px;">
+              <span>Menos</span>
+              <div class="legend-box" style="background: var(--surface-elevated);"></div>
+              <div class="legend-box l1"></div>
+              <div class="legend-box l2"></div>
+              <div class="legend-box l3"></div>
+              <div class="legend-box l4"></div>
+              <span>Mais calorias</span>
+            </div>
+          </div>
+
+          <!-- Weekly Agenda (Expanded View) -->
+          <div class="weekly-agenda" id="agenda-view-wrapper">
+            <div class="agenda-day-row today">
+              <span class="agenda-day-name">Hoje</span>
+              <span class="agenda-routine-tag">Treino A • Peito & Tríceps</span>
+              <span class="agenda-status" style="color: var(--accent);">Pendente</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Ter</span>
+              <span class="agenda-routine-tag">Treino B • Costas & Bíceps</span>
+              <span class="agenda-status done">✓ Concluído</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Qua</span>
+              <span class="agenda-routine-tag">Descanso ou Cardio Leve</span>
+              <span class="agenda-status done">✓ 25 min</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Qui</span>
+              <span class="agenda-routine-tag">Treino C • Pernas & Ombros</span>
+              <span class="agenda-status done">✓ Concluído</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Sex</span>
+              <span class="agenda-routine-tag">Treino A • Foco Supino</span>
+              <span class="agenda-status">Programado</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Sáb</span>
+              <span class="agenda-routine-tag">Treino B • Volume Costas</span>
+              <span class="agenda-status">Programado</span>
+            </div>
+            <div class="agenda-day-row">
+              <span class="agenda-day-name">Dom</span>
+              <span class="agenda-routine-tag">Descanso Total</span>
+              <span class="agenda-status">Livre</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Routine Card with Anatomical Muscle Heatmap -->
+        <div class="hero-routine-card">
+          <div class="hero-routine-header">
+            <div>
+              <h2 class="routine-name">Treino A • Peitoral e Tríceps</h2>
+              <p class="routine-sub">5 exercícios • Cerca de 55 min • ~480 kcal</p>
+            </div>
+          </div>
+
+          <!-- Anatomical Muscle Map Preview -->
+          <div class="muscle-preview-box">
+            <!-- Vector Anatomical Silhouette with Target Highlight (body-highlighter polygons) -->
+            <div class="muscle-svg-wrapper" id="home-routine-anatomy"></div>
+            <div class="muscle-target-tags">
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <span style="width: 6px; height: 6px; border-radius: 3px; background: var(--accent);"></span>
+                <span class="target-title" style="color: var(--accent);">Músculo Mais Treinado</span>
+              </div>
+              <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: -0.015em;">Peitoral Maior</span>
+              <div class="target-pills-row" style="margin-top: 3px;">
+                <span class="muscle-badge">Foco Primário</span>
+                <span class="muscle-badge" style="background: var(--surface-elevated); color: var(--text-secondary);">Tríceps Braquial</span>
+                <span class="muscle-badge" style="background: var(--surface-elevated); color: var(--text-secondary);">Deltoide Anterior</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-start-hero" onclick="window.location.href='workout-flow.html'">
+            <span>Iniciar Treino de Hoje</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Quick Access to Other Routines -->
+        <div>
+          <div class="section-label" style="margin-bottom: 8px;">Outras Rotinas</div>
+          <div class="inset-list">
+            <div class="list-row" onclick="window.location.href='workout-flow.html'">
+              <div>
+                <div class="row-title">Treino B • Costas, Bíceps e Abdômen</div>
+                <div class="row-desc">Última execução: Há 2 dias • 420 kcal</div>
+              </div>
+              <span class="row-arrow">›</span>
+            </div>
+            <div class="list-row" onclick="window.location.href='workout-flow.html'">
+              <div>
+                <div class="row-title">Treino C • Pernas e Ombros</div>
+                <div class="row-desc">Última execução: Há 4 dias • 560 kcal</div>
+              </div>
+              <span class="row-arrow">›</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: ROTINAS -->
+      <div id="view-routines" style="display: none; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="font-size: 1.25rem; font-weight: 700;">Minhas Fichas</h2>
+          <button class="icon-btn" style="width: auto; padding: 0 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;" onclick="alert('Criar ficha manual ou com agente')">+ Nova</button>
+        </div>
+        <div class="inset-list">
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino A • Peito & Tríceps</div>
+              <div class="row-desc">5 exercícios • Supino, Crucifixo, Tríceps corda...</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino B • Costas & Bíceps</div>
+              <div class="row-desc">6 exercícios • Puxada alta, Remada baixa...</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino C • Quadríceps & Ombros</div>
+              <div class="row-desc">6 exercícios • Agachamento, Leg press, Elevação...</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: HISTÓRICO -->
+      <div id="view-history" style="display: none; flex-direction: column; gap: 14px;">
+        <h2 style="font-size: 1.25rem; font-weight: 700;">Histórico</h2>
+        <div class="inset-list">
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino B • Costas e Bíceps</div>
+              <div class="row-desc">Ontem às 19:15 • 52 min • 440 kcal est.</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino A • Peitoral e Tríceps</div>
+              <div class="row-desc">3 de Setembro • 58 min • 480 kcal est.</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Treino C • Pernas Completo</div>
+              <div class="row-desc">1 de Setembro • 64 min • 590 kcal est.</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: EXERCÍCIOS -->
+      <div id="view-exercises" style="display: none; flex-direction: column; gap: 14px;">
+        <h2 style="font-size: 1.25rem; font-weight: 700;">Catálogo</h2>
+        <input type="text" placeholder="Buscar exercício por nome ou músculo…" style="width: 100%; height: 42px; border-radius: 12px; background: var(--surface-grouped); border: 0.5px solid var(--separator); color: var(--text-primary); padding: 0 14px; font-size: 0.9rem; outline: none;" />
+        <div class="inset-list">
+          <div class="list-row">
+            <div>
+              <div class="row-title">Supino Reto com Barra</div>
+              <div class="row-desc">Peitoral Maior • Barra Olímpica</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Puxada Alta Frontal</div>
+              <div class="row-desc">Dorsais • Máquina / Polia</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+          <div class="list-row">
+            <div>
+              <div class="row-title">Agachamento Livre com Barra</div>
+              <div class="row-desc">Quadríceps, Glúteos • Barra</div>
+            </div>
+            <span class="row-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar" role="navigation" aria-label="Navegação principal">
+      <button class="tab-item active" onclick="switchTab('train')" aria-label="Treinar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+        <span class="tab-label">Treinar</span>
+      </button>
+      <button class="tab-item" onclick="switchTab('routines')" aria-label="Rotinas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <span class="tab-label">Rotinas</span>
+      </button>
+      <button class="tab-item" onclick="switchTab('history')" aria-label="Histórico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span class="tab-label">Histórico</span>
+      </button>
+      <button class="tab-item" onclick="switchTab('exercises')" aria-label="Exercícios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span class="tab-label">Exercícios</span>
+      </button>
+    </nav>
+  </main>
+
+  <script>
+    // Generate Sample Heatmap Data (12 weeks x 7 days)
+    const grid = document.getElementById('heatmap-grid');
+    const levels = ['', '', 'l1', '', 'l2', '', 'l3', '', 'l4', '', '', 'l2'];
+    for (let i = 0; i < 84; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'heat-cell';
+      // deterministic sample intensity
+      const lvl = (i % 3 === 0 || i % 7 === 1) ? (i % 4 === 0 ? 'l3' : (i % 5 === 0 ? 'l4' : 'l1')) : '';
+      if (lvl) cell.classList.add(lvl);
+      grid.appendChild(cell);
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      const tabs = ['train', 'routines', 'history', 'exercises'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        if (view) view.style.display = (t === tabId ? 'flex' : 'none');
+      });
+
+      const buttons = document.querySelectorAll('.tab-item');
+      buttons.forEach((btn, idx) => {
+        btn.classList.toggle('active', tabs[idx] === tabId);
+      });
+    }
+
+    // Toggle between Heatmap Grid and Weekly Agenda
+    let isAgendaOpen = false;
+    function toggleAgendaView() {
+      isAgendaOpen = !isAgendaOpen;
+      const heatView = document.getElementById('heatmap-view-wrapper');
+      const agendaView = document.getElementById('agenda-view-wrapper');
+      const toggleBtn = document.getElementById('toggle-agenda-btn');
+      const title = document.getElementById('stats-header-title');
+      const meta = document.getElementById('stats-header-meta');
+
+      if (isAgendaOpen) {
+        heatView.style.display = 'none';
+        agendaView.style.display = 'flex';
+        toggleBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>Grid</span>';
+        title.textContent = 'Agenda da Semana';
+        meta.textContent = '3 de 5 concluídos';
+      } else {
+        heatView.style.display = 'block';
+        agendaView.style.display = 'none';
+        toggleBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span>Agenda</span>';
+        title.textContent = 'Frequência e Intensidade';
+        meta.textContent = '4 treinos • ~1.820 kcal';
+      }
+    }
+
+    // Theme Toggle (Light / Dark)
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const icon = document.getElementById('theme-icon');
+      if (isDark) {
+        // Switch to Moon icon
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+        // Switch to Sun icon
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+    }
+
+    // Industry-standard anatomical polygon data from body-highlighter
+    const ANATOMY = {
+      anterior: [
+        { muscle: 'head', points: ['42.4489796 2.85714286 40 11.8367347 42.0408163 19.5918367 46.122449 23.2653061 49.7959184 25.3061224 54.6938776 22.4489796 57.5510204 19.1836735 59.1836735 10.2040816 57.1428571 2.44897959 49.7959184 0'] },
+        { muscle: 'neck', points: ['55.5102041 23.6734694 50.6122449 33.4693878 50.6122449 39.1836735 61.6326531 40 70.6122449 44.8979592 69.3877551 36.7346939 63.2653061 35.1020408 58.3673469 30.6122449', '28.9795918 44.8979592 30.2040816 37.1428571 36.3265306 35.1020408 41.2244898 30.2040816 44.4897959 24.4897959 48.9795918 33.877551 48.5714286 39.1836735 37.9591837 39.5918367'] },
+        { muscle: 'front-deltoids', points: ['78.3673469 53.0612245 79.5918367 47.755102 79.1836735 41.2244898 75.9183673 37.9591837 71.0204082 36.3265306 72.244898 42.8571429 71.4285714 47.3469388', '28.1632653 47.3469388 21.2244898 53.0612245 20 47.755102 20.4081633 40.8163265 24.4897959 37.1428571 28.5714286 37.1428571 26.9387755 43.2653061'] },
+        { muscle: 'chest', points: ['51.8367347 41.6326531 51.0204082 55.1020408 57.9591837 57.9591837 67.755102 55.5102041 70.6122449 47.3469388 62.0408163 41.6326531', '29.7959184 46.5306122 31.4285714 55.5102041 40.8163265 57.9591837 48.1632653 55.1020408 47.755102 42.0408163 37.5510204 42.0408163'] },
+        { muscle: 'biceps', points: ['16.7346939 68.1632653 17.9591837 71.4285714 22.8571429 66.122449 28.9795918 53.877551 27.755102 49.3877551 20.4081633 55.9183673', '71.4285714 49.3877551 70.2040816 54.6938776 76.3265306 66.122449 81.6326531 71.8367347 82.8571429 68.9795918 78.7755102 55.5102041'] },
+        { muscle: 'triceps', points: ['69.3877551 55.5102041 69.3877551 61.6326531 75.9183673 72.6530612 77.5510204 70.2040816 75.5102041 67.3469388', '22.4489796 69.3877551 29.7959184 55.5102041 29.7959184 60.8163265 22.8571429 73.0612245'] },
+        { muscle: 'forearm', points: ['6.12244898 88.5714286 10.2040816 75.1020408 14.6938776 70.2040816 16.3265306 74.2857143 19.1836735 73.4693878 4.48979592 97.5510204 0 100', '84.4897959 69.7959184 83.2653061 73.4693878 80 73.0612245 95.1020408 98.3673469 100 100.408163 93.4693878 89.3877551 89.7959184 76.3265306', '77.5510204 72.244898 77.5510204 77.5510204 80.4081633 84.0816327 85.3061224 89.7959184 92.244898 101.22449 94.6938776 99.5918367', '6.93877551 101.22449 13.4693878 90.6122449 18.7755102 84.0816327 21.6326531 77.1428571 21.2244898 71.8367347 4.89795918 98.7755102'] },
+        { muscle: 'obliques', points: ['68.5714286 63.2653061 67.3469388 57.1428571 58.7755102 59.5918367 60 64.0816327 60.4081633 83.2653061 65.7142857 78.7755102 66.5306122 69.7959184', '33.877551 78.3673469 33.0612245 71.8367347 31.0204082 63.2653061 32.244898 57.1428571 40.8163265 59.1836735 39.1836735 63.2653061 39.1836735 83.6734694'] },
+        { muscle: 'abs', points: ['56.3265306 59.1836735 57.9591837 64.0816327 58.3673469 77.9591837 58.3673469 92.6530612 56.3265306 98.3673469 55.1020408 104.081633 51.4285714 107.755102 51.0204082 84.4897959 50.6122449 67.3469388 51.0204082 57.1428571', '43.6734694 58.7755102 48.5714286 57.1428571 48.9795918 67.3469388 48.5714286 84.4897959 48.1632653 107.346939 44.4897959 103.673469 40.8163265 91.4285714 40.8163265 78.3673469 41.2244898 64.4897959'] },
+        { muscle: 'abductors', points: ['52.6530612 110.204082 54.2857143 124.897959 60 110.204082 62.0408163 100 64.8979592 94.2857143 60 92.6530612 56.7346939 104.489796', '47.755102 110.612245 44.8979592 125.306122 42.0408163 115.918367 40.4081633 113.061224 39.5918367 107.346939 37.9591837 102.44898 34.6938776 93.877551 39.5918367 92.244898 41.6326531 99.1836735 43.6734694 105.306122'] },
+        { muscle: 'quadriceps', points: ['34.6938776 98.7755102 37.1428571 108.163265 37.1428571 127.755102 34.2857143 137.142857 31.0204082 132.653061 29.3877551 120 28.1632653 111.428571 29.3877551 100.816327 32.244898 94.6938776', '63.2653061 105.714286 64.4897959 100 66.9387755 94.6938776 70.2040816 101.22449 71.0204082 111.836735 68.1632653 133.061224 65.3061224 137.55102 62.4489796 128.571429 62.0408163 111.428571', '38.7755102 129.387755 38.3673469 112.244898 41.2244898 118.367347 44.4897959 129.387755 42.8571429 135.102041 40 146.122449 36.3265306 146.530612 35.5102041 140', '59.5918367 145.714286 55.5102041 128.979592 60.8163265 113.877551 61.2244898 130.204082 64.0816327 139.591837 62.8571429 146.530612', '32.6530612 138.367347 26.5306122 145.714286 25.7142857 136.734694 25.7142857 127.346939 26.9387755 114.285714 29.3877551 133.469388', '71.8367347 113.061224 73.877551 124.081633 73.877551 140.408163 72.6530612 145.714286 66.5306122 138.367347 70.2040816 133.469388'] },
+        { muscle: 'knees', points: ['33.877551 140 34.6938776 143.265306 35.5102041 147.346939 36.3265306 151.020408 35.1020408 156.734694 29.7959184 156.734694 27.3469388 152.653061 27.3469388 147.346939 30.2040816 144.081633', '65.7142857 140 72.244898 147.755102 72.244898 152.244898 69.7959184 157.142857 64.8979592 156.734694 62.8571429 151.020408'] },
+        { muscle: 'calves', points: ['71.4285714 160.408163 73.4693878 153.469388 76.7346939 161.22449 79.5918367 167.755102 78.3673469 187.755102 79.5918367 195.510204 74.6938776 195.510204', '24.8979592 194.693878 27.755102 164.897959 28.1632653 160.408163 26.122449 154.285714 24.8979592 157.55102 22.4489796 161.632653 20.8163265 167.755102 22.0408163 188.163265 20.8163265 195.510204', '72.6530612 195.102041 69.7959184 159.183673 65.3061224 158.367347 64.0816327 162.44898 64.0816327 165.306122 65.7142857 177.142857', '35.5102041 158.367347 35.9183673 162.44898 35.9183673 166.938776 35.1020408 172.244898 35.1020408 176.734694 32.244898 182.040816 30.6122449 187.346939 26.9387755 194.693878 27.3469388 187.755102 28.1632653 180.408163 28.5714286 175.510204 28.9795918 169.795918 29.7959184 164.081633 30.2040816 158.77551'] }
+      ]
+    };
+
+    function renderBodySVG({ primary = [], secondary = [] }) {
+      let polygonsHtml = '';
+      for (const item of ANATOMY.anterior) {
+        const isPri = primary.includes(item.muscle);
+        const isSec = secondary.includes(item.muscle);
+        let fill = 'var(--surface-elevated)';
+        let opacity = '0.9';
+        let stroke = 'var(--bg)';
+        let strokeWidth = '0.6';
+
+        if (isPri) {
+          fill = 'var(--accent)';
+          opacity = '1';
+        } else if (isSec) {
+          fill = 'var(--accent)';
+          opacity = '0.42';
+        }
+
+        for (const pts of item.points) {
+          polygonsHtml += `<polygon points="${pts}" fill="${fill}" opacity="${opacity}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round" />`;
+        }
+      }
+      return `<svg viewBox="0 0 100 205" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display: block;">${polygonsHtml}</svg>`;
+    }
+
+    function initHomeAnatomy() {
+      const el = document.getElementById('home-routine-anatomy');
+      if (el) el.innerHTML = renderBodySVG({ primary: ['chest'], secondary: ['triceps', 'front-deltoids'] });
+    }
+    initHomeAnatomy();
+  </script>
+</body>
+</html>
