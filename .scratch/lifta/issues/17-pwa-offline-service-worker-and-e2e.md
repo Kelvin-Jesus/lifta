@@ -1,7 +1,7 @@
 # 17 - PWA Offline Service Worker and E2E Mobile Audits
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 14, 15, 16
 
 ## Goal
