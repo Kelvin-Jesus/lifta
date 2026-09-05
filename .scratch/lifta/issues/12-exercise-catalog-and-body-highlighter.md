@@ -1,7 +1,7 @@
 # 12 - Exercise Catalog and Body Highlighter
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 10
 
 ## Goal
