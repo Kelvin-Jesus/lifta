@@ -1,7 +1,7 @@
 # 13 - Active Workout Engine and Core Loop
 
 Type: task
-Status: open
+Status: resolved
 Blocked by: 11, 12
 
 ## Goal
