@@ -3,9 +3,9 @@ import type { Routine } from '../domain/routine';
 export const DEFAULT_SAMPLE_ROUTINES: Routine[] = [
   {
     id: 'routine-a-push',
-    name: 'Treino A — Peito, Ombros e Tríceps',
+    name: 'Treino A • Peitoral e Tríceps',
     description: 'Foco em hipertrofia de empurrar com sobrecarga progressiva.',
-    scheduledDays: ['monday', 'thursday'],
+    scheduledDays: ['monday', 'thursday', 'saturday'],
     exercises: [
       { exerciseId: 'bench-press', targetSets: 4, targetRepsMin: 8, targetRepsMax: 10, suggestedRestSeconds: 90 },
       { exerciseId: 'incline-dumbbell-press', targetSets: 3, targetRepsMin: 10, targetRepsMax: 12, suggestedRestSeconds: 90 },
@@ -18,7 +18,7 @@ export const DEFAULT_SAMPLE_ROUTINES: Routine[] = [
   },
   {
     id: 'routine-b-pull',
-    name: 'Treino B — Costas e Bíceps',
+    name: 'Treino B • Costas e Bíceps',
     description: 'Puxadas verticais e horizontais com foco em densidade dorsal.',
     scheduledDays: ['tuesday', 'friday'],
     exercises: [
@@ -33,13 +33,13 @@ export const DEFAULT_SAMPLE_ROUTINES: Routine[] = [
   },
   {
     id: 'routine-c-legs',
-    name: 'Treino C — Pernas e Core',
-    description: 'Treino completo de cadeia anterior e posterior inferior.',
-    scheduledDays: ['wednesday', 'saturday'],
+    name: 'Treino C • Pernas e Ombros',
+    description: 'Treino completo de pernas e cadeia posterior inferior.',
+    scheduledDays: ['wednesday', 'sunday'],
     exercises: [
       { exerciseId: 'barbell-squat', targetSets: 4, targetRepsMin: 8, targetRepsMax: 10, suggestedRestSeconds: 120 },
+      { exerciseId: 'leg-press-45', targetSets: 3, targetRepsMin: 10, targetRepsMax: 12, suggestedRestSeconds: 90 },
       { exerciseId: 'romanian-deadlift', targetSets: 3, targetRepsMin: 10, targetRepsMax: 12, suggestedRestSeconds: 90 },
-      { exerciseId: 'leg-press-45', targetSets: 3, targetRepsMin: 12, targetRepsMax: 15, suggestedRestSeconds: 90 },
       { exerciseId: 'standing-calf-raise-machine', targetSets: 4, targetRepsMin: 15, targetRepsMax: 20, suggestedRestSeconds: 60 },
       { exerciseId: 'hanging-leg-raise', targetSets: 3, targetRepsMin: 12, targetRepsMax: 15, suggestedRestSeconds: 60 },
     ],
