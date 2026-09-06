@@ -62,4 +62,30 @@ describe('CatalogView', () => {
     await new Promise((r) => setTimeout(r, 40));
     expect(container.textContent).not.toContain('Deite-se no banco');
   });
+
+  it('renders gif, instructions, and target muscles when expanded without collapsing on details click', async () => {
+    render(() => <CatalogView />, container);
+
+    const exerciseCard = container.querySelector('[data-testid="catalog-card-bench-press"]') as HTMLElement;
+    expect(exerciseCard).not.toBeNull();
+
+    // Expand
+    exerciseCard.click();
+    await new Promise((r) => setTimeout(r, 40));
+
+    // Verify gif demonstration
+    const gifImg = container.querySelector('img[alt*="Demonstração de execução"]') as HTMLImageElement;
+    expect(gifImg).not.toBeNull();
+    expect(gifImg.src).toContain('.gif');
+
+    // Verify instructions and target muscles
+    expect(container.textContent).toContain('Instruções de Execução');
+    expect(container.textContent).toContain('Músculos Alvo');
+    expect(container.textContent).toContain('Peitoral (Primário)');
+
+    // Clicking inside the details should not collapse
+    gifImg.click();
+    await new Promise((r) => setTimeout(r, 40));
+    expect(container.textContent).toContain('Instruções de Execução');
+  });
 });

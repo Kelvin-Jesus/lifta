@@ -9,6 +9,7 @@ import { BottomTabBar, type TabId } from './components/BottomTabBar';
 import { WorkoutDeck } from './features/workout/WorkoutDeck';
 import { activeWorkoutStore } from './features/workout/activeWorkoutStore';
 import { RoutineRepository } from './storage/repositories/RoutineRepository';
+import { WorkoutSessionRepository } from './storage/repositories/WorkoutSessionRepository';
 import { ActiveSessionRepository } from './storage/repositories/ActiveSessionRepository';
 import { SettingsRepository } from './storage/repositories/SettingsRepository';
 import { initWebMCPPolyfill } from './webmcp/modelContextPolyfill';
@@ -16,11 +17,13 @@ import { registerAllWebMCPTools } from './webmcp/tools';
 import { registerServiceWorker } from './pwa';
 import type { Routine } from './domain/routine';
 import { DEFAULT_SAMPLE_ROUTINES } from './catalog/defaultRoutines';
+import { getSampleSessions } from './catalog/defaultSessions';
 
 export const App: Component = () => {
   const [currentScreen, setCurrentScreen] = createSignal<'tabs' | 'workout'>('tabs');
   const [currentTab, setCurrentTab] = createSignal<TabId>('train');
   const [hasActiveWorkout, setHasActiveWorkout] = createSignal(false);
+  const [currentTheme, setCurrentTheme] = createSignal<'dark' | 'light'>('dark');
 
   const initApp = async () => {
     // 1. Initialize WebMCP
@@ -34,7 +37,9 @@ export const App: Component = () => {
     try {
       const settings = await Effect.runPromise(SettingsRepository.getSettings());
       if (settings && typeof document !== 'undefined') {
+        setCurrentTheme(settings.theme);
         document.documentElement.setAttribute('data-theme', settings.theme);
+        document.body.setAttribute('data-theme', settings.theme);
         document.documentElement.setAttribute('data-accent', settings.accentColor);
         if (settings.theme === 'dark') {
           document.documentElement.classList.add('dark');
@@ -54,7 +59,15 @@ export const App: Component = () => {
       }
     }
 
-    // 5. Check for active workout recovery (<80ms restore)
+    // 5. Seed default sessions if database is new
+    const existingSessions = await Effect.runPromise(WorkoutSessionRepository.listAll());
+    if (existingSessions.length === 0) {
+      for (const s of getSampleSessions()) {
+        await Effect.runPromise(WorkoutSessionRepository.save(s));
+      }
+    }
+
+    // 6. Check for active workout recovery (<80ms restore)
     const active = await Effect.runPromise(ActiveSessionRepository.getActive());
     if (active) {
       setHasActiveWorkout(true);
@@ -64,6 +77,25 @@ export const App: Component = () => {
   onMount(() => {
     initApp();
   });
+
+  const toggleTheme = async () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    setCurrentTheme(next);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', next);
+      document.body.setAttribute('data-theme', next);
+      if (next === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+    try {
+      await Effect.runPromise(SettingsRepository.updateSettings({ theme: next }));
+    } catch {
+      // ignore
+    }
+  };
 
   const handleStartWorkout = async (routine: Routine) => {
     await activeWorkoutStore.startWorkout(routine);
@@ -82,8 +114,8 @@ export const App: Component = () => {
   };
 
   return (
-    <div class="min-h-[100dvh] w-full bg-theme-bg text-theme-primary font-sans selection:bg-blue-500/30 selection:text-white flex justify-center theme-transition">
-      <div class="w-full max-w-[440px] min-h-[100dvh] flex flex-col relative bg-theme-bg shadow-2xl">
+    <div class="min-h-[100dvh] w-full bg-black flex justify-center items-center select-none theme-transition">
+      <main class="app-shell" role="main">
         <Show
           when={currentScreen() === 'tabs'}
           fallback={
@@ -93,6 +125,65 @@ export const App: Component = () => {
             />
           }
         >
+          {/* Header Bar persistent across all tabs */}
+          <header class="header-bar">
+            <div class="flex items-center gap-2.5">
+              <img
+                src="/logo.png"
+                alt="Lifta Logo"
+                class="w-7 h-7 rounded-lg object-cover shadow-sm"
+              />
+              <div class="brand-title">Lifta<span class="sr-only">LIFTA</span></div>
+            </div>
+
+            <div class="header-actions">
+              {/* Theme Toggle Button (Light/Dark) */}
+              <button
+                type="button"
+                class="icon-btn"
+                onClick={toggleTheme}
+                aria-label="Alternar tema claro/escuro"
+                title="Tema"
+                data-testid="btn-toggle-theme"
+              >
+                <Show
+                  when={currentTheme() === 'dark'}
+                  fallback={
+                    <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                  }
+                >
+                  <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                </Show>
+              </button>
+
+              {/* Assistant / Settings Button */}
+              <button
+                type="button"
+                class="icon-btn"
+                onClick={() => setCurrentTab('settings')}
+                aria-label="Configurações"
+                title="Configurações"
+                data-testid="tab-settings"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </button>
+            </div>
+          </header>
+
           {/* Active Tab View */}
           <Show when={currentTab() === 'train'}>
             <HomeDashboard
@@ -108,7 +199,7 @@ export const App: Component = () => {
           </Show>
 
           <Show when={currentTab() === 'history'}>
-            <HistoryView />
+            <HistoryView onStartWorkout={handleStartWorkout} />
           </Show>
 
           <Show when={currentTab() === 'exercises'}>
@@ -125,7 +216,7 @@ export const App: Component = () => {
             onSelectTab={setCurrentTab}
           />
         </Show>
-      </div>
+      </main>
     </div>
   );
 };

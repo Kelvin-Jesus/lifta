@@ -15,6 +15,7 @@ export interface BodyHighlighterProps {
   strokeColor?: string;
   class?: string;
   style?: JSX.CSSProperties;
+  showLabels?: boolean;
   onClickMuscle?: (muscle: MuscleGroup) => void;
 }
 
@@ -23,15 +24,15 @@ export const BodyHighlighter: Component<BodyHighlighterProps> = (props) => {
   const primarySet = () => new Set(props.primaryMuscles ?? []);
   const secondarySet = () => new Set(props.secondaryMuscles ?? []);
 
-  const accentColor = () => props.accentColor ?? 'var(--accent, #007aff)';
-  const neutralColor = () => props.neutralColor ?? 'var(--surface-elevated, #2c2c2e)';
-  const strokeColor = () => props.strokeColor ?? 'var(--separator, rgba(128, 128, 128, 0.25))';
+  const accentColor = () => props.accentColor ?? 'var(--accent, #0a84ff)';
+  const neutralColor = () => props.neutralColor ?? 'var(--anatomy-neutral, #2c2c2e)';
+  const strokeColor = () => props.strokeColor ?? 'var(--anatomy-stroke, var(--bg))';
 
   const getHighlightState = (
     group?: MuscleGroup
   ): { highlight: 'primary' | 'secondary' | 'neutral'; fill: string; opacity: string } => {
     if (!group) {
-      return { highlight: 'neutral', fill: neutralColor(), opacity: '1' };
+      return { highlight: 'neutral', fill: neutralColor(), opacity: '0.9' };
     }
     if (primarySet().has(group)) {
       return { highlight: 'primary', fill: accentColor(), opacity: '1' };
@@ -39,7 +40,7 @@ export const BodyHighlighter: Component<BodyHighlighterProps> = (props) => {
     if (secondarySet().has(group)) {
       return { highlight: 'secondary', fill: accentColor(), opacity: '0.42' };
     }
-    return { highlight: 'neutral', fill: neutralColor(), opacity: '1' };
+    return { highlight: 'neutral', fill: neutralColor(), opacity: '0.9' };
   };
 
   const renderViewSvg = (
@@ -48,7 +49,7 @@ export const BodyHighlighter: Component<BodyHighlighterProps> = (props) => {
   ) => {
     return (
       <svg
-        viewBox="0 0 100 225"
+        viewBox="0 0 100 205"
         class="h-full w-auto max-h-full max-w-full drop-shadow-sm select-none"
         data-view={viewName}
         data-testid={`body-highlighter-${viewName}`}
@@ -94,16 +95,20 @@ export const BodyHighlighter: Component<BodyHighlighterProps> = (props) => {
       data-testid="body-highlighter"
     >
       <Show when={viewMode() === 'both' || viewMode() === 'anterior'}>
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center h-full justify-center">
           {renderViewSvg('anterior', ANTERIOR_POLYGONS)}
-          <span class="text-[10px] tracking-wider uppercase text-neutral-500 font-mono mt-1">Frente</span>
+          <Show when={props.showLabels !== false}>
+            <span class="text-[10px] tracking-wider uppercase text-neutral-500 font-mono mt-1">Frente</span>
+          </Show>
         </div>
       </Show>
 
       <Show when={viewMode() === 'both' || viewMode() === 'posterior'}>
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center h-full justify-center">
           {renderViewSvg('posterior', POSTERIOR_POLYGONS)}
-          <span class="text-[10px] tracking-wider uppercase text-neutral-500 font-mono mt-1">Costas</span>
+          <Show when={props.showLabels !== false}>
+            <span class="text-[10px] tracking-wider uppercase text-neutral-500 font-mono mt-1">Costas</span>
+          </Show>
         </div>
       </Show>
     </div>

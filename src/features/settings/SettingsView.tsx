@@ -105,40 +105,37 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
 
   return (
     <div
-      class="w-full min-h-[100dvh] bg-theme-bg text-theme-primary pb-24 p-4 flex flex-col gap-5 select-none theme-transition"
+      class="tab-content"
       data-testid="settings-view"
     >
       {/* Header */}
-      <header class="flex items-center justify-between pt-2 pb-1 border-b border-theme-subtle">
-        <div class="flex items-center gap-3">
-          <Show when={props.onBack}>
-            <button
-              type="button"
-              onClick={props.onBack}
-              class="w-9 h-9 rounded-xl bg-theme-surface border border-theme-subtle text-theme-secondary hover:text-theme-primary flex items-center justify-center active:scale-95 transition-all cursor-pointer"
-              aria-label="Voltar"
-              data-testid="btn-settings-back"
-            >
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          </Show>
-          <div>
-            <h1 class="text-xl font-bold tracking-tight text-theme-primary">Ajustes</h1>
-            <span class="text-xs text-theme-secondary font-mono">Personalização e Dados Soberanos</span>
-          </div>
+      <div class="flex items-center gap-3">
+        <Show when={props.onBack}>
+          <button
+            type="button"
+            onClick={props.onBack}
+            class="w-8 h-8 rounded-full bg-theme-surface border border-theme-subtle text-theme-accent flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            aria-label="Voltar"
+            data-testid="btn-settings-back"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        </Show>
+        <div>
+          <h2 class="text-xl font-bold tracking-tight text-theme-primary">Ajustes</h2>
         </div>
-      </header>
+      </div>
 
       {/* Section 1: Tema e Cores */}
-      <div class="bg-theme-surface border border-theme-separator rounded-2xl p-4 flex flex-col gap-4">
-        <h2 class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold flex items-center gap-1.5">
+      <div class="bg-theme-surface border border-theme-subtle rounded-2xl p-4 flex flex-col gap-4">
+        <h3 class="text-xs uppercase tracking-wider text-theme-secondary font-bold flex items-center gap-1.5">
           <svg class="w-4 h-4 text-theme-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
           </svg>
           Aparência do Aplicativo
-        </h2>
+        </h3>
 
         <div class="grid grid-cols-2 gap-3">
           {/* Dark OLED */}
@@ -225,7 +222,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
           <button
             type="button"
             onClick={handleExportJson}
-            class="w-full h-11 rounded-xl bg-theme-elevated hover:opacity-90 active:scale-[0.98] border border-theme-subtle text-xs font-bold text-theme-primary flex items-center justify-center gap-2 transition-all"
+            class="w-full h-11 rounded-xl btn-secondary text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
             data-testid="btn-export-backup"
           >
             <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -237,7 +234,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
           <button
             type="button"
             onClick={handleExportCsv}
-            class="w-full h-11 rounded-xl bg-theme-elevated hover:opacity-90 active:scale-[0.98] border border-theme-subtle text-xs font-bold text-theme-primary flex items-center justify-center gap-2 transition-all"
+            class="w-full h-11 rounded-xl btn-secondary text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
             data-testid="btn-export-csv"
           >
             <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -247,7 +244,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
           </button>
 
           <label
-            class="w-full h-11 rounded-xl bg-theme-elevated hover:opacity-90 active:scale-[0.98] border border-theme-subtle text-xs font-bold text-theme-accent flex items-center justify-center gap-2 cursor-pointer transition-all"
+            class="w-full h-11 rounded-xl btn-secondary text-xs font-bold text-theme-accent flex items-center justify-center gap-2 cursor-pointer transition-all"
           >
             <svg class="w-4 h-4 text-theme-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12" />

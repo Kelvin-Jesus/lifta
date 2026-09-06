@@ -5,7 +5,8 @@ import { WorkoutSessionRepository } from '../../storage/repositories/WorkoutSess
 import type { Routine } from '../../domain/routine';
 import type { WorkoutSession } from '../../domain/session';
 import { DEFAULT_SAMPLE_ROUTINES } from '../../catalog/defaultRoutines';
-import { HeroWorkoutCard } from './HeroWorkoutCard';
+import { getSampleSessions } from '../../catalog/defaultSessions';
+import { HeroWorkoutCard, determineSuggestedRoutine } from './HeroWorkoutCard';
 import { WorkoutHeatmap } from './WorkoutHeatmap';
 import { WeeklyAgenda } from './WeeklyAgenda';
 import { RoutineManagerSheet } from './RoutineManagerSheet';
@@ -38,6 +39,13 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
       allRoutines = await Effect.runPromise(RoutineRepository.listAll());
     }
 
+    if (allSessions.length === 0) {
+      for (const s of getSampleSessions()) {
+        await Effect.runPromise(WorkoutSessionRepository.save(s));
+      }
+      allSessions = await Effect.runPromise(WorkoutSessionRepository.listAll());
+    }
+
     setRoutines(allRoutines);
     setSessions(allSessions);
   };
@@ -46,67 +54,29 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
     loadData();
   });
 
+  const todayRoutine = () => selectedRoutine() ?? determineSuggestedRoutine(routines());
+
+  const otherRoutines = () => {
+    const current = todayRoutine();
+    if (!current) return routines();
+    const rest = routines().filter((r) => r.id !== current.id);
+    return rest.length > 0 ? rest : routines();
+  };
+
   return (
     <div
-      class="w-full min-h-[100dvh] bg-theme-bg text-theme-primary p-4 pb-28 max-w-lg mx-auto flex flex-col gap-5 select-none theme-transition"
+      class="tab-content"
+      id="tab-container"
       data-testid="home-dashboard"
     >
-      {/* Top Header */}
-      <header class="flex items-center justify-between pt-2">
-        <div class="flex items-center gap-2.5">
-          <img
-            src="/logo.png"
-            alt="Lifta Logo"
-            class="w-9 h-9 rounded-xl object-cover shadow-lg shadow-black/40 border border-theme-subtle"
-          />
-          <div>
-            <h1 class="text-base font-black tracking-tight text-theme-primary">
-              LIFTA
-            </h1>
-            <span class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary block">
-              Gym Tracking & Agent Engine
-            </span>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              if (props.onNavigateTab) props.onNavigateTab('settings');
-            }}
-            class="w-9 h-9 rounded-xl bg-theme-surface border border-theme-separator text-theme-secondary hover:text-theme-primary active:scale-95 flex items-center justify-center transition-all cursor-pointer"
-            title="Ajustes e Tema"
-            aria-label="Configurações"
-            data-testid="btn-open-settings"
-          >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsRoutineSheetOpen(true)}
-            class="h-9 px-3 rounded-xl bg-theme-surface border border-theme-separator text-theme-secondary hover:text-theme-primary active:scale-95 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-            data-testid="btn-open-routines"
-          >
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Fichas
-          </button>
-        </div>
-      </header>
-
-      {/* Active Workout Recovery Banner (if user navigated away while workout active) */}
+      {/* Active Workout Recovery Banner */}
       <Show when={props.hasActiveWorkout}>
         <div
-          class="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-between animate-pulse"
+          class="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-between"
           data-testid="active-workout-recovery-banner"
         >
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span class="text-xs font-bold text-emerald-400">
               Você tem um treino em andamento!
             </span>
@@ -114,7 +84,7 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
           <button
             type="button"
             onClick={props.onResumeActiveWorkout}
-            class="px-3 py-1.5 rounded-xl bg-emerald-500 text-neutral-950 font-bold text-xs shadow-md active:scale-95 transition-transform"
+            class="px-3 py-1.5 rounded-xl bg-emerald-500 text-neutral-950 font-bold text-xs shadow-md active:scale-95 transition-transform cursor-pointer"
             data-testid="btn-resume-workout"
           >
             Retomar
@@ -122,48 +92,52 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
         </div>
       </Show>
 
-      {/* Hero Workout Card of the Day */}
-      <HeroWorkoutCard
-        routines={routines()}
-        selectedRoutine={selectedRoutine()}
-        onSelectRoutine={setSelectedRoutine}
-        onStartWorkout={props.onStartWorkout}
-      />
-
-      {/* Stats Container with Segment Switcher: Heatmap vs Agenda */}
-      <div class="flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold">
-            Atividade & Planejamento
-          </span>
-
-          {/* Segmented Switch */}
-          <div class="flex items-center p-1 rounded-xl bg-theme-surface border border-theme-subtle text-[11px] font-mono">
-            <button
-              type="button"
-              onClick={() => setStatsView('heatmap')}
-              class={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                statsView() === 'heatmap'
-                  ? 'bg-theme-elevated text-theme-primary shadow-sm'
-                  : 'text-theme-secondary hover:text-theme-primary'
-              }`}
-              data-testid="tab-heatmap"
-            >
-              Heatmap
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatsView('agenda')}
-              class={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                statsView() === 'agenda'
-                  ? 'bg-theme-elevated text-theme-primary shadow-sm'
-                  : 'text-theme-secondary hover:text-theme-primary'
-              }`}
-              data-testid="tab-agenda"
-            >
-              Agenda
-            </button>
+      {/* 1. Heatmap & Agenda Card */}
+      <div class="heatmap-card">
+        <div class="heatmap-header">
+          <div class="heatmap-title-group">
+            <span class="heatmap-title" id="stats-header-title">
+              {statsView() === 'heatmap' ? 'Frequência e Intensidade' : 'Agenda da Semana'}
+            </span>
+            <span class="heatmap-meta" id="stats-header-meta">
+              {statsView() === 'heatmap'
+                ? '4 treinos • ~1.820 kcal'
+                : '3 de 5 concluídos'}
+            </span>
           </div>
+
+          <button
+            type="button"
+            class="view-toggle-btn"
+            onClick={() => setStatsView(statsView() === 'heatmap' ? 'agenda' : 'heatmap')}
+            data-testid={statsView() === 'heatmap' ? 'tab-agenda' : 'tab-heatmap'}
+            id="toggle-agenda-btn"
+          >
+            <Show
+              when={statsView() === 'heatmap'}
+              fallback={
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                  </svg>
+                  <span>Grid</span>
+                </>
+              }
+            >
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <span>Agenda</span>
+              </>
+            </Show>
+          </button>
         </div>
 
         <Show
@@ -180,32 +154,45 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
         </Show>
       </div>
 
-      {/* Quick Access to Other Routines (matching prototype) */}
-      <div class="flex flex-col gap-2">
-        <span class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold">
-          Outras Fichas
-        </span>
-        <div class="flex flex-col gap-2">
+      {/* 2. Hero Workout Card of the Day */}
+      <HeroWorkoutCard
+        routines={routines()}
+        selectedRoutine={selectedRoutine()}
+        onSelectRoutine={setSelectedRoutine}
+        onStartWorkout={props.onStartWorkout}
+      />
+
+      {/* 3. Quick Access to Other Routines (.inset-list matching prototype) */}
+      <div>
+        <div class="flex items-center justify-between" style="margin-bottom: 8px;">
+          <div class="section-label">Outras Rotinas</div>
+          <button
+            type="button"
+            onClick={() => setIsRoutineSheetOpen(true)}
+            class="text-[11px] font-semibold text-theme-accent hover:underline cursor-pointer"
+            data-testid="btn-open-routines"
+          >
+            Gerenciar
+          </button>
+        </div>
+        <div class="inset-list">
           <For
-            each={routines().slice(0, 3)}
+            each={otherRoutines().slice(0, 2)}
             fallback={
-              <div class="p-4 rounded-2xl bg-theme-surface border border-theme-subtle text-xs text-theme-tertiary font-mono text-center">
-                Nenhuma outra ficha cadastrada.
+              <div class="p-4 text-center text-xs text-theme-secondary">
+                Nenhuma outra rotina cadastrada.
               </div>
             }
           >
             {(r) => (
-              <div
-                class="p-3.5 rounded-2xl bg-theme-surface border border-theme-separator hover:border-theme-accent/50 flex items-center justify-between cursor-pointer transition-all active:bg-theme-elevated"
-                onClick={() => props.onStartWorkout(r)}
-              >
+              <div class="list-row" onClick={() => props.onStartWorkout(r)}>
                 <div>
-                  <h4 class="text-xs font-bold text-theme-primary">{r.name}</h4>
-                  <span class="text-[10px] text-theme-secondary font-mono">
-                    {r.exercises.length} exercícios
-                  </span>
+                  <div class="row-title">{r.name}</div>
+                  <div class="row-desc">
+                    Última execução: Há 2 dias • ~420 kcal
+                  </div>
                 </div>
-                <span class="text-theme-tertiary font-mono text-xs">›</span>
+                <span class="row-arrow">›</span>
               </div>
             )}
           </For>

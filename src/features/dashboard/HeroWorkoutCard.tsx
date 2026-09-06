@@ -72,125 +72,107 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
 
   const estimatedDuration = () => {
     const r = currentRoutine();
-    if (!r) return 45;
+    if (!r) return 55;
     const totalSets = r.exercises.reduce((acc, e) => acc + e.targetSets, 0);
-    // ~2.5 mins per set (execution + rest)
-    return Math.max(25, Math.round(totalSets * 2.5));
+    return Math.max(35, Math.round(totalSets * 2.6));
+  };
+
+  const estimatedCalories = () => {
+    const r = currentRoutine();
+    if (!r) return 480;
+    const totalSets = r.exercises.reduce((acc, e) => acc + e.targetSets, 0);
+    return Math.round(totalSets * 32);
+  };
+
+  const mostTrainedMuscle = () => {
+    const p = muscles().primary;
+    if (p.length > 0) return formatMuscleName(p[0]);
+    const s = muscles().secondary;
+    if (s.length > 0) return formatMuscleName(s[0]);
+    return 'Corpo Inteiro';
+  };
+
+  const isPosteriorFocus = () => {
+    const p = muscles().primary;
+    const posteriorMuscles: MuscleGroup[] = ['back', 'glutes', 'hamstrings', 'calves'];
+    return p.some((m) => posteriorMuscles.includes(m));
   };
 
   return (
-    <div
-      class="w-full bg-theme-surface border border-theme-separator rounded-3xl p-5 shadow-2xl theme-transition select-none"
-      data-testid="hero-workout-card"
-    >
+    <div class="hero-routine-card" data-testid="hero-workout-card">
       <Show
         when={currentRoutine()}
         fallback={
-          <div class="py-12 text-center text-theme-secondary font-mono text-xs">
+          <div class="py-10 text-center text-theme-secondary text-sm">
             Nenhuma rotina cadastrada. Crie uma rotina para começar.
           </div>
         }
       >
         {(routine) => (
           <>
-            {/* Top Tag & Routine Selector Chips */}
-            <div class="flex items-center justify-between gap-2 mb-3">
-              <span class="text-[10px] uppercase font-mono font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                Treino Sugerido
-              </span>
-
-              {/* Routine switcher chips */}
-              <div class="flex items-center gap-1 overflow-x-auto max-w-[180px] pb-0.5">
-                <For each={props.routines}>
-                  {(r) => (
-                    <button
-                      type="button"
-                      onClick={() => props.onSelectRoutine(r)}
-                      class={`px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
-                        routine().id === r.id
-                          ? 'bg-theme-accent text-white shadow-sm'
-                          : 'bg-theme-elevated text-theme-secondary hover:text-theme-primary'
-                      }`}
-                      data-testid={`routine-chip-${r.id}`}
-                    >
-                      {r.name.slice(0, 8)}
-                    </button>
-                  )}
-                </For>
+            <div class="hero-routine-header">
+              <div>
+                <h2 class="routine-name" data-testid="hero-routine-name">
+                  {routine().name}
+                </h2>
+                <p class="routine-sub">
+                  {routine().exercises.length} exercícios • Cerca de {estimatedDuration()} min • ~{estimatedCalories()} kcal
+                </p>
               </div>
             </div>
 
-            {/* Title & Metadata */}
-            <h2
-              class="text-xl font-black text-theme-primary tracking-tight mb-1"
-              data-testid="hero-routine-name"
-            >
-              {routine().name}
-            </h2>
-
-            <div class="flex items-center gap-3 text-xs text-theme-secondary font-mono mb-4">
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-                {routine().exercises.length} exercícios
-              </span>
-              <span>•</span>
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4 text-theme-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                ~{estimatedDuration()} min
-              </span>
-            </div>
-
-            {/* Anatomical Routine Coverage Preview */}
-            <div class="w-full bg-theme-elevated border border-theme-subtle rounded-2xl p-3 flex items-center justify-between gap-4 mb-5">
-              <div class="flex-1">
-                <span class="text-[10px] uppercase font-mono tracking-wider text-theme-secondary font-bold block mb-1">
-                  Grupos Musculares Ativados
-                </span>
-                <div class="flex flex-wrap gap-1 mb-2">
-                  <For each={muscles().primary}>
-                    {(m) => (
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30 font-medium">
-                        {formatMuscleName(m)}
-                      </span>
-                    )}
-                  </For>
-                  <For each={muscles().secondary}>
-                    {(m) => (
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-theme-surface text-theme-secondary border border-theme-subtle">
-                        {formatMuscleName(m)}
-                      </span>
-                    )}
-                  </For>
-                </div>
-              </div>
-
-              <div class="w-20 h-24 flex items-center justify-center p-1 bg-theme-surface rounded-xl border border-theme-subtle flex-shrink-0">
+            {/* Anatomical Muscle Map Preview */}
+            <div class="muscle-preview-box">
+              <div class="muscle-svg-wrapper">
                 <BodyHighlighter
                   primaryMuscles={muscles().primary}
                   secondaryMuscles={muscles().secondary}
-                  view="both"
+                  view={isPosteriorFocus() ? 'posterior' : 'anterior'}
+                  showLabels={false}
                   class="h-full w-auto"
                 />
               </div>
+
+              <div class="muscle-target-tags">
+                <div style="display: flex; align-items: center; gap: 5px;">
+                  <span style="width: 6px; height: 6px; border-radius: 3px; background: var(--accent);"></span>
+                  <span class="target-title" style="color: var(--accent);">Músculo Mais Treinado</span>
+                </div>
+                <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: -0.015em; color: var(--text-primary);">
+                  {mostTrainedMuscle()}
+                </span>
+                <div class="target-pills-row" style="margin-top: 3px;">
+                  <span class="muscle-badge">Foco Primário</span>
+                  <For each={muscles().secondary.slice(0, 2)}>
+                    {(m) => (
+                      <span class="muscle-badge-secondary">
+                        {formatMuscleName(m)}
+                      </span>
+                    )}
+                  </For>
+                  <Show when={muscles().secondary.length === 0 && muscles().primary.length > 1}>
+                    <For each={muscles().primary.slice(1, 3)}>
+                      {(m) => (
+                        <span class="muscle-badge-secondary">
+                          {formatMuscleName(m)}
+                        </span>
+                      )}
+                    </For>
+                  </Show>
+                </div>
+              </div>
             </div>
 
-            {/* Primary Giant 1-Tap Action Button */}
             <button
               type="button"
               onClick={() => props.onStartWorkout(routine())}
-              class="w-full h-13 rounded-2xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-base tracking-wide shadow-xl shadow-blue-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              class="btn-start-hero"
               data-testid="btn-start-hero-workout"
             >
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <span>Iniciar Treino de Hoje</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
               </svg>
-              Iniciar Treino de Hoje
             </button>
           </>
         )}
@@ -198,3 +180,4 @@ export const HeroWorkoutCard: Component<HeroWorkoutCardProps> = (props) => {
     </div>
   );
 };
+
