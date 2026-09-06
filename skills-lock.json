@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ui-test": {
+      "source": "browserbase/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-test/SKILL.md",
+      "computedHash": "10d98ae1404627398958c3a5821fc57f395b9857cd98322379117fa586f43410"
+    }
+  }
+}

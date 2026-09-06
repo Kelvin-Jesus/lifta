@@ -30,6 +30,17 @@ async function run() {
   const heroRoutineName = await page.locator('[data-testid="hero-routine-name"]').textContent().catch(() => 'NOT FOUND');
   console.log('Hero routine text:', heroRoutineName);
 
+  // 1b. Agenda toggle
+  const agendaBtn = page.locator('#toggle-agenda-btn');
+  if (await agendaBtn.isVisible()) {
+    await agendaBtn.click();
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, '01b_agenda_view.png') });
+    console.log('Captured: 01b_agenda_view.png');
+    await agendaBtn.click(); // toggle back to heatmap
+    await page.waitForTimeout(300);
+  }
+
   // 2. Routines Tab
   const routinesTab = page.locator('[data-testid="tab-routines"]');
   if (await routinesTab.isVisible()) {
@@ -53,8 +64,33 @@ async function run() {
   if (await exercisesTab.isVisible()) {
     await exercisesTab.click();
     await page.waitForTimeout(500);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, '04_exercises_tab.png') });
-    console.log('Captured: 04_exercises_tab.png');
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, '04_exercises_todos.png') });
+    console.log('Captured: 04_exercises_todos.png');
+
+    // Expand the first exercise (Supino Reto com Barra) to see GIF and anatomy
+    const firstExercise = page.locator('[data-testid^="catalog-card-"]').first();
+    if (await firstExercise.isVisible()) {
+      await firstExercise.click();
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: path.join(ARTIFACT_DIR, '04b_exercise_expanded.png') });
+      console.log('Captured: 04b_exercise_expanded.png');
+    }
+
+    // Click "Peitoral" filter chip
+    const peitoralChip = page.getByRole('button', { name: 'Peitoral', exact: true });
+    if (await peitoralChip.isVisible()) {
+      await peitoralChip.click();
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: path.join(ARTIFACT_DIR, '04c_exercise_peitoral.png') });
+      console.log('Captured: 04c_exercise_peitoral.png');
+    }
+
+    // Switch back to "Todos"
+    const todosChip = page.getByRole('button', { name: 'Todos', exact: true });
+    if (await todosChip.isVisible()) {
+      await todosChip.click();
+      await page.waitForTimeout(300);
+    }
   }
 
   // 5. Settings Tab
@@ -71,18 +107,21 @@ async function run() {
       console.log('Clicking Light iOS theme button...');
       await lightBtn.click();
       await page.waitForTimeout(800);
-      const rootTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-      const bodyTheme = await page.evaluate(() => document.body.getAttribute('data-theme'));
-      console.log(`Themes after click -> html data-theme: ${rootTheme}, body data-theme: ${bodyTheme}`);
       await page.screenshot({ path: path.join(ARTIFACT_DIR, '06_settings_light.png') });
       console.log('Captured: 06_settings_light.png');
 
-      // Go back to Train tab to see home in Light theme!
+      // Go to Train tab to see home in Light theme!
       const trainTab = page.locator('[data-testid="tab-train"]');
       await trainTab.click();
       await page.waitForTimeout(500);
       await page.screenshot({ path: path.join(ARTIFACT_DIR, '07_home_light.png') });
       console.log('Captured: 07_home_light.png');
+
+      // Check Exercises tab in Light theme!
+      await page.locator('[data-testid="tab-exercises"]').click();
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: path.join(ARTIFACT_DIR, '07b_exercises_light.png') });
+      console.log('Captured: 07b_exercises_light.png');
 
       // Switch back to Dark
       await settingsTab.click();
@@ -110,6 +149,23 @@ async function run() {
       await page.waitForTimeout(600);
       await page.screenshot({ path: path.join(ARTIFACT_DIR, '09_workout_rest_timer.png') });
       console.log('Captured: 09_workout_rest_timer.png');
+    }
+
+    // Finish workout and capture Victory Celebration Modal
+    const finishBtn = page.locator('[data-testid="btn-deck-finish"]');
+    if (await finishBtn.isVisible()) {
+      console.log('Finishing workout to trigger Victory Modal...');
+      await finishBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: path.join(ARTIFACT_DIR, '10_workout_victory_modal.png') });
+      console.log('Captured: 10_workout_victory_modal.png');
+
+      // Dismiss victory modal
+      const confirmVictoryBtn = page.locator('[data-testid="btn-victory-confirm"]');
+      if (await confirmVictoryBtn.isVisible()) {
+        await confirmVictoryBtn.click();
+        await page.waitForTimeout(500);
+      }
     }
   }
 

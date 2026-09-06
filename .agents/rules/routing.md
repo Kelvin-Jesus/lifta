@@ -126,6 +126,19 @@ Do NOT require the user to explicitly say: "Use X skill."
 * **tdd**: Test-driven development for domain logic, bug fixes, parsers, transformations, and APIs.
 * **diagnose**: Debugging loop when behavior is unexpected, failing, or slow. Form and test hypotheses before changing code.
 * **code-review**: Proportional review after meaningful changes (standards, specs, regressions, tests).
+* **ui-test**: Mandatory real-browser adversarial QA for meaningful UI changes (see `.agents/rules/ui-qa.md`). Never declare UI work complete based solely on unit/E2E test suite passing.
+* **review-animations**: Auditing and inspecting motion and animations while they are actively running.
+
+---
+
+## UI QA & Browser Validation
+
+Consult and strictly follow [`.agents/rules/ui-qa.md`](ui-qa.md).
+- Never consider a user-facing task complete only because unit/E2E tests pass.
+- Use `ui-test` with the `browse` CLI to inspect results in a real browser.
+- Perform diff-driven testing after normal feature work; perform exploratory testing after major refactors/flows/design changes.
+- Interact adversarially (rapid clicks, long values, empty submissions, edge cases, responsive resizing).
+- Use `review-animations` to inspect animations in flight.
 
 ---
 
@@ -141,4 +154,13 @@ When writing or modifying Effect code:
 
 * Perform discoverable work autonomously. Do not ask trivia like "which file should I inspect?" or "should I run tests?".
 * Avoid tool ceremony: don't run every tool on every turn, and don't produce giant plans for small changes.
-* Verify real behavior with tests before declaring work complete.
+* Verify real behavior with tests and UI QA before declaring work complete.
+
+---
+
+## Git Discipline & Automatic Commits
+
+* **Always commit upon completing work**: Do not leave batches of uncommitted modifications across sessions or prompts.
+* **Pre-commit verification**: Run `pnpm typecheck` and `pnpm test` before any commit. Never commit with failing tests or broken types.
+* **Semantic messages**: Use Conventional Commits (`feat`, `fix`, `style`, `refactor`, `test`, `chore`).
+* **Atomic staging**: Group logically related files together; do not blindly `git add .` across unrelated features.
