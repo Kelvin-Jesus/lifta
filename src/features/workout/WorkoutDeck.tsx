@@ -4,6 +4,8 @@ import { MuscleFocusCard } from './MuscleFocusCard';
 import { ExerciseCard } from './ExerciseCard';
 import { FloatingRestBar } from './FloatingRestBar';
 import { SubstituteExerciseSheet } from './SubstituteExerciseSheet';
+import { WorkoutVictoryModal } from './WorkoutVictoryModal';
+import type { WorkoutSession } from '../../domain/session';
 
 export interface WorkoutDeckProps {
   onFinish?: () => void;
@@ -16,6 +18,7 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
   const [activePageIndex, setActivePageIndex] = createSignal(0);
   const [substituteExerciseIndex, setSubstituteExerciseIndex] = createSignal<number | null>(null);
   const [toastMessage, setToastMessage] = createSignal<string | null>(null);
+  const [completedSession, setCompletedSession] = createSignal<WorkoutSession | null>(null);
 
   const session = () => activeWorkoutStore.session();
   const restTimer = () => activeWorkoutStore.restTimer();
@@ -132,14 +135,32 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
             </h1>
           </div>
 
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-theme-elevated border border-theme-subtle">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span
-              class="text-xs font-mono font-bold text-theme-primary tabular-nums"
-              data-testid="elapsed-time-display"
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-theme-elevated border border-theme-subtle">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span
+                class="text-xs font-mono font-bold text-theme-primary tabular-nums"
+                data-testid="elapsed-time-display"
+              >
+                {formatElapsed(elapsed())}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const finished = await activeWorkoutStore.finishWorkout();
+                if (finished) {
+                  setCompletedSession(finished);
+                } else if (props.onFinish) {
+                  props.onFinish();
+                }
+              }}
+              class="px-2.5 py-1 rounded-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-neutral-950 font-bold text-xs shadow-sm transition-all cursor-pointer"
+              data-testid="btn-deck-finish"
             >
-              {formatElapsed(elapsed())}
-            </span>
+              Finalizar
+            </button>
           </div>
         </div>
 
@@ -254,8 +275,12 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
                     }
                   }}
                   onFinishWorkout={async () => {
-                    await activeWorkoutStore.finishWorkout();
-                    if (props.onFinish) props.onFinish();
+                    const finished = await activeWorkoutStore.finishWorkout();
+                    if (finished) {
+                      setCompletedSession(finished);
+                    } else if (props.onFinish) {
+                      props.onFinish();
+                    }
                   }}
                 />
               </div>
@@ -297,6 +322,17 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
         >
           {toastMessage()}
         </div>
+      </Show>
+
+      {/* Victory Celebration Modal */}
+      <Show when={completedSession()}>
+        <WorkoutVictoryModal
+          session={completedSession()!}
+          onDismiss={() => {
+            setCompletedSession(null);
+            if (props.onFinish) props.onFinish();
+          }}
+        />
       </Show>
     </div>
   );

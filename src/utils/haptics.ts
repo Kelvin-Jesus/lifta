@@ -2,7 +2,9 @@
  * Haptic and discrete audio cues for mobile gym training
  */
 
-export function triggerHaptic(type: 'light' | 'medium' | 'heavy' | 'success' = 'medium'): void {
+export function triggerHaptic(
+  type: 'light' | 'medium' | 'heavy' | 'success' | 'victory' = 'medium'
+): void {
   if (typeof navigator === 'undefined' || !navigator.vibrate) return;
 
   try {
@@ -18,6 +20,9 @@ export function triggerHaptic(type: 'light' | 'medium' | 'heavy' | 'success' = '
         break;
       case 'success':
         navigator.vibrate([30, 60, 40, 60, 50]);
+        break;
+      case 'victory':
+        navigator.vibrate([40, 60, 40, 60, 100]);
         break;
     }
   } catch {

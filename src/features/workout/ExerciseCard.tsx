@@ -94,9 +94,27 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
           </For>
         </div>
 
-        {/* Collapsible Anatomy Vector View */}
+        {/* Collapsible Exercise Motion & Anatomy View */}
         <Show when={showAnatomy()}>
-          <div class="mt-3 p-3 rounded-xl bg-theme-bg border border-theme-subtle flex justify-center animate-in fade-in duration-200">
+          <div class="mt-3 p-3 rounded-xl bg-theme-bg border border-theme-subtle flex flex-col items-center gap-3 animate-in fade-in duration-200">
+            <Show when={catalogDetails()?.gifUrl}>
+              <div class="relative w-full rounded-xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-2">
+                <img
+                  src={catalogDetails()?.gifUrl}
+                  alt={`Demonstração de ${props.exercise.exerciseName}`}
+                  class="max-h-48 w-auto object-contain rounded-lg"
+                  loading="lazy"
+                />
+                <span class="mt-1 text-[10px] text-theme-tertiary font-medium">Demonstração do Movimento</span>
+              </div>
+            </Show>
+
+            <Show when={catalogDetails()?.instructions}>
+              <p class="text-xs text-theme-secondary leading-relaxed self-start">
+                {catalogDetails()?.instructions}
+              </p>
+            </Show>
+
             <BodyHighlighter
               primaryMuscles={catalogDetails()?.primaryMuscles}
               secondaryMuscles={catalogDetails()?.secondaryMuscles}

@@ -39,6 +39,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
             primaryMuscles={primaryMuscles()}
             secondaryMuscles={secondaryMuscles()}
             view={preferredView()}
+            showLabels={false}
             class="h-full w-auto"
           />
           <div class="absolute bottom-1 right-1.5 px-1 py-0.2 rounded bg-theme-surface text-[8px] font-mono uppercase text-theme-tertiary border border-theme-subtle">

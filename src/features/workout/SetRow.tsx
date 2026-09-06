@@ -1,6 +1,7 @@
-import { createSignal, Show, type Component } from 'solid-js';
+import { createSignal, Show, onCleanup, type Component } from 'solid-js';
 import type { ResistanceSet, WorkoutSet } from '../../domain/set';
 import type { SetKind } from '../../domain/types';
+import { triggerHaptic } from '../../utils/haptics';
 
 export interface SetRowProps {
   setIndex: number;
@@ -12,6 +13,64 @@ export interface SetRowProps {
   onSetReps: (val: number) => void;
   onCycleKind: () => void;
   onRemoveSet?: () => void;
+}
+
+function createHoldAction(callback: () => void) {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let interval: ReturnType<typeof setInterval> | null = null;
+  let lastPointerDownTime = 0;
+
+  const stop = () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+  };
+
+  const onPointerDown = (e: PointerEvent) => {
+    if (e.button !== 0) return;
+    lastPointerDownTime = Date.now();
+    callback();
+    triggerHaptic('light');
+
+    timer = setTimeout(() => {
+      let count = 0;
+      const tick = () => {
+        callback();
+        triggerHaptic('light');
+        count++;
+        if (count === 6 && interval) {
+          clearInterval(interval);
+          interval = setInterval(tick, 50);
+        }
+      };
+      interval = setInterval(tick, 100);
+    }, 350);
+  };
+
+  const onClick = () => {
+    if (Date.now() - lastPointerDownTime < 300) {
+      return;
+    }
+    callback();
+    triggerHaptic('light');
+  };
+
+  onCleanup(() => {
+    stop();
+  });
+
+  return {
+    onPointerDown,
+    onPointerUp: stop,
+    onPointerLeave: stop,
+    onPointerCancel: stop,
+    onClick,
+  };
 }
 
 export const SetRow: Component<SetRowProps> = (props) => {
@@ -46,6 +105,11 @@ export const SetRow: Component<SetRowProps> = (props) => {
     }
   };
 
+  const weightMinus = createHoldAction(() => props.onAdjustWeight(-2.5));
+  const weightPlus = createHoldAction(() => props.onAdjustWeight(2.5));
+  const repsMinus = createHoldAction(() => props.onAdjustReps(-1));
+  const repsPlus = createHoldAction(() => props.onAdjustReps(1));
+
   return (
     <div
       class={`flex items-center justify-between py-2 px-3 transition-colors duration-150 border-b border-theme-subtle select-none ${
@@ -70,8 +134,12 @@ export const SetRow: Component<SetRowProps> = (props) => {
       <div class="flex items-center gap-1">
         <button
           type="button"
-          onClick={() => props.onAdjustWeight(-2.5)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-md font-bold text-sm"
+          onPointerDown={weightMinus.onPointerDown}
+          onPointerUp={weightMinus.onPointerUp}
+          onPointerLeave={weightMinus.onPointerLeave}
+          onPointerCancel={weightMinus.onPointerCancel}
+          onClick={weightMinus.onClick}
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-md font-bold text-sm select-none active:scale-95 transition-transform"
           aria-label="Diminuir 2.5 kg"
           data-testid={`btn-weight-minus-${props.setIndex}`}
         >
@@ -120,8 +188,12 @@ export const SetRow: Component<SetRowProps> = (props) => {
 
         <button
           type="button"
-          onClick={() => props.onAdjustWeight(2.5)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
+          onPointerDown={weightPlus.onPointerDown}
+          onPointerUp={weightPlus.onPointerUp}
+          onPointerLeave={weightPlus.onPointerLeave}
+          onPointerCancel={weightPlus.onPointerCancel}
+          onClick={weightPlus.onClick}
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm select-none active:scale-95 transition-transform"
           aria-label="Aumentar 2.5 kg"
           data-testid={`btn-weight-plus-${props.setIndex}`}
         >
@@ -133,8 +205,12 @@ export const SetRow: Component<SetRowProps> = (props) => {
       <div class="flex items-center gap-1">
         <button
           type="button"
-          onClick={() => props.onAdjustReps(-1)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
+          onPointerDown={repsMinus.onPointerDown}
+          onPointerUp={repsMinus.onPointerUp}
+          onPointerLeave={repsMinus.onPointerLeave}
+          onPointerCancel={repsMinus.onPointerCancel}
+          onClick={repsMinus.onClick}
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm select-none active:scale-95 transition-transform"
           aria-label="Diminuir 1 repetição"
           data-testid={`btn-reps-minus-${props.setIndex}`}
         >
@@ -182,8 +258,12 @@ export const SetRow: Component<SetRowProps> = (props) => {
 
         <button
           type="button"
-          onClick={() => props.onAdjustReps(1)}
-          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm transition-all"
+          onPointerDown={repsPlus.onPointerDown}
+          onPointerUp={repsPlus.onPointerUp}
+          onPointerLeave={repsPlus.onPointerLeave}
+          onPointerCancel={repsPlus.onPointerCancel}
+          onClick={repsPlus.onClick}
+          class="w-10 h-11 min-w-[40px] flex items-center justify-center text-theme-secondary active:text-theme-primary active:bg-theme-elevated rounded-lg font-bold text-sm select-none active:scale-95 transition-transform"
           aria-label="Aumentar 1 repetição"
           data-testid={`btn-reps-plus-${props.setIndex}`}
         >
