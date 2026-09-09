@@ -30,6 +30,11 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
         targetSets: 3,
         suggestedRestSeconds: 60,
       },
+      {
+        exerciseId: 'incline-dumbbell-press',
+        targetSets: 3,
+        suggestedRestSeconds: 60,
+      },
     ],
   };
 
@@ -166,13 +171,112 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     expect(container.querySelector('[data-testid="workout-deck"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="deck-carousel"]')).not.toBeNull();
 
-    // Segmented progress bar should have 2 segments
+    // Segmented progress bar should have 3 segments
     const segment0 = container.querySelector('[data-testid="progress-segment-0"]');
     const segment1 = container.querySelector('[data-testid="progress-segment-1"]');
+    const segment2 = container.querySelector('[data-testid="progress-segment-2"]');
     expect(segment0).not.toBeNull();
     expect(segment1).not.toBeNull();
+    expect(segment2).not.toBeNull();
 
     // Progressive overload target banner should be visible
     expect(container.textContent).toContain('Sobrecarga Progressiva');
   });
+
+  it('enforces strict single-exercise navigation via wheel with momentum lock', async () => {
+    indexedDB = new IDBFactory();
+    await activeWorkoutStore.startWorkout(sampleRoutine);
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <WorkoutDeck />, container);
+
+    const carousel = container.querySelector('[data-testid="deck-carousel"]') as HTMLElement;
+    expect(carousel).not.toBeNull();
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
+
+    // 1. Send first wheel swipe event: deltaX = 40 (past threshold of 25)
+    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 40, deltaY: 0, bubbles: true }));
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+
+    // 2. High-force momentum burst arrives immediately (same swipe gesture): deltaX = 120, 200, 80
+    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 120, deltaY: 0, bubbles: true }));
+    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 200, deltaY: 0, bubbles: true }));
+    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 80, deltaY: 0, bubbles: true }));
+
+    // Must STAY at index 1! Multi-skipping past 1 to 2 is strictly blocked by momentum lock!
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+
+    // 3. Dominant vertical scroll should NOT trigger horizontal card change
+    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 10, deltaY: 50, bubbles: true }));
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+  });
+
+  it('navigates exercises via keyboard arrows and chevrons', async () => {
+    indexedDB = new IDBFactory();
+    await activeWorkoutStore.startWorkout(sampleRoutine);
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <WorkoutDeck />, container);
+
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
+
+    // ArrowRight navigates to next
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+
+    // ArrowRight again navigates to 2
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(2);
+
+    // At last exercise, ArrowRight doesn't go out of bounds
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(2);
+
+    // Chevron prev navigates back to 1
+    const prevBtn = container.querySelector('[data-testid="btn-deck-prev"]') as HTMLButtonElement;
+    expect(prevBtn).not.toBeNull();
+    prevBtn.click();
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+
+    // Segment progress button navigates directly
+    const segment0 = container.querySelector('[data-testid="progress-segment-0"]') as HTMLButtonElement;
+    segment0.click();
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
+  });
+
+  it('enforces strict single-exercise navigation via touch swipe', async () => {
+    indexedDB = new IDBFactory();
+    await activeWorkoutStore.startWorkout(sampleRoutine);
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <WorkoutDeck />, container);
+
+    const carousel = container.querySelector('[data-testid="deck-carousel"]') as HTMLElement;
+    expect(carousel).not.toBeNull();
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
+
+    // Simulate touch swipe left (to go to next exercise)
+    carousel.dispatchEvent(
+      new TouchEvent('touchstart', {
+        touches: [{ clientX: 250, clientY: 200 } as Touch],
+        bubbles: true,
+      })
+    );
+    carousel.dispatchEvent(
+      new TouchEvent('touchmove', {
+        touches: [{ clientX: 150, clientY: 200 } as Touch], // deltaX = -100
+        bubbles: true,
+      })
+    );
+    carousel.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+
+    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+  });
 });
+
