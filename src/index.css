@@ -770,4 +770,34 @@ html, body {
   scrollbar-width: none;
 }
 
+/* Catalog Accordion Animation */
+.catalog-accordion-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms var(--ease-apple);
+}
 
+.catalog-accordion-grid.expanded {
+  grid-template-rows: 1fr;
+}
+
+.catalog-accordion-inner {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 200ms var(--ease-apple), transform 220ms var(--ease-apple);
+}
+
+.catalog-accordion-grid.expanded .catalog-accordion-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.catalog-chevron {
+  transition: transform 220ms var(--ease-apple);
+  transform: rotate(0deg);
+}
+
+.catalog-chevron.expanded {
+  transform: rotate(180deg);
+}

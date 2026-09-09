@@ -97,7 +97,7 @@ export const CatalogView: Component = () => {
                 onClick={() => setExpandedId(isExpanded() ? null : ex.id)}
                 data-testid={`catalog-card-${ex.id}`}
               >
-                <div class="flex items-center justify-between w-full cursor-pointer">
+                <div class="flex items-center justify-between w-full cursor-pointer" aria-expanded={isExpanded()}>
                   <div>
                     <div class="row-title">{ex.name}</div>
                     <div class="row-desc">
@@ -105,75 +105,95 @@ export const CatalogView: Component = () => {
                     </div>
                   </div>
 
-                  <span class="row-arrow">
-                    {isExpanded() ? '▲' : '›'}
-                  </span>
+                  <svg
+                    class={`w-4 h-4 text-theme-tertiary catalog-chevron flex-shrink-0 ${
+                      isExpanded() ? 'expanded' : ''
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                    data-testid={`catalog-chevron-${ex.id}`}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
 
-                {/* Expanded Details with Animated GIF & Anatomy */}
-                <Show when={isExpanded()}>
-                  <div
-                    class="pt-3 border-t border-theme-subtle flex flex-col gap-3.5"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {/* Exercise Motion Demo GIF */}
-                    <Show when={ex.gifUrl}>
-                      <div class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3">
-                        <img
-                          src={ex.gifUrl}
-                          alt={`Demonstração de execução: ${ex.name}`}
-                          class="max-h-60 w-auto object-contain rounded-xl shadow-xs"
-                          loading="lazy"
-                        />
-                        <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-theme-secondary">
-                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span>Demonstração do Movimento</span>
+                {/* Expanded Details with Animated GIF & Anatomy (Smooth CSS Grid Accordion) */}
+                <div
+                  class={`catalog-accordion-grid w-full ${isExpanded() ? 'expanded' : ''}`}
+                  data-testid={`catalog-accordion-${ex.id}`}
+                  aria-hidden={!isExpanded()}
+                >
+                  <div class="catalog-accordion-inner w-full">
+                    <div
+                      class="pt-3 border-t border-theme-subtle flex flex-col gap-3.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* Exercise Motion Demo GIF */}
+                      <Show when={ex.gifUrl}>
+                        <div class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3">
+                          <img
+                            src={ex.gifUrl}
+                            alt={`Demonstração de execução: ${ex.name}`}
+                            class="max-h-60 w-auto object-contain rounded-xl shadow-xs"
+                            loading="lazy"
+                          />
+                          <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-theme-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>Demonstração do Movimento</span>
+                          </div>
                         </div>
-                      </div>
-                    </Show>
+                      </Show>
 
-                    {/* Step by step instructions */}
-                    <Show when={ex.instructions}>
-                      <div class="p-3 rounded-xl bg-theme-elevated/40 border border-theme-subtle">
-                        <span class="text-[10px] uppercase font-bold tracking-wider text-theme-tertiary block mb-1">
-                          Instruções de Execução
+                      {/* Step by step instructions */}
+                      <Show when={ex.instructions}>
+                        <div class="p-3 rounded-xl bg-theme-elevated/40 border border-theme-subtle">
+                          <span class="text-[10px] uppercase font-bold tracking-wider text-theme-tertiary block mb-1">
+                            Instruções de Execução
+                          </span>
+                          <p class="text-xs text-theme-primary leading-relaxed">
+                            {ex.instructions}
+                          </p>
+                        </div>
+                      </Show>
+
+                      {/* Muscle Groups & Anatomy */}
+                      <div class="p-3 rounded-xl bg-theme-elevated/40 border border-theme-subtle flex flex-col items-center gap-2">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-theme-tertiary block self-start">
+                          Músculos Alvo
                         </span>
-                        <p class="text-xs text-theme-primary leading-relaxed">
-                          {ex.instructions}
-                        </p>
-                      </div>
-                    </Show>
-
-                    {/* Muscle Groups & Anatomy */}
-                    <div class="p-3 rounded-xl bg-theme-elevated/40 border border-theme-subtle flex flex-col items-center gap-2">
-                      <span class="text-[10px] uppercase font-bold tracking-wider text-theme-tertiary block self-start">
-                        Músculos Alvo
-                      </span>
-                      <BodyHighlighter
-                        primaryMuscles={ex.primaryMuscles}
-                        secondaryMuscles={ex.secondaryMuscles}
-                        view="both"
-                        class="h-44"
-                      />
-                      <div class="flex flex-wrap gap-1.5 justify-center mt-1">
-                        <For each={ex.primaryMuscles}>
-                          {(m) => (
-                            <span class="muscle-badge">
-                              {formatMuscleName(m)} (Primário)
-                            </span>
-                          )}
-                        </For>
-                        <For each={ex.secondaryMuscles}>
-                          {(m) => (
-                            <span class="muscle-badge-secondary">
-                              {formatMuscleName(m)}
-                            </span>
-                          )}
-                        </For>
+                        <BodyHighlighter
+                          primaryMuscles={ex.primaryMuscles}
+                          secondaryMuscles={ex.secondaryMuscles}
+                          view="both"
+                          class="h-44"
+                        />
+                        <div class="flex flex-wrap gap-1.5 justify-center mt-1">
+                          <For each={ex.primaryMuscles}>
+                            {(m) => (
+                              <span class="muscle-badge">
+                                {formatMuscleName(m)} (Primário)
+                              </span>
+                            )}
+                          </For>
+                          <For each={ex.secondaryMuscles}>
+                            {(m) => (
+                              <span class="muscle-badge-secondary">
+                                {formatMuscleName(m)}
+                              </span>
+                            )}
+                          </For>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </Show>
+                </div>
               </div>
             );
           }}

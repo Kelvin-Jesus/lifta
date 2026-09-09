@@ -46,21 +46,38 @@ describe('CatalogView', () => {
     expect(container.textContent).toContain('Supino Reto com Barra');
   });
 
-  it('expands and collapses exercise details on click', async () => {
+  it('expands and collapses exercise details on click with smooth accordion and rotating chevron', async () => {
     render(() => <CatalogView />, container);
 
     const exerciseCard = container.querySelector('[data-testid="catalog-card-bench-press"]') as HTMLElement;
     expect(exerciseCard).not.toBeNull();
 
+    const accordion = container.querySelector('[data-testid="catalog-accordion-bench-press"]') as HTMLElement;
+    const chevron = container.querySelector('[data-testid="catalog-chevron-bench-press"]') as HTMLElement;
+    expect(accordion).not.toBeNull();
+    expect(chevron).not.toBeNull();
+
+    // Initial state: collapsed
+    expect(accordion.classList.contains('expanded')).toBe(false);
+    expect(chevron.classList.contains('expanded')).toBe(false);
+    expect(accordion.getAttribute('aria-hidden')).toBe('true');
+
     // Click to expand
     exerciseCard.click();
     await new Promise((r) => setTimeout(r, 40));
+
+    expect(accordion.classList.contains('expanded')).toBe(true);
+    expect(chevron.classList.contains('expanded')).toBe(true);
+    expect(accordion.getAttribute('aria-hidden')).toBe('false');
     expect(container.textContent).toContain('Deite-se no banco');
 
     // Click to collapse
     exerciseCard.click();
     await new Promise((r) => setTimeout(r, 40));
-    expect(container.textContent).not.toContain('Deite-se no banco');
+
+    expect(accordion.classList.contains('expanded')).toBe(false);
+    expect(chevron.classList.contains('expanded')).toBe(false);
+    expect(accordion.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('renders gif, instructions, and target muscles when expanded without collapsing on details click', async () => {
