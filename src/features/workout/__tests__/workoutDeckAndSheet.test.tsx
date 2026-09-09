@@ -127,6 +127,67 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     expect(onSubstitute).toHaveBeenCalledTimes(1);
   });
 
+  it('prioritizes execution GIF by default and allows 1-tap toggle to muscle anatomy', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(
+      () => <MuscleFocusCard exerciseId="bench-press" />,
+      container
+    );
+
+    // Default view: Execution GIF
+    expect(container.textContent).toContain('Demonstração do Movimento');
+    expect(container.textContent).toContain('Peitoral');
+    const gifThumbnail = container.querySelector('[data-testid="exercise-gif-thumbnail"]') as HTMLElement;
+    expect(gifThumbnail).not.toBeNull();
+    const gifImg = gifThumbnail.querySelector('img') as HTMLImageElement;
+    expect(gifImg).not.toBeNull();
+    expect(gifImg.src).toContain('.gif');
+
+    // Switch to Muscles Anatomy
+    const toggleMusclesBtn = container.querySelector('[data-testid="btn-media-toggle-muscles"]') as HTMLButtonElement;
+    expect(toggleMusclesBtn).not.toBeNull();
+    toggleMusclesBtn.click();
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(container.textContent).toContain('Foco Muscular');
+    const anatomyThumbnail = container.querySelector('[data-testid="exercise-anatomy-thumbnail"]') as HTMLElement;
+    expect(anatomyThumbnail).not.toBeNull();
+
+    // Switch back to Execution GIF
+    const toggleExecutionBtn = container.querySelector('[data-testid="btn-media-toggle-execution"]') as HTMLButtonElement;
+    expect(toggleExecutionBtn).not.toBeNull();
+    toggleExecutionBtn.click();
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(container.textContent).toContain('Demonstração do Movimento');
+    expect(container.querySelector('[data-testid="exercise-gif-thumbnail"]')).not.toBeNull();
+  });
+
+  it('opens full exercise details bottom sheet with looping GIF, instructions, and full anatomy', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(
+      () => <MuscleFocusCard exerciseId="bench-press" />,
+      container
+    );
+
+    // Click details button to open bottom sheet
+    const detailsBtn = container.querySelector('[data-testid="btn-open-exercise-details"]') as HTMLButtonElement;
+    expect(detailsBtn).not.toBeNull();
+    detailsBtn.click();
+    await new Promise((r) => setTimeout(r, 20));
+
+    // Verify sheet content
+    expect(container.querySelector('[data-testid="sheet-execution-gif"]')).not.toBeNull();
+    expect(container.textContent).toContain('Instruções de Postura e Execução');
+    expect(container.textContent).toContain('Músculos Primários (100% ativação)');
+    expect(container.textContent).toContain('Músculos Sinergistas (42% ativação)');
+  });
+
+
   it('renders SubstituteExerciseSheet and selects alternative exercise', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
