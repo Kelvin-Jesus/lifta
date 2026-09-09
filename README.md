@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="public/logo.png" alt="Lifta logo" width="200">
+  <img src="public/logo-transparent.png" alt="" width="320">
 </p>
 
 <h1 align="center">Lifta</h1>
 
 <p align="center">
-  <strong>Treine. Registre. Evolua.</strong>
+  <strong>Train. Track. Progress.</strong>
 </p>
 
 <p align="center">
@@ -29,6 +29,43 @@ device.
 > Lifta is under active development. The interface is currently in Brazilian
 > Portuguese, and a new local database is populated with sample Routines and
 > WorkoutSessions so the experience can be explored immediately.
+
+## A quick look
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/screenshots/home-dashboard.png" alt="Lifta home dashboard with workout heatmap and today's Routine" width="100%">
+      <br>
+      <strong>Progress at a glance</strong>
+      <br>
+      <sub>Today's Routine and training heatmap.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/screenshots/active-session.png" alt="Lifta ActiveSession with complete set controls and RestTimer" width="100%">
+      <br>
+      <strong>Fast set logging</strong>
+      <br>
+      <sub>Tactile controls, muscle focus, and a floating RestTimer.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/screenshots/exercise-catalog.png" alt="Lifta exercise catalog with instructions and MuscleMap" width="100%">
+      <br>
+      <strong>Exercise intelligence</strong>
+      <br>
+      <sub>Exercise instructions and anatomical MuscleMaps.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/screenshots/local-data.png" alt="Lifta settings with local backup and export controls" width="100%">
+      <br>
+      <strong>Your data, your device</strong>
+      <br>
+      <sub>Local persistence, portable backups, CSV export, and WebMCP.</sub>
+    </td>
+  </tr>
+</table>
 
 ## Built for the gym floor
 
