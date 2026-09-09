@@ -127,6 +127,16 @@ Before writing any Effect code, first read `node_modules/effect/AGENTS.md` **com
 
 If you need to learn more about particular Effect apis and concepts that the guide doesn't cover, search through the source code in `node_modules/effect/src`.
 
+## Mandatory Regression Testing Policy
+
+For any modification, bug fix, or feature refinement:
+- Agents MUST ALWAYS generate and maintain regression tests of all applicable types:
+  1. **Unit Tests**: Domain entities, calculations, stores, reducers, and validators.
+  2. **Component & Integration Tests**: Component rendering, visual structure, DOM hierarchy, and CSS layout classes.
+  3. **Interaction & Native Behavior Tests**: Explicitly verify that native browser/OS ergonomics (such as native `overflow-x-auto snap-x snap-mandatory` horizontal scroll, touch gestures, keyboard shortcuts) are preserved without unwanted button carousels or artificial overrides.
+  4. **E2E & Adversarial Tests**: Critical user journeys and edge cases via browser testing.
+- Never consider any task complete without dedicated regression test cases specifically guarding against regressions of the modified or fixed behavior.
+
 ---
 
 ## Git Discipline & Automatic Commits
@@ -144,3 +154,4 @@ Agents MUST maintain a clean, atomic Git history. Do not let uncommitted work ac
    - Use Conventional Commits format (`feat(...)`, `fix(...)`, `refactor(...)`, `style(...)`, `test(...)`, `chore(...)`).
    - Write clear, descriptive commit messages outlining what was changed and why.
    - Stage files intentionally by logical unit; do not blindly `git add .` when changes span unrelated areas.
+

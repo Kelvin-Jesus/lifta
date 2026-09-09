@@ -244,7 +244,7 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     expect(container.textContent).toContain('Sobrecarga Progressiva');
   });
 
-  it('enforces strict single-exercise navigation via wheel with momentum lock', async () => {
+  it('renders native snap-mandatory container and confirms absence of artificial carousel buttons', async () => {
     indexedDB = new IDBFactory();
     await activeWorkoutStore.startWorkout(sampleRoutine);
 
@@ -255,26 +255,22 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
 
     const carousel = container.querySelector('[data-testid="deck-carousel"]') as HTMLElement;
     expect(carousel).not.toBeNull();
-    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
+    expect(carousel.className).toContain('overflow-x-auto');
+    expect(carousel.className).toContain('snap-x');
+    expect(carousel.className).toContain('snap-mandatory');
 
-    // 1. Send first wheel swipe event: deltaX = 40 (past threshold of 25)
-    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 40, deltaY: 0, bubbles: true }));
-    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+    // Regression check: artificial floating carousel buttons must NOT exist
+    expect(container.querySelector('[data-testid="btn-deck-prev"]')).toBeNull();
+    expect(container.querySelector('[data-testid="btn-deck-next"]')).toBeNull();
 
-    // 2. High-force momentum burst arrives immediately (same swipe gesture): deltaX = 120, 200, 80
-    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 120, deltaY: 0, bubbles: true }));
-    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 200, deltaY: 0, bubbles: true }));
-    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 80, deltaY: 0, bubbles: true }));
-
-    // Must STAY at index 1! Multi-skipping past 1 to 2 is strictly blocked by momentum lock!
-    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
-
-    // 3. Dominant vertical scroll should NOT trigger horizontal card change
-    carousel.dispatchEvent(new WheelEvent('wheel', { deltaX: 10, deltaY: 50, bubbles: true }));
-    expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
+    // Pages must be direct snap-center children
+    const page0 = container.querySelector('[data-testid="deck-page-0"]') as HTMLElement;
+    expect(page0).not.toBeNull();
+    expect(page0.className).toContain('snap-center');
+    expect(page0.className).toContain('min-w-full');
   });
 
-  it('navigates exercises via keyboard arrows and chevrons', async () => {
+  it('navigates exercises via keyboard arrows and segmented progress bar', async () => {
     indexedDB = new IDBFactory();
     await activeWorkoutStore.startWorkout(sampleRoutine);
 
@@ -297,10 +293,8 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(2);
 
-    // Chevron prev navigates back to 1
-    const prevBtn = container.querySelector('[data-testid="btn-deck-prev"]') as HTMLButtonElement;
-    expect(prevBtn).not.toBeNull();
-    prevBtn.click();
+    // ArrowLeft navigates back to 1
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
     expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
 
     // Segment progress button navigates directly
@@ -309,7 +303,7 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
   });
 
-  it('enforces strict single-exercise navigation via touch swipe', async () => {
+  it('syncs active exercise index on native scroll event', async () => {
     indexedDB = new IDBFactory();
     await activeWorkoutStore.startWorkout(sampleRoutine);
 
@@ -322,20 +316,11 @@ describe('Exercise Carousel, Muscle Focus Card and Fluid Bottom Sheet', () => {
     expect(carousel).not.toBeNull();
     expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(0);
 
-    // Simulate touch swipe left (to go to next exercise)
-    carousel.dispatchEvent(
-      new TouchEvent('touchstart', {
-        touches: [{ clientX: 250, clientY: 200 } as Touch],
-        bubbles: true,
-      })
-    );
-    carousel.dispatchEvent(
-      new TouchEvent('touchmove', {
-        touches: [{ clientX: 150, clientY: 200 } as Touch], // deltaX = -100
-        bubbles: true,
-      })
-    );
-    carousel.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+    // Mock clientWidth and scrollLeft
+    Object.defineProperty(carousel, 'clientWidth', { value: 375, writable: true, configurable: true });
+    Object.defineProperty(carousel, 'scrollLeft', { value: 375, writable: true, configurable: true });
+
+    carousel.dispatchEvent(new Event('scroll'));
 
     expect(activeWorkoutStore.session()?.activeExerciseIndex).toBe(1);
   });

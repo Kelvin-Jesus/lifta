@@ -156,6 +156,16 @@ When writing or modifying Effect code:
 * Avoid tool ceremony: don't run every tool on every turn, and don't produce giant plans for small changes.
 * Verify real behavior with tests and UI QA before declaring work complete.
 
+## Mandatory Regression Testing Policy
+
+For any modification, bugfix, or feature enhancement:
+- Agents MUST ALWAYS generate and maintain regression tests of all possible types:
+  1. **Unit**: Domain models, calculations, stores, reducers, and validators.
+  2. **Component & Integration**: Component rendering, visual structure, DOM hierarchy, and CSS layout classes.
+  3. **Interaction & Native Behavior**: Preservation of native browser/OS ergonomics (e.g., native `overflow-x-auto snap-x` horizontal scroll, gestures, keyboard shortcuts) without unwanted button carousels or artificial overrides.
+  4. **E2E & Adversarial**: Critical user journeys and edge cases.
+- Never declare a fix or feature complete without dedicated regression test cases specifically guarding against regressions of the fixed behavior.
+
 ---
 
 ## Git Discipline & Automatic Commits
@@ -164,3 +174,4 @@ When writing or modifying Effect code:
 * **Pre-commit verification**: Run `pnpm typecheck` and `pnpm test` before any commit. Never commit with failing tests or broken types.
 * **Semantic messages**: Use Conventional Commits (`feat`, `fix`, `style`, `refactor`, `test`, `chore`).
 * **Atomic staging**: Group logically related files together; do not blindly `git add .` across unrelated features.
+

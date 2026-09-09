@@ -64,6 +64,13 @@ graph TD
 - **Sem cerimônia:** Não gerar planos gigantes para alterações pequenas nem invocar todas as ferramentas desnecessariamente.
 
 ## 5. Verificação, Revisão e Conclusão
-- Validar as alterações executando testes reais.
+- **Geração Obrigatória de Testes de Regressão de Todos os Tipos Possíveis**:
+  Toda e qualquer alteração de código (seja nova feature, refatoração de UX ou correção de bug) DEVE obrigatoriamente criar ou estender testes de regressão de todos os tipos pertinentes:
+  1. **Unitários**: Regras de negócio, cálculos de domínio, formatadores e stores reativos.
+  2. **Integração & Componentes**: Renderização no DOM, estado reativo, classes CSS estruturais e ausência de elementos intrusivos.
+  3. **Interação, Gestos e Comportamentos Nativos**: Validar explicitamente que comportamentos nativos (rolagem nativa `overflow-x-auto snap-x snap-mandatory`, navegação via teclado, ausência de botões artificiais de carrossel onde há scroll nativo) não sofram regressão.
+  4. **E2E e Adversariais**: Validar fluxos completos de ponta a ponta e casos de borda.
+- Validar rigorosamente as alterações executando `pnpm typecheck` e `pnpm test`.
 - Aplicar `code-review` proporcional ao tamanho e risco da mudança.
 - **Após o trabalho:** Persistir decisões arquiteturais duráveis, lições aprendidas e trade-offs no `ai-memory`.
+
