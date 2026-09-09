@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-09-08T21:30:00.000Z",
+  "settings": {
+    "key": "app_settings",
+    "theme": "dark",
+    "accentColor": "blue",
+    "bodyWeightKg": 75.0,
+    "soundEnabled": true,
+    "vibrationEnabled": true,
+    "ollamaEndpoint": "http://localhost:11434"
+  },
+  "routines": [
+    {
+      "id": "routine-a-voce",
+      "name": "Treino A • Pernas + Empurrar (Você)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até 12 reps, depois aumente a carga.",
+      "scheduledDays": [
+        "wednesday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "leg-press-45",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Leg Press 45º. 3 × 8–12 reps. Manter 2 repetições de reserva (2 RIR)."
+        },
+        {
+          "exerciseId": "bench-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino na máquina articulada ou guiada. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "leg-extension",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Cadeira extensora. 2 × 10–15 reps com movimento controlado."
+        },
+        {
+          "exerciseId": "dumbbell-shoulder-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Desenvolvimento na máquina ou com halteres. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "lat-pulldown",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Puxada frontal na polia alta. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "lateral-raise",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Elevação lateral com halteres. 2 séries de 10–15 reps."
+        },
+        {
+          "exerciseId": "tricep-rope-pushdown",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Tríceps na polia com corda. 2 séries de 10–15 reps."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "id": "routine-b-voce",
+      "name": "Treino B • Posterior + Costas (Você)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até o topo, depois aumente a carga.",
+      "scheduledDays": [
+        "friday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "romanian-deadlift",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 10,
+          "suggestedRestSeconds": 90,
+          "notes": "Romeno com halteres (RDL). 3 × 8–10 reps. Foco na cadeia posterior e glúteos (2 RIR)."
+        },
+        {
+          "exerciseId": "seated-cable-row",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Remada sentada no cabo. 3 × 8–12 reps com pico de contração."
+        },
+        {
+          "exerciseId": "lying-leg-curl",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Mesa flexora. 3 × 10–15 reps com descida controlada."
+        },
+        {
+          "exerciseId": "incline-dumbbell-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino inclinado com halteres. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "hip-thrust",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Elevação pélvica. 3 × 8–12 reps com pausa no topo."
+        },
+        {
+          "exerciseId": "dumbbell-incline-curl",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Rosca de bíceps com halteres. 2 séries de 10–12 reps."
+        },
+        {
+          "exerciseId": "standing-calf-raise-machine",
+          "targetSets": 2,
+          "targetRepsMin": 12,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Panturrilha em pé na máquina. 2 séries de 12–15 reps."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "id": "routine-c-voce",
+      "name": "Treino C • Corpo Inteiro (Você)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até o topo, depois aumente a carga.",
+      "scheduledDays": [
+        "sunday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "barbell-squat",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Agachamento hack na máquina ou goblet squat com halter. 3 × 8–12 reps."
+        },
+        {
+          "exerciseId": "lat-pulldown",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Puxada frontal na polia alta. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "walking-lunge",
+          "targetSets": 2,
+          "targetRepsMin": 8,
+          "targetRepsMax": 10,
+          "suggestedRestSeconds": 60,
+          "notes": "Afundo com halteres. 2 séries de 8–10 reps por perna."
+        },
+        {
+          "exerciseId": "bench-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino na máquina articulada ou reto. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "seated-cable-row",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Remada sentada no cabo. 3 × 8–12 reps."
+        },
+        {
+          "exerciseId": "plank",
+          "targetSets": 2,
+          "targetRepsMin": 30,
+          "targetRepsMax": 45,
+          "suggestedRestSeconds": 45,
+          "notes": "Prancha isométrica no solo. 2 séries de 30–45 segundos."
+        },
+        {
+          "exerciseId": "barbell-bicep-curl",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Rosca de bíceps com barra ou halteres. 2 séries de 10–12 reps."
+        },
+        {
+          "exerciseId": "tricep-rope-pushdown",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Últimos 8 min (Você): Tríceps na polia com corda. 2 séries de 10–15 reps."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "id": "routine-a-ela",
+      "name": "Treino A • Pernas + Empurrar (Ela)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até 12 reps, depois aumente a carga.",
+      "scheduledDays": [
+        "wednesday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "leg-press-45",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Leg Press 45º. 3 × 8–12 reps. Manter 2 repetições de reserva (2 RIR)."
+        },
+        {
+          "exerciseId": "bench-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino na máquina articulada ou guiada. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "leg-extension",
+          "targetSets": 2,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Cadeira extensora. 2 × 10–15 reps com movimento controlado."
+        },
+        {
+          "exerciseId": "dumbbell-shoulder-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Desenvolvimento na máquina ou com halteres. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "lat-pulldown",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Puxada frontal na polia alta. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "treadmill-running",
+          "targetSets": 1,
+          "targetRepsMin": 8,
+          "targetRepsMax": 8,
+          "suggestedRestSeconds": 0,
+          "notes": "Últimos 8 min (Ela): Caminhada inclinada na esteira em ritmo moderado por 8 minutos."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "id": "routine-b-ela",
+      "name": "Treino B • Posterior + Costas (Ela)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até o topo, depois aumente a carga.",
+      "scheduledDays": [
+        "friday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "romanian-deadlift",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 10,
+          "suggestedRestSeconds": 90,
+          "notes": "Romeno com halteres (RDL). 3 × 8–10 reps. Foco na cadeia posterior e glúteos (2 RIR)."
+        },
+        {
+          "exerciseId": "seated-cable-row",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Remada sentada no cabo. 3 × 8–12 reps com pico de contração."
+        },
+        {
+          "exerciseId": "lying-leg-curl",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "Mesa flexora. 3 × 10–15 reps com descida controlada."
+        },
+        {
+          "exerciseId": "incline-dumbbell-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino inclinado com halteres. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "hip-thrust",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Elevação pélvica. 3 × 8–12 reps com pausa no topo."
+        },
+        {
+          "exerciseId": "stationary-bike",
+          "targetSets": 1,
+          "targetRepsMin": 8,
+          "targetRepsMax": 8,
+          "suggestedRestSeconds": 0,
+          "notes": "Últimos 8 min (Ela): Bicicleta ergométrica ritmo moderado, acelerando 20 segundos a cada minuto (8 min total)."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    },
+    {
+      "id": "routine-c-ela",
+      "name": "Treino C • Corpo Inteiro (Ela)",
+      "description": "Aquecimento: 6 min • Duração: ~60 min • RIR 2 (deixe 2 reps na reserva). Progressão: +1 rep/semana até o topo, depois aumente a carga.",
+      "scheduledDays": [
+        "sunday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "barbell-squat",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Agachamento hack na máquina ou goblet squat com halter. 3 × 8–12 reps."
+        },
+        {
+          "exerciseId": "lat-pulldown",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Puxada frontal na polia alta. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "walking-lunge",
+          "targetSets": 2,
+          "targetRepsMin": 8,
+          "targetRepsMax": 10,
+          "suggestedRestSeconds": 60,
+          "notes": "Afundo com halteres. 2 séries de 8–10 reps por perna."
+        },
+        {
+          "exerciseId": "bench-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Supino na máquina articulada ou reto. 3 × 8–12 reps (2 RIR)."
+        },
+        {
+          "exerciseId": "seated-cable-row",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "Remada sentada no cabo. 3 × 8–12 reps."
+        },
+        {
+          "exerciseId": "plank",
+          "targetSets": 2,
+          "targetRepsMin": 30,
+          "targetRepsMax": 45,
+          "suggestedRestSeconds": 45,
+          "notes": "Prancha isométrica no solo. 2 séries de 30–45 segundos."
+        },
+        {
+          "exerciseId": "treadmill-running",
+          "targetSets": 1,
+          "targetRepsMin": 8,
+          "targetRepsMax": 8,
+          "suggestedRestSeconds": 0,
+          "notes": "Últimos 8 min (Ela): Esteira ou elíptico em ritmo moderado por 8 minutos."
+        }
+      ],
+      "createdAt": "2026-09-08T21:30:00.000Z",
+      "updatedAt": "2026-09-08T21:30:00.000Z"
+    }
+  ],
+  "workoutSessions": []
+}
