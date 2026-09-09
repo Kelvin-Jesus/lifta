@@ -115,6 +115,47 @@ describe('Exportação e Importação Soberana (JSON & CSV)', () => {
     expect(csv).toContain('80,10,true,8');
   });
 
+  it('deve permitir importar arquivo com apenas rotinas (sem sobrescrever settings)', async () => {
+    const routinePayload = JSON.stringify({
+      schemaVersion: 1,
+      exportedAt: '2026-09-08T00:00:00.000Z',
+      routines: [
+        {
+          id: 'routine-import-only-1',
+          name: 'Treino A • Pernas',
+          scheduledDays: ['wednesday'],
+          exercises: [{ exerciseId: 'leg-press-45', targetSets: 3, suggestedRestSeconds: 90 }],
+          createdAt: '2026-09-08T00:00:00.000Z',
+          updatedAt: '2026-09-08T00:00:00.000Z',
+        },
+      ],
+    });
+
+    const res = await Effect.runPromise(importLiftaJson(routinePayload));
+    expect(res.routinesImported).toBe(1);
+    expect(res.sessionsImported).toBe(0);
+    expect(res.settingsRestored).toBe(false);
+
+    const saved = await Effect.runPromise(RoutineRepository.getById('routine-import-only-1'));
+    expect(saved?.name).toBe('Treino A • Pernas');
+  });
+
+  it('deve importar os arquivos de treino gerados sem nenhum erro', async () => {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+
+    const fileContent = await fs.readFile(path.resolve(__dirname, '../../../treino-casal.lifta.json'), 'utf-8');
+    const res = await Effect.runPromise(importLiftaJson(fileContent));
+
+    expect(res.routinesImported).toBe(6);
+    expect(res.sessionsImported).toBe(0);
+
+    const routineA = await Effect.runPromise(RoutineRepository.getById('routine-a-voce'));
+    expect(routineA).not.toBeNull();
+    expect(routineA?.name).toBe('Treino A • Pernas + Empurrar (Você)');
+    expect(routineA?.exercises.length).toBe(7);
+  });
+
   it('deve rejeitar JSON inválido com ValidationError tipado', async () => {
     const corruptedJson = '{"schemaVersion": 1, "routines": "invalido"}';
 

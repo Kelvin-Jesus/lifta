@@ -9,9 +9,9 @@ import { StorageError, ValidationError } from '../domain/errors';
 export const LiftaBackupSchema = Schema.Struct({
   schemaVersion: Schema.Literal(1),
   exportedAt: Schema.String,
-  settings: SettingsSchema,
+  settings: Schema.optional(SettingsSchema),
   routines: Schema.Array(Routine),
-  workoutSessions: Schema.Array(WorkoutSession),
+  workoutSessions: Schema.optional(Schema.Array(WorkoutSession)),
 });
 export type LiftaBackup = typeof LiftaBackupSchema.Type;
 
@@ -131,27 +131,29 @@ export function importLiftaJson(
     if (options.dryRun) {
       return {
         routinesImported: validated.routines.length,
-        sessionsImported: validated.workoutSessions.length,
-        settingsRestored: true,
+        sessionsImported: (validated.workoutSessions ?? []).length,
+        settingsRestored: !!validated.settings,
         dryRun: true,
       };
     }
 
     // Persistir no IndexedDB
-    yield* SettingsRepository.updateSettings(validated.settings);
+    if (validated.settings) {
+      yield* SettingsRepository.updateSettings(validated.settings);
+    }
 
     for (const routine of validated.routines) {
       yield* RoutineRepository.save(routine);
     }
 
-    for (const session of validated.workoutSessions) {
+    for (const session of (validated.workoutSessions ?? [])) {
       yield* WorkoutSessionRepository.save(session);
     }
 
     return {
       routinesImported: validated.routines.length,
-      sessionsImported: validated.workoutSessions.length,
-      settingsRestored: true,
+      sessionsImported: (validated.workoutSessions ?? []).length,
+      settingsRestored: !!validated.settings,
       dryRun: false,
     };
   });
