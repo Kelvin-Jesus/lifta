@@ -2,6 +2,7 @@ import { For, Show, createSignal, type Component } from 'solid-js';
 import type { LoggedExercise } from '../../domain/session';
 import { SetRow } from './SetRow';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
+import { ExerciseGifModal } from './ExerciseGifModal';
 import { getExerciseById, EXERCISE_CATALOG } from '../../catalog/exercises';
 import { formatMuscleName, formatEquipmentName } from '../../catalog/muscles';
 
@@ -23,6 +24,7 @@ export interface ExerciseCardProps {
 
 export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
   const [showAnatomy, setShowAnatomy] = createSignal(false);
+  const [isGifModalOpen, setIsGifModalOpen] = createSignal(false);
 
   const catalogDetails = () => getExerciseById(EXERCISE_CATALOG, props.exercise.exerciseId);
 
@@ -98,14 +100,28 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
         <Show when={showAnatomy()}>
           <div class="mt-3 p-3 rounded-xl bg-theme-bg border border-theme-subtle flex flex-col items-center gap-3 animate-in fade-in duration-200">
             <Show when={catalogDetails()?.gifUrl}>
-              <div class="relative w-full rounded-xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-2">
+              <div
+                class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-2.5 cursor-pointer group hover:border-blue-500/50 transition-all"
+                onClick={() => setIsGifModalOpen(true)}
+                title="Toque para ampliar demonstração da execução"
+                data-testid="exercise-card-gif-preview"
+              >
                 <img
                   src={catalogDetails()?.gifUrl}
                   alt={`Demonstração de ${props.exercise.exerciseName}`}
-                  class="max-h-48 w-auto object-contain rounded-lg"
+                  class="max-h-48 w-auto object-contain rounded-xl"
                   loading="lazy"
                 />
-                <span class="mt-1 text-[10px] text-theme-tertiary font-medium">Demonstração do Movimento</span>
+                <div class="mt-1.5 flex items-center gap-1.5 text-[10px] text-theme-secondary font-medium">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Demonstração do Movimento</span>
+                  <span class="text-blue-500 font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                    Ampliar
+                  </span>
+                </div>
               </div>
             </Show>
 
@@ -220,6 +236,17 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
           </button>
         </Show>
       </div>
+
+      {/* Expanded GIF Lightbox Modal */}
+      <ExerciseGifModal
+        isOpen={isGifModalOpen()}
+        onClose={() => setIsGifModalOpen(false)}
+        gifUrl={catalogDetails()?.gifUrl}
+        exerciseName={props.exercise.exerciseName}
+        primaryMuscles={catalogDetails()?.primaryMuscles}
+        equipment={catalogDetails()?.equipment}
+        instructions={catalogDetails()?.instructions}
+      />
     </div>
   );
 };

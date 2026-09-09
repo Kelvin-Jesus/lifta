@@ -2,6 +2,7 @@ import { For, Show, createSignal, type Component } from 'solid-js';
 import type { MuscleGroup } from '../../domain/types';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
 import { BottomSheet } from '../../components/BottomSheet';
+import { ExerciseGifModal } from './ExerciseGifModal';
 import { getExerciseById, EXERCISE_CATALOG } from '../../catalog/exercises';
 import { formatMuscleName, formatEquipmentName } from '../../catalog/muscles';
 
@@ -12,6 +13,7 @@ export interface MuscleFocusCardProps {
 
 export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
   const [isDetailOpen, setIsDetailOpen] = createSignal(false);
+  const [isGifModalOpen, setIsGifModalOpen] = createSignal(false);
   const [mediaView, setMediaView] = createSignal<'execution' | 'muscles'>('execution');
 
   const exercise = () => getExerciseById(EXERCISE_CATALOG, props.exerciseId);
@@ -110,10 +112,19 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
               </div>
             }
           >
-            {/* Execution GIF Thumbnail */}
+            {/* Execution GIF Thumbnail with Rounded-2xl and Expand Action */}
             <div
-              class="relative w-28 h-24 sm:w-32 bg-black/5 dark:bg-black/30 border border-theme-subtle rounded-xl flex items-center justify-center p-1 overflow-hidden flex-shrink-0"
+              class="relative w-28 h-24 sm:w-32 bg-black/5 dark:bg-black/30 border border-theme-subtle rounded-2xl flex items-center justify-center p-1.5 overflow-hidden flex-shrink-0 cursor-pointer group hover:border-blue-500/50 transition-all select-none"
               data-testid="exercise-gif-thumbnail"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (exercise()?.gifUrl) {
+                  setIsGifModalOpen(true);
+                } else {
+                  setIsDetailOpen(true);
+                }
+              }}
+              title="Toque para ampliar demonstração da execução"
             >
               <Show
                 when={exercise()?.gifUrl}
@@ -132,9 +143,20 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
                 <img
                   src={exercise()!.gifUrl}
                   alt={`Execução de ${exercise()?.name ?? 'exercício'}`}
-                  class="h-full w-full object-contain rounded-lg"
+                  class="h-full w-full object-contain rounded-xl"
                   loading="lazy"
                 />
+
+                {/* Visual Expand Affordance Badge */}
+                <div
+                  class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[9px] font-semibold text-white/90 flex items-center gap-0.5 border border-white/15 shadow-xs pointer-events-none group-hover:bg-blue-600 transition-colors"
+                  data-testid="gif-expand-badge"
+                >
+                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  <span>Ampliar</span>
+                </div>
               </Show>
             </div>
           </Show>
@@ -214,9 +236,14 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
         title={exercise()?.name ?? 'Detalhes do Exercício'}
       >
         <div class="flex flex-col gap-4 py-2" data-testid="anatomy-sheet-content">
-          {/* Looping Full-Fidelity Execution GIF */}
+          {/* Looping Full-Fidelity Execution GIF with Expand Trigger */}
           <Show when={exercise()?.gifUrl}>
-            <div class="w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3">
+            <div
+              class="w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3 cursor-pointer group hover:border-blue-500/50 transition-colors"
+              onClick={() => setIsGifModalOpen(true)}
+              title="Toque para ampliar execução em alta resolução"
+              data-testid="sheet-gif-container"
+            >
               <img
                 src={exercise()!.gifUrl}
                 alt={`Execução técnica completa: ${exercise()?.name}`}
@@ -227,6 +254,12 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
               <div class="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-theme-secondary">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Demonstração de Execução em Loop</span>
+                <span class="text-[10px] text-blue-500 font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Ampliar
+                </span>
               </div>
             </div>
           </Show>
@@ -288,6 +321,17 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
           </div>
         </div>
       </BottomSheet>
+
+      {/* High-Fidelity Expanded Exercise Execution GIF Lightbox Modal */}
+      <ExerciseGifModal
+        isOpen={isGifModalOpen()}
+        onClose={() => setIsGifModalOpen(false)}
+        gifUrl={exercise()?.gifUrl}
+        exerciseName={exercise()?.name}
+        primaryMuscles={primaryMuscles()}
+        equipment={exercise()?.equipment}
+        instructions={exercise()?.instructions}
+      />
     </>
   );
 };
