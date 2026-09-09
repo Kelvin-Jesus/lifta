@@ -150,4 +150,29 @@ describe('Lifta Mobile E2E Simulation (iPhone 15)', () => {
     expect(container.querySelector('[data-testid="home-dashboard"]')).not.toBeNull();
     expect(container.textContent).toContain('LIFTA');
   });
+
+  it('E2E Test 5: Metric toggle between Calories and Tonnage in full App on mobile viewport', async () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <App />, container);
+
+    // Initial state: Frequência e Calorias with kcal active
+    const titleEl = container.querySelector('#stats-header-title');
+    expect(titleEl?.textContent).toBe('Frequência e Calorias');
+
+    const btnKcal = container.querySelector('[data-testid="btn-metric-calories"]') as HTMLButtonElement;
+    const btnTonnage = container.querySelector('[data-testid="btn-metric-tonnage"]') as HTMLButtonElement;
+    expect(btnKcal).not.toBeNull();
+    expect(btnTonnage).not.toBeNull();
+    expect(btnKcal.getAttribute('aria-pressed')).toBe('true');
+
+    // Click Tonnage (kg)
+    btnTonnage.click();
+
+    expect(titleEl?.textContent).toBe('Frequência e Tonelagem');
+    expect(btnTonnage.getAttribute('aria-pressed')).toBe('true');
+    expect(btnKcal.getAttribute('aria-pressed')).toBe('false');
+    expect(container.querySelector('[aria-label="Histórico de treinos e tonelagem"]')).not.toBeNull();
+  });
 });

@@ -10,6 +10,12 @@ import { HeroWorkoutCard, determineSuggestedRoutine } from './HeroWorkoutCard';
 import { WorkoutHeatmap } from './WorkoutHeatmap';
 import { WeeklyAgenda } from './WeeklyAgenda';
 import { RoutineManagerSheet } from './RoutineManagerSheet';
+import {
+  type StatsMetric,
+  formatCalories,
+  formatTonnage,
+  calculateCurrentWeekStats,
+} from '../../domain/metrics';
 
 export interface HomeDashboardProps {
   onStartWorkout: (routine: Routine) => void;
@@ -23,8 +29,28 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
   const [sessions, setSessions] = createSignal<WorkoutSession[]>([]);
   const [selectedRoutine, setSelectedRoutine] = createSignal<Routine | null>(null);
 
+  const getInitialMetric = (): StatsMetric => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = window.localStorage.getItem('lifta_stats_metric');
+        if (saved === 'tonnage' || saved === 'calories') return saved;
+      }
+    } catch {}
+    return 'calories';
+  };
+
   const [statsView, setStatsView] = createSignal<'heatmap' | 'agenda'>('heatmap');
+  const [statsMetric, setStatsMetric] = createSignal<StatsMetric>(getInitialMetric());
   const [isRoutineSheetOpen, setIsRoutineSheetOpen] = createSignal(false);
+
+  const handleSetMetric = (metric: StatsMetric) => {
+    setStatsMetric(metric);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('lifta_stats_metric', metric);
+      }
+    } catch {}
+  };
 
   const loadData = async () => {
     let [allRoutines, allSessions] = await Promise.all([
@@ -63,6 +89,30 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
     return rest.length > 0 ? rest : routines();
   };
 
+  const currentWeekStats = () => calculateCurrentWeekStats(sessions());
+
+  const statsTitle = () => {
+    if (statsView() === 'agenda') return 'Agenda da Semana';
+    return statsMetric() === 'calories' ? 'Frequência e Calorias' : 'Frequência e Tonelagem';
+  };
+
+  const statsMeta = () => {
+    if (statsView() === 'agenda') {
+      return '3 de 5 concluídos';
+    }
+    const stats = currentWeekStats();
+    const count = stats.workoutCount;
+    const label = count === 1 ? 'treino' : 'treinos';
+
+    if (statsMetric() === 'calories') {
+      const cal = count > 0 ? formatCalories(stats.totalCalories) : '~1.820 kcal';
+      return `${count > 0 ? count : 4} ${label} • ${cal}`;
+    } else {
+      const ton = count > 0 ? formatTonnage(stats.totalVolumeKg) : '16.400 kg';
+      return `${count > 0 ? count : 4} ${label} • ${ton}`;
+    }
+  };
+
   return (
     <div
       class="tab-content"
@@ -97,47 +147,77 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
         <div class="heatmap-header">
           <div class="heatmap-title-group">
             <span class="heatmap-title" id="stats-header-title">
-              {statsView() === 'heatmap' ? 'Frequência e Intensidade' : 'Agenda da Semana'}
+              {statsTitle()}
             </span>
             <span class="heatmap-meta" id="stats-header-meta">
-              {statsView() === 'heatmap'
-                ? '4 treinos • ~1.820 kcal'
-                : '3 de 5 concluídos'}
+              {statsMeta()}
             </span>
           </div>
 
-          <button
-            type="button"
-            class="view-toggle-btn"
-            onClick={() => setStatsView(statsView() === 'heatmap' ? 'agenda' : 'heatmap')}
-            data-testid={statsView() === 'heatmap' ? 'tab-agenda' : 'tab-heatmap'}
-            id="toggle-agenda-btn"
-          >
-            <Show
-              when={statsView() === 'heatmap'}
-              fallback={
+          <div class="heatmap-header-actions">
+            <Show when={statsView() === 'heatmap'}>
+              <div
+                class="metric-toggle-pill"
+                role="group"
+                aria-label="Alternar métrica de exibição"
+                data-testid="metric-toggle-group"
+              >
+                <button
+                  type="button"
+                  class={`metric-pill-btn ${statsMetric() === 'calories' ? 'active' : ''}`}
+                  onClick={() => handleSetMetric('calories')}
+                  data-testid="btn-metric-calories"
+                  aria-pressed={statsMetric() === 'calories'}
+                  title="Frequência + Calorias"
+                >
+                  kcal
+                </button>
+                <button
+                  type="button"
+                  class={`metric-pill-btn ${statsMetric() === 'tonnage' ? 'active' : ''}`}
+                  onClick={() => handleSetMetric('tonnage')}
+                  data-testid="btn-metric-tonnage"
+                  aria-pressed={statsMetric() === 'tonnage'}
+                  title="Frequência + Tonelagem"
+                >
+                  kg
+                </button>
+              </div>
+            </Show>
+
+            <button
+              type="button"
+              class="view-toggle-btn"
+              onClick={() => setStatsView(statsView() === 'heatmap' ? 'agenda' : 'heatmap')}
+              data-testid={statsView() === 'heatmap' ? 'tab-agenda' : 'tab-heatmap'}
+              id="toggle-agenda-btn"
+            >
+              <Show
+                when={statsView() === 'heatmap'}
+                fallback={
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                    <span>Grid</span>
+                  </>
+                }
+              >
                 <>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
                   </svg>
-                  <span>Grid</span>
+                  <span>Agenda</span>
                 </>
-              }
-            >
-              <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <span>Agenda</span>
-              </>
-            </Show>
-          </button>
+              </Show>
+            </button>
+          </div>
         </div>
 
         <Show
@@ -150,7 +230,7 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
             />
           }
         >
-          <WorkoutHeatmap sessions={sessions()} />
+          <WorkoutHeatmap sessions={sessions()} metric={statsMetric()} />
         </Show>
       </div>
 
