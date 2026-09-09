@@ -259,6 +259,56 @@ html, body {
   opacity: 0.85;
 }
 
+.heatmap-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metric-toggle-pill {
+  display: flex;
+  align-items: center;
+  background: var(--surface-elevated);
+  border: 0.5px solid var(--separator-subtle);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.metric-pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  line-height: 1;
+}
+
+.metric-pill-btn:hover {
+  color: var(--text-primary);
+}
+
+.metric-pill-btn.active {
+  background: var(--surface-grouped);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+}
+
+[data-theme="light"] .metric-pill-btn.active {
+  background: #ffffff;
+  color: #007aff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.metric-pill-btn:active {
+  transform: scale(0.96);
+}
+
 /* Weekly Agenda Inside Card */
 .weekly-agenda {
   display: flex;
@@ -711,4 +761,13 @@ html, body {
     scroll-behavior: auto !important;
   }
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 

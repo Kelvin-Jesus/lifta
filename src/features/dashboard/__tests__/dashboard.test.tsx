@@ -14,8 +14,27 @@ import type { Routine } from '../../../domain/routine';
 import type { WorkoutSession } from '../../../domain/session';
 
 describe('Home Dashboard, Heatmap, and Agenda', () => {
+  let store: Record<string, string> = {};
+
   beforeEach(() => {
     indexedDB = new IDBFactory();
+    store = {};
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: (key: string) => store[key] ?? null,
+        setItem: (key: string, value: string) => {
+          store[key] = value.toString();
+        },
+        removeItem: (key: string) => {
+          delete store[key];
+        },
+        clear: () => {
+          store = {};
+        },
+      },
+      writable: true,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
@@ -67,6 +86,42 @@ describe('Home Dashboard, Heatmap, and Agenda', () => {
     const activeCell = weeks.flat().find((c) => c.calories === 450);
     expect(activeCell).toBeDefined();
     expect(activeCell?.level).toBe(3);
+    expect(activeCell?.totalVolumeKg).toBe(4200);
+  });
+
+  it('generates 84 cells and maps tonnage intensity when metric is tonnage', () => {
+    const weeks = generate12WeeksGrid([sampleSession], 'tonnage');
+    const activeCell = weeks.flat().find((c) => c.totalVolumeKg === 4200);
+    expect(activeCell).toBeDefined();
+    // 4200 kg is in tier 2 (2500 - 4500 kg)
+    expect(activeCell?.level).toBe(2);
+  });
+
+  it('renders WorkoutHeatmap in tonnage mode and displays volume detail on cell click', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <WorkoutHeatmap sessions={[sampleSession]} metric="tonnage" />, container);
+
+    const heatmap = container.querySelector('[data-testid="workout-heatmap"]');
+    expect(heatmap).not.toBeNull();
+    expect(container.querySelector('[aria-label="Histórico de treinos e tonelagem"]')).not.toBeNull();
+    expect(container.textContent).toContain('Mais tonelagem');
+
+    // Click active cell
+    const todayStr = sampleSession.startedAt.slice(0, 10);
+    const cell = container.querySelector(`[data-testid="cell-${todayStr}"]`) as HTMLButtonElement;
+    expect(cell).not.toBeNull();
+    expect(cell.getAttribute('data-metric')).toBe('tonnage');
+    expect(cell.getAttribute('data-tonnage')).toBe('4200');
+
+    cell.click();
+
+    // Detail card should display tonnage
+    const detailCard = container.querySelector('[data-testid="heatmap-detail-card"]');
+    expect(detailCard).not.toBeNull();
+    expect(detailCard?.textContent).toContain('4.200 kg');
+    expect(detailCard?.textContent).toContain('tonelagem total');
   });
 
   it('renders WorkoutHeatmap and displays detail card on cell click', () => {
@@ -177,5 +232,42 @@ describe('Home Dashboard, Heatmap, and Agenda', () => {
     agendaTab.click();
 
     expect(container.querySelector('[data-testid="weekly-agenda"]')).not.toBeNull();
+  });
+
+  it('allows toggling between calories and tonnage metrics in HomeDashboard', async () => {
+    store = {};
+    await Effect.runPromise(RoutineRepository.save(sampleRoutineA));
+    await Effect.runPromise(WorkoutSessionRepository.save(sampleSession));
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    render(() => <HomeDashboard onStartWorkout={vi.fn()} />, container);
+
+    const titleEl = container.querySelector('#stats-header-title');
+    const metaEl = container.querySelector('#stats-header-meta');
+    const btnKcal = container.querySelector('[data-testid="btn-metric-calories"]') as HTMLButtonElement;
+    const btnTonnage = container.querySelector('[data-testid="btn-metric-tonnage"]') as HTMLButtonElement;
+
+    expect(titleEl?.textContent).toBe('Frequência e Calorias');
+    expect(btnKcal.getAttribute('aria-pressed')).toBe('true');
+    expect(btnTonnage.getAttribute('aria-pressed')).toBe('false');
+
+    // Click Tonnage button (kg)
+    btnTonnage.click();
+
+    expect(titleEl?.textContent).toBe('Frequência e Tonelagem');
+    expect(metaEl?.textContent).toContain('kg');
+    expect(btnTonnage.getAttribute('aria-pressed')).toBe('true');
+    expect(btnKcal.getAttribute('aria-pressed')).toBe('false');
+    expect(store['lifta_stats_metric']).toBe('tonnage');
+
+    // Click back to calories button (kcal)
+    btnKcal.click();
+
+    expect(titleEl?.textContent).toBe('Frequência e Calorias');
+    expect(metaEl?.textContent).toContain('kcal');
+    expect(btnKcal.getAttribute('aria-pressed')).toBe('true');
+    expect(store['lifta_stats_metric']).toBe('calories');
   });
 });
