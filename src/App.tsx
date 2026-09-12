@@ -19,16 +19,50 @@ import type { Routine } from './domain/routine';
 import { DEFAULT_SAMPLE_ROUTINES } from './catalog/defaultRoutines';
 import { getSampleSessions } from './catalog/defaultSessions';
 
+/**
+ * Reads the initial screen/tab from the URL so that any screen is directly
+ * addressable (`/?tab=history`, `/?screen=workout`). Read-only: navigating
+ * between tabs afterwards does not touch history, preserving existing behavior.
+ */
+export const readInitialLocation = (
+  search: string
+): { tab: TabId; screen: 'tabs' | 'workout' } => {
+  const validTabs: readonly TabId[] = ['train', 'routines', 'history', 'exercises', 'settings'];
+  let tab: TabId = 'train';
+  let screen: 'tabs' | 'workout' = 'tabs';
+  try {
+    const params = new URLSearchParams(search);
+    const requestedTab = params.get('tab');
+    if (requestedTab && (validTabs as readonly string[]).includes(requestedTab)) {
+      tab = requestedTab as TabId;
+    }
+    if (params.get('screen') === 'workout') {
+      screen = 'workout';
+    }
+  } catch {
+    // malformed URL: fall back to defaults
+  }
+  return { tab, screen };
+};
+
 export const App: Component = () => {
+  const initialLocation = readInitialLocation(
+    typeof window === 'undefined' ? '' : window.location.search
+  );
   const [currentScreen, setCurrentScreen] = createSignal<'tabs' | 'workout'>('tabs');
-  const [currentTab, setCurrentTab] = createSignal<TabId>('train');
+  const [currentTab, setCurrentTab] = createSignal<TabId>(initialLocation.tab);
   const [hasActiveWorkout, setHasActiveWorkout] = createSignal(false);
   const [currentTheme, setCurrentTheme] = createSignal<'dark' | 'light'>('dark');
 
   const initApp = async () => {
-    // 1. Initialize WebMCP
-    const context = initWebMCPPolyfill();
-    registerAllWebMCPTools(context);
+    // 1. Initialize WebMCP — optional integration: a failure here must never
+    // stop theme restore or active-workout recovery below.
+    try {
+      const context = initWebMCPPolyfill();
+      registerAllWebMCPTools(context);
+    } catch (error) {
+      console.warn('WebMCP indisponível:', error);
+    }
 
     // 2. Register Service Worker
     registerServiceWorker();
@@ -71,6 +105,10 @@ export const App: Component = () => {
     const active = await Effect.runPromise(ActiveSessionRepository.getActive());
     if (active) {
       setHasActiveWorkout(true);
+      if (initialLocation.screen === 'workout') {
+        await activeWorkoutStore.resumeWorkout();
+        setCurrentScreen('workout');
+      }
     }
   };
 
@@ -131,6 +169,10 @@ export const App: Component = () => {
               <img
                 src="/logo.png"
                 alt="Lifta Logo"
+                width="28"
+                height="28"
+                decoding="async"
+                fetchpriority="high"
                 class="w-7 h-7 rounded-lg object-cover shadow-sm"
               />
               <div class="brand-title">Lifta<span class="sr-only">LIFTA</span></div>
