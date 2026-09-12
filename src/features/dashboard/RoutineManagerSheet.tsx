@@ -2,7 +2,7 @@ import { For, Show, createSignal, type Component } from 'solid-js';
 import { Effect } from 'effect';
 import { BottomSheet } from '../../components/BottomSheet';
 import { RoutineRepository } from '../../storage/repositories/RoutineRepository';
-import { EXERCISE_CATALOG } from '../../catalog/exercises';
+import { EXERCISE_CATALOG, getExerciseById } from '../../catalog/exercises';
 import type { Routine, RoutineExercise } from '../../domain/routine';
 import type { Weekday } from '../../domain/types';
 
@@ -29,6 +29,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
   const [selectedDays, setSelectedDays] = createSignal<Weekday[]>([]);
   const [selectedExercises, setSelectedExercises] = createSignal<RoutineExercise[]>([]);
   const [exerciseSearch, setExerciseSearch] = createSignal('');
+  const [expandedRoutineId, setExpandedRoutineId] = createSignal<string | null>(null);
 
   const resetForm = () => {
     setName('');
@@ -112,38 +113,75 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                     </div>
                   }
                 >
-                  {(routine) => (
-                    <div
-                      class="p-3.5 rounded-2xl bg-theme-elevated border border-theme-subtle flex items-center justify-between"
-                      data-testid={`routine-item-${routine.id}`}
-                    >
-                      <div>
-                        <h4 class="text-sm font-bold text-theme-primary">{routine.name}</h4>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-theme-secondary font-mono">
-                          <span>{routine.exercises.length} exercícios</span>
-                          <Show when={routine.scheduledDays && routine.scheduledDays.length > 0}>
-                            <span>•</span>
-                            <span class="text-blue-500 font-medium">
-                              {routine.scheduledDays!.map((d) => d.slice(0, 3)).join(', ')}
-                            </span>
-                          </Show>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteRoutine(routine.id)}
-                        class="w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-500/10 active:scale-95 flex items-center justify-center transition-all"
-                        title="Excluir rotina"
-                        aria-label="Excluir rotina"
-                        data-testid={`btn-delete-routine-${routine.id}`}
+                  {(routine) => {
+                    const isExpanded = () => expandedRoutineId() === routine.id;
+                    return (
+                      <div
+                        class="rounded-2xl bg-theme-elevated border border-theme-subtle overflow-hidden"
+                        data-testid={`routine-item-${routine.id}`}
                       >
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  )}
+                        <div class="p-3.5 flex items-center justify-between">
+                          <div
+                            class="flex-1 pr-2 cursor-pointer"
+                            onClick={() =>
+                              setExpandedRoutineId(isExpanded() ? null : routine.id)
+                            }
+                            aria-expanded={isExpanded()}
+                            data-testid={`btn-preview-routine-${routine.id}`}
+                          >
+                            <h4 class="text-sm font-bold text-theme-primary">{routine.name}</h4>
+                            <div class="flex items-center gap-2 mt-1 text-xs text-theme-secondary font-mono">
+                              <span>{routine.exercises.length} exercícios</span>
+                              <Show when={routine.scheduledDays && routine.scheduledDays.length > 0}>
+                                <span>•</span>
+                                <span class="text-blue-500 font-medium">
+                                  {routine.scheduledDays!.map((d) => d.slice(0, 3)).join(', ')}
+                                </span>
+                              </Show>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteRoutine(routine.id);
+                            }}
+                            class="w-9 h-9 rounded-lg text-rose-500 hover:bg-rose-500/10 active:scale-95 flex items-center justify-center transition-all shrink-0"
+                            title="Excluir rotina"
+                            aria-label={`Excluir rotina ${routine.name}`}
+                            data-testid={`btn-delete-routine-${routine.id}`}
+                          >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <Show when={isExpanded()}>
+                          <ul
+                            class="px-3.5 pb-3.5 space-y-1.5 border-t border-theme-subtle pt-2.5"
+                            data-testid={`routine-preview-${routine.id}`}
+                          >
+                            <For each={routine.exercises}>
+                              {(re, i) => (
+                                <li class="flex items-center gap-2 text-xs text-theme-secondary">
+                                  <span class="w-5 h-5 shrink-0 rounded-md bg-theme-surface text-[10px] font-mono font-bold flex items-center justify-center">
+                                    {i() + 1}
+                                  </span>
+                                  <span class="text-theme-primary truncate">
+                                    {getExerciseById(EXERCISE_CATALOG, re.exerciseId)?.name ??
+                                      re.exerciseId}
+                                  </span>
+                                  <span class="font-mono shrink-0">{re.targetSets}x</span>
+                                </li>
+                              )}
+                            </For>
+                          </ul>
+                        </Show>
+                      </div>
+                    );
+                  }}
                 </For>
               </div>
 

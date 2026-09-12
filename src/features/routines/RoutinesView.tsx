@@ -2,6 +2,7 @@ import { createSignal, onMount, For, Show, type Component } from 'solid-js';
 import { Effect } from 'effect';
 import { RoutineRepository } from '../../storage/repositories/RoutineRepository';
 import { RoutineManagerSheet } from '../dashboard/RoutineManagerSheet';
+import { RoutinePreviewSheet } from './RoutinePreviewSheet';
 import { getExerciseById, EXERCISE_CATALOG } from '../../catalog/exercises';
 import type { Routine } from '../../domain/routine';
 
@@ -12,6 +13,7 @@ export interface RoutinesViewProps {
 export const RoutinesView: Component<RoutinesViewProps> = (props) => {
   const [routines, setRoutines] = createSignal<Routine[]>([]);
   const [isSheetOpen, setIsSheetOpen] = createSignal(false);
+  const [previewRoutine, setPreviewRoutine] = createSignal<Routine | null>(null);
 
   const loadRoutines = async () => {
     const list = await Effect.runPromise(RoutineRepository.listAll());
@@ -92,7 +94,7 @@ export const RoutinesView: Component<RoutinesViewProps> = (props) => {
             >
               <div
                 class="flex-1 pr-2 cursor-pointer"
-                onClick={() => props.onStartWorkout(routine)}
+                onClick={() => setPreviewRoutine(routine)}
               >
                 <div class="row-title">{routine.name}</div>
                 <div class="row-desc">
@@ -135,7 +137,7 @@ export const RoutinesView: Component<RoutinesViewProps> = (props) => {
                 </button>
                 <span
                   class="row-arrow cursor-pointer"
-                  onClick={() => props.onStartWorkout(routine)}
+                  onClick={() => setPreviewRoutine(routine)}
                 >
                   ›
                 </span>
@@ -151,6 +153,16 @@ export const RoutinesView: Component<RoutinesViewProps> = (props) => {
         onClose={() => setIsSheetOpen(false)}
         routines={routines()}
         onRoutinesUpdated={loadRoutines}
+      />
+
+      {/* Routine Preview — starting a workout is always explicit */}
+      <RoutinePreviewSheet
+        routine={previewRoutine()}
+        onClose={() => setPreviewRoutine(null)}
+        onStart={(routine) => {
+          setPreviewRoutine(null);
+          props.onStartWorkout(routine);
+        }}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import { HeroWorkoutCard, determineSuggestedRoutine } from './HeroWorkoutCard';
 import { WorkoutHeatmap } from './WorkoutHeatmap';
 import { WeeklyAgenda } from './WeeklyAgenda';
 import { RoutineManagerSheet } from './RoutineManagerSheet';
+import { RoutinePreviewSheet } from '../routines/RoutinePreviewSheet';
 import {
   type StatsMetric,
   formatCalories,
@@ -42,6 +43,7 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
   const [statsView, setStatsView] = createSignal<'heatmap' | 'agenda'>('heatmap');
   const [statsMetric, setStatsMetric] = createSignal<StatsMetric>(getInitialMetric());
   const [isRoutineSheetOpen, setIsRoutineSheetOpen] = createSignal(false);
+  const [previewRoutine, setPreviewRoutine] = createSignal<Routine | null>(null);
 
   const handleSetMetric = (metric: StatsMetric) => {
     setStatsMetric(metric);
@@ -226,7 +228,7 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
             <WeeklyAgenda
               routines={routines()}
               sessions={sessions()}
-              onStartRoutine={props.onStartWorkout}
+              onSelectRoutine={setPreviewRoutine}
             />
           }
         >
@@ -265,11 +267,15 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
             }
           >
             {(r) => (
-              <div class="list-row" onClick={() => props.onStartWorkout(r)}>
+              <div
+                class="list-row cursor-pointer"
+                onClick={() => setPreviewRoutine(r)}
+                data-testid={`other-routine-${r.id}`}
+              >
                 <div>
                   <div class="row-title">{r.name}</div>
                   <div class="row-desc">
-                    Última execução: Há 2 dias • ~420 kcal
+                    {r.exercises.length} exercícios • Toque para ver os detalhes
                   </div>
                 </div>
                 <span class="row-arrow">›</span>
@@ -285,6 +291,16 @@ export const HomeDashboard: Component<HomeDashboardProps> = (props) => {
         onClose={() => setIsRoutineSheetOpen(false)}
         routines={routines()}
         onRoutinesUpdated={loadData}
+      />
+
+      {/* Routine Preview — starting a workout is always explicit */}
+      <RoutinePreviewSheet
+        routine={previewRoutine()}
+        onClose={() => setPreviewRoutine(null)}
+        onStart={(routine) => {
+          setPreviewRoutine(null);
+          props.onStartWorkout(routine);
+        }}
       />
     </div>
   );

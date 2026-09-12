@@ -6,7 +6,8 @@ import type { Weekday } from '../../domain/types';
 export interface WeeklyAgendaProps {
   routines: readonly Routine[];
   sessions: readonly WorkoutSession[];
-  onStartRoutine?: (routine: Routine) => void;
+  /** Opens the routine preview; starting a workout stays an explicit action. */
+  onSelectRoutine?: (routine: Routine) => void;
 }
 
 const WEEKDAY_KEYS: Weekday[] = [
@@ -103,8 +104,8 @@ export const WeeklyAgenda: Component<WeeklyAgendaProps> = (props) => {
               class={`agenda-day-row ${item.isToday ? 'today' : ''} ${item.scheduledRoutine && !item.completedSession ? 'cursor-pointer active:opacity-75 transition-opacity' : ''}`}
               data-testid={`agenda-day-${item.key}`}
               onClick={() => {
-                if (!item.completedSession && item.scheduledRoutine && props.onStartRoutine) {
-                  props.onStartRoutine(item.scheduledRoutine);
+                if (!item.completedSession && item.scheduledRoutine && props.onSelectRoutine) {
+                  props.onSelectRoutine(item.scheduledRoutine);
                 }
               }}
             >
