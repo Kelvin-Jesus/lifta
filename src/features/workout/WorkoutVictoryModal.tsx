@@ -39,7 +39,7 @@ export const WorkoutVictoryModal: Component<WorkoutVictoryModalProps> = (props) 
 
   return (
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
       data-testid="workout-victory-modal"
     >
       <div

@@ -280,7 +280,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
 
       {/* Toast Notification */}
       <div
-        class={`fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-theme-surface border border-theme-separator text-xs font-semibold text-theme-primary shadow-2xl transition-all duration-200 ${
+        class={`fixed top-14 left-1/2 -translate-x-1/2 z-[90] px-4 py-2 rounded-full bg-theme-surface border border-theme-separator text-xs font-semibold text-theme-primary shadow-2xl transition-all duration-200 ${
           toastMessage() ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
       >

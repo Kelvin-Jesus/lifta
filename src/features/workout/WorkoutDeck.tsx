@@ -299,7 +299,7 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
       {/* Toast Notification */}
       <Show when={toastMessage()}>
         <div
-          class="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-theme-surface border border-theme-separator text-xs text-theme-primary shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 select-none"
+          class="fixed top-16 left-1/2 -translate-x-1/2 z-[90] px-4 py-2 rounded-full bg-theme-surface border border-theme-separator text-xs text-theme-primary shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 select-none"
           data-testid="deck-toast"
         >
           {toastMessage()}

@@ -23,7 +23,7 @@ export const FloatingRestBar: Component<FloatingRestBarProps> = (props) => {
   return (
     <Show when={props.timer.active}>
       <div
-        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-full bg-theme-surface/95 border border-theme-separator backdrop-blur-xl shadow-2xl px-4 py-2.5 flex items-center justify-between transition-all animate-in fade-in slide-in-from-bottom-4 duration-200 select-none theme-transition"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[55] w-[92%] max-w-sm rounded-full bg-theme-surface/95 border border-theme-separator backdrop-blur-xl shadow-2xl px-4 py-2.5 flex items-center justify-between transition-all animate-in fade-in slide-in-from-bottom-4 duration-200 select-none theme-transition"
         data-testid="floating-rest-bar"
       >
         {/* Left: Timer Display */}

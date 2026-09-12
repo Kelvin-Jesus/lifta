@@ -702,6 +702,15 @@ html, body {
   font-size: 0.9rem;
 }
 
+/*
+ * Layering scale — keep every overlay on one of these steps:
+ *   50  bottom tab bar
+ *   55  floating rest bar (ambient, above the tab bar)
+ *   60  bottom sheets (cover the tab bar so their actions stay tappable)
+ *   70  fullscreen modals opened from a sheet (gif lightbox, victory)
+ *   90  toasts
+ */
+
 /* Bottom Tab Bar (iOS Native Style) */
 .tab-bar {
   position: absolute;

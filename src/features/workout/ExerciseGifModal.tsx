@@ -38,7 +38,7 @@ export const ExerciseGifModal: Component<ExerciseGifModalProps> = (props) => {
   return (
     <Show when={props.isOpen && props.gifUrl}>
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+        class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
         onClick={handleBackdropClick}
         data-testid="exercise-gif-modal"
         role="dialog"
