@@ -1,7 +1,9 @@
 import type { Exercise } from '../domain/exercise';
 import type { MuscleGroup, Equipment } from '../domain/types';
+import { EXTENDED_EXERCISE_CATALOG } from './exercisesExtended';
 
-export const EXERCISE_CATALOG: readonly Exercise[] = [
+/** Movimentos base escritos à mão, referenciados pelas rotinas padrão. */
+const CORE_EXERCISE_CATALOG: readonly Exercise[] = [
   // PEITO / CHEST
   {
     id: 'bench-press',
@@ -480,6 +482,11 @@ export const EXERCISE_CATALOG: readonly Exercise[] = [
     instructions: 'Empurre com as pernas e puxe o pegador em direção ao tórax, movimento cíclico de corpo inteiro.',
     gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1323-SJqRxOt.gif',
   },
+];
+
+export const EXERCISE_CATALOG: readonly Exercise[] = [
+  ...CORE_EXERCISE_CATALOG,
+  ...EXTENDED_EXERCISE_CATALOG,
 ];
 
 export function searchExercises(

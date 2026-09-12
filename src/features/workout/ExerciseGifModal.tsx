@@ -1,6 +1,7 @@
 import { onMount, onCleanup, Show, For, type Component } from 'solid-js';
 import { triggerHaptic } from '../../utils/haptics';
 import { formatMuscleName } from '../../catalog/muscles';
+import { EXERCISE_MEDIA_ATTRIBUTION } from '../../catalog/exercisesExtended';
 import type { MuscleGroup } from '../../domain/types';
 
 export interface ExerciseGifModalProps {
@@ -92,6 +93,7 @@ export const ExerciseGifModal: Component<ExerciseGifModalProps> = (props) => {
               loading="eager"
               data-testid="expanded-exercise-gif"
             />
+            <span class="mt-1 text-[9px] text-theme-tertiary">{EXERCISE_MEDIA_ATTRIBUTION}</span>
           </div>
 
           {/* Target Muscles Badges */}

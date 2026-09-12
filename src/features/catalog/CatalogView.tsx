@@ -1,5 +1,6 @@
 import { createEffect, createSignal, For, Show, type Component } from 'solid-js';
 import { EXERCISE_CATALOG } from '../../catalog/exercises';
+import { EXERCISE_MEDIA_ATTRIBUTION } from '../../catalog/exercisesExtended';
 import { formatMuscleName, formatEquipmentName, MUSCLE_NAME_PT } from '../../catalog/muscles';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
 import type { MuscleGroup } from '../../domain/types';
@@ -164,6 +165,9 @@ export const CatalogView: Component = () => {
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>Demonstração do Movimento</span>
                           </div>
+                          <span class="mt-1 text-[9px] text-theme-tertiary">
+                            {EXERCISE_MEDIA_ATTRIBUTION}
+                          </span>
                         </div>
                       </Show>
 
