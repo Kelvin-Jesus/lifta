@@ -95,7 +95,7 @@ export const BottomSheet: Component<BottomSheetProps> = (props) => {
   return (
     <Show when={props.isOpen}>
       <div
-        class="fixed inset-0 z-50 flex items-end justify-center select-none"
+        class="fixed inset-0 z-[60] flex items-end justify-center select-none"
         role="dialog"
         aria-modal="true"
         data-testid="bottom-sheet"
@@ -154,7 +154,10 @@ export const BottomSheet: Component<BottomSheetProps> = (props) => {
           </Show>
 
           {/* Sheet Body with scrolling */}
-          <div class="p-5 overflow-y-auto max-h-[calc(85dvh-70px)] overscroll-contain">
+          <div
+            class="px-5 pt-5 overflow-y-auto max-h-[calc(85dvh-70px)] overscroll-contain"
+            style={{ 'padding-bottom': 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+          >
             {props.children}
           </div>
         </div>
