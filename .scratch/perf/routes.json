@@ -1,0 +1,32 @@
+[
+  {
+    "id": "train",
+    "label": "Dashboard / Treinar",
+    "url": "/?tab=train"
+  },
+  {
+    "id": "routines",
+    "label": "Rotinas",
+    "url": "/?tab=routines"
+  },
+  {
+    "id": "history",
+    "label": "Histórico",
+    "url": "/?tab=history"
+  },
+  {
+    "id": "exercises",
+    "label": "Catálogo de Exercícios",
+    "url": "/?tab=exercises"
+  },
+  {
+    "id": "settings",
+    "label": "Configurações",
+    "url": "/?tab=settings"
+  },
+  {
+    "id": "workout",
+    "label": "Treino Ativo (WorkoutDeck)",
+    "url": "/?screen=workout"
+  }
+]

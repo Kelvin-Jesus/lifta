@@ -37,3 +37,7 @@ playwright-report/
 blob-report/
 playwright/.cache/
 coverage/
+
+# Generated perf audit output (routes.json is tracked)
+.scratch/perf/report.json
+.scratch/perf/*.png
