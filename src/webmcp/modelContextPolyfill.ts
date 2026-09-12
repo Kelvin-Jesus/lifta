@@ -51,8 +51,30 @@ export function initWebMCPPolyfill(): ModelContext {
     return createModelContext();
   }
 
-  if (!document.modelContext) {
-    document.modelContext = createModelContext();
+  // Chrome 141+ ships a native `document.modelContext` whose surface differs
+  // from this app's contract (no registerTool/listTools). Presence alone is not
+  // enough: install the polyfill unless the existing object speaks our API,
+  // otherwise tool registration throws and takes app startup down with it.
+  const existing = document.modelContext as Partial<ModelContext> | undefined;
+  const speaksOurApi =
+    typeof existing?.registerTool === 'function' &&
+    typeof existing?.listTools === 'function' &&
+    typeof existing?.callTool === 'function';
+
+  const context = speaksOurApi ? (existing as ModelContext) : createModelContext();
+
+  if (!speaksOurApi) {
+    // `document.modelContext` is an accessor without a setter in browsers that
+    // ship the native API, so plain assignment throws there.
+    try {
+      document.modelContext = context;
+    } catch {
+      Object.defineProperty(document, 'modelContext', {
+        value: context,
+        configurable: true,
+        writable: true,
+      });
+    }
   }
 
   // Set up window.postMessage bridge for external test runners & browser extensions
@@ -62,7 +84,7 @@ export function initWebMCPPolyfill(): ModelContext {
       if (!data || typeof data !== 'object') return;
 
       if (data.type === 'WEBMCP_LIST_TOOLS') {
-        const list = document.modelContext?.listTools().map((t) => ({
+        const list = context.listTools().map((t) => ({
           name: t.name,
           description: t.description,
           inputSchema: t.inputSchema,
@@ -80,7 +102,7 @@ export function initWebMCPPolyfill(): ModelContext {
       } else if (data.type === 'WEBMCP_CALL') {
         const { id, tool, params } = data;
         try {
-          const result = await document.modelContext?.callTool(tool, params);
+          const result = await context.callTool(tool, params);
           window.postMessage(
             {
               type: 'WEBMCP_RESPONSE',
@@ -108,11 +130,11 @@ export function initWebMCPPolyfill(): ModelContext {
     window.dispatchEvent(
       new CustomEvent('webmcp:ready', {
         detail: {
-          toolsCount: document.modelContext.listTools().length,
+          toolsCount: context.listTools().length,
         },
       })
     );
   }
 
-  return document.modelContext;
+  return context;
 }
