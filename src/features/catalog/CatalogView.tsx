@@ -1,4 +1,4 @@
-import { createSignal, For, Show, type Component } from 'solid-js';
+import { createEffect, createSignal, For, Show, type Component } from 'solid-js';
 import { EXERCISE_CATALOG } from '../../catalog/exercises';
 import { formatMuscleName, formatEquipmentName, MUSCLE_NAME_PT } from '../../catalog/muscles';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
@@ -91,6 +91,15 @@ export const CatalogView: Component = () => {
         >
           {(ex) => {
             const isExpanded = () => expandedId() === ex.id;
+            // Heavy accordion content (GIF + anatomy SVG) is mounted on first
+            // expand and kept afterwards: mounting all of it up front costs a
+            // ~230 ms main-thread task on a low-end phone, and the CSS grid
+            // animation still runs because the mount happens in the same tick
+            // as the class change.
+            const [hasExpanded, setHasExpanded] = createSignal(false);
+            createEffect(() => {
+              if (isExpanded()) setHasExpanded(true);
+            });
             return (
               <div
                 class="list-row flex-col items-stretch !gap-3"
@@ -131,19 +140,26 @@ export const CatalogView: Component = () => {
                   aria-hidden={!isExpanded()}
                 >
                   <div class="catalog-accordion-inner w-full">
-                    <div
-                      class="pt-3 border-t border-theme-subtle flex flex-col gap-3.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <Show when={hasExpanded()}>
+                      <div
+                        class="pt-3 border-t border-theme-subtle flex flex-col gap-3.5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                       {/* Exercise Motion Demo GIF */}
                       <Show when={ex.gifUrl}>
                         <div class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3">
-                          <img
-                            src={ex.gifUrl}
-                            alt={`Demonstração de execução: ${ex.name}`}
-                            class="max-h-60 w-auto object-contain rounded-xl shadow-xs"
-                            loading="lazy"
-                          />
+                          {/* Fixed media box: the remote gif arrives after the
+                              accordion has opened, and without reserved space
+                              its arrival reflows the whole list. */}
+                          <div class="h-60 w-full flex items-center justify-center">
+                            <img
+                              src={ex.gifUrl}
+                              alt={`Demonstração de execução: ${ex.name}`}
+                              class="max-h-60 max-w-full w-auto object-contain rounded-xl shadow-xs"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
                           <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-theme-secondary">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>Demonstração do Movimento</span>
@@ -189,9 +205,10 @@ export const CatalogView: Component = () => {
                               </span>
                             )}
                           </For>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Show>
                   </div>
                 </div>
               </div>

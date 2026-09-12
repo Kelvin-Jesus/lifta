@@ -783,6 +783,11 @@ html, body {
 
 .catalog-accordion-inner {
   overflow: hidden;
+  /* The grid-rows animation resizes this box every frame; containment keeps
+     Chrome from re-laying-out and repainting the anatomy SVGs and gif inside
+     it on each of those frames, which cost ~250 ms per frame on a throttled
+     low-end phone. */
+  contain: layout paint style;
   opacity: 0;
   transform: translateY(-4px);
   transition: opacity 200ms var(--ease-apple), transform 220ms var(--ease-apple);
