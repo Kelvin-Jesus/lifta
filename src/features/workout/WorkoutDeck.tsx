@@ -1,4 +1,4 @@
-import { For, Show, createSignal, onMount, onCleanup, type Component } from 'solid-js';
+import { Index, Show, createSignal, onMount, onCleanup, type Component } from 'solid-js';
 import { activeWorkoutStore } from './activeWorkoutStore';
 import { MuscleFocusCard } from './MuscleFocusCard';
 import { ExerciseCard } from './ExerciseCard';
@@ -162,16 +162,16 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
           class="flex items-center gap-1.5 w-full cursor-pointer"
           data-testid="segmented-progress-bar"
         >
-          <For each={exercises()}>
+          <Index each={exercises()}>
             {(ex, idx) => {
               const isAllComplete = () =>
-                ex.sets.length > 0 && ex.sets.every((s) => s.completed);
-              const isCurrent = () => idx() === activePageIndex();
+                ex().sets.length > 0 && ex().sets.every((s) => s.completed);
+              const isCurrent = () => idx === activePageIndex();
 
               return (
                 <button
                   type="button"
-                  onClick={() => scrollToExercise(idx())}
+                  onClick={() => scrollToExercise(idx)}
                   class={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
                     isCurrent()
                       ? 'bg-blue-500 ring-2 ring-blue-500/40'
@@ -179,12 +179,12 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
                       ? 'bg-emerald-500'
                       : 'bg-theme-elevated'
                   }`}
-                  title={`Ir para exercício ${idx() + 1}`}
-                  data-testid={`progress-segment-${idx()}`}
+                  title={`Ir para exercício ${idx + 1}`}
+                  data-testid={`progress-segment-${idx}`}
                 />
               );
             }}
-          </For>
+          </Index>
         </div>
 
         {/* Progressive Overload Target Banner */}
@@ -210,51 +210,51 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
         style={{ 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch' }}
         data-testid="deck-carousel"
       >
-        <For each={exercises()}>
+        <Index each={exercises()}>
           {(exercise, idx) => (
             <div
-              class="w-full min-w-full snap-center h-full px-4 py-4 overflow-y-auto flex flex-col items-center flex-shrink-0"
-              data-testid={`deck-page-${idx()}`}
+              class="w-full min-w-full snap-center h-full px-4 py-4 overflow-y-auto flex flex-col items-center flex-shrink-0 deck-page"
+              data-testid={`deck-page-${idx}`}
             >
               {/* Top Muscle Focus Card with live highlighted silhouette */}
               <MuscleFocusCard
-                exerciseId={exercise.exerciseId}
-                onOpenSubstitute={() => setSubstituteExerciseIndex(idx())}
+                exerciseId={exercise().exerciseId}
+                onOpenSubstitute={() => setSubstituteExerciseIndex(idx)}
               />
 
               {/* Core Exercise Card with Inset Grouped Set Table and 1-tap Steppers */}
               <ExerciseCard
-                exerciseIndex={idx()}
-                exercise={exercise}
+                exerciseIndex={idx}
+                exercise={exercise()}
                 totalExercises={exercises().length}
                 onToggleCompleteSet={(sIdx) => {
-                  const set = exercise.sets[sIdx];
+                  const set = exercise().sets[sIdx];
                   if (set.completed) {
-                    activeWorkoutStore.uncompleteSet(idx(), sIdx);
+                    activeWorkoutStore.uncompleteSet(idx, sIdx);
                   } else {
-                    activeWorkoutStore.completeSet(idx(), sIdx);
+                    activeWorkoutStore.completeSet(idx, sIdx);
                   }
                 }}
                 onAdjustWeight={(sIdx, delta) =>
-                  activeWorkoutStore.adjustWeight(idx(), sIdx, delta)
+                  activeWorkoutStore.adjustWeight(idx, sIdx, delta)
                 }
                 onSetWeight={(sIdx, val) =>
-                  activeWorkoutStore.setWeight(idx(), sIdx, val)
+                  activeWorkoutStore.setWeight(idx, sIdx, val)
                 }
                 onAdjustReps={(sIdx, delta) =>
-                  activeWorkoutStore.adjustReps(idx(), sIdx, delta)
+                  activeWorkoutStore.adjustReps(idx, sIdx, delta)
                 }
                 onSetReps={(sIdx, val) =>
-                  activeWorkoutStore.setReps(idx(), sIdx, val)
+                  activeWorkoutStore.setReps(idx, sIdx, val)
                 }
                 onCycleKind={(sIdx) =>
-                  activeWorkoutStore.cycleSetKind(idx(), sIdx)
+                  activeWorkoutStore.cycleSetKind(idx, sIdx)
                 }
-                onAddSet={() => activeWorkoutStore.addSet(idx())}
-                onRemoveSet={(sIdx) => activeWorkoutStore.removeSet(idx(), sIdx)}
+                onAddSet={() => activeWorkoutStore.addSet(idx)}
+                onRemoveSet={(sIdx) => activeWorkoutStore.removeSet(idx, sIdx)}
                 onNextExercise={() => {
-                  if (idx() < exercises().length - 1) {
-                    scrollToExercise(idx() + 1);
+                  if (idx < exercises().length - 1) {
+                    scrollToExercise(idx + 1);
                   }
                 }}
                 onFinishWorkout={async () => {
@@ -268,7 +268,7 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
               />
             </div>
           )}
-        </For>
+        </Index>
       </main>
 
       {/* Floating Rest Bar (Dynamic Island style countdown) */}

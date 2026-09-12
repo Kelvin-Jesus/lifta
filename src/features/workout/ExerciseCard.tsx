@@ -1,4 +1,4 @@
-import { For, Show, createSignal, type Component } from 'solid-js';
+import { For, Index, Show, createSignal, type Component } from 'solid-js';
 import type { LoggedExercise } from '../../domain/session';
 import { SetRow } from './SetRow';
 import { BodyHighlighter } from '../../components/BodyHighlighter';
@@ -151,21 +151,21 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
 
       {/* Sets List */}
       <div class="divide-y divide-theme-subtle">
-        <For each={props.exercise.sets}>
+        <Index each={props.exercise.sets}>
           {(set, idx) => (
             <SetRow
-              setIndex={idx()}
-              set={set}
-              onToggleComplete={() => props.onToggleCompleteSet(idx())}
-              onAdjustWeight={(delta) => props.onAdjustWeight(idx(), delta)}
-              onSetWeight={(val) => props.onSetWeight(idx(), val)}
-              onAdjustReps={(delta) => props.onAdjustReps(idx(), delta)}
-              onSetReps={(val) => props.onSetReps(idx(), val)}
-              onCycleKind={() => props.onCycleKind(idx())}
-              onRemoveSet={() => props.onRemoveSet(idx())}
+              setIndex={idx}
+              set={set()}
+              onToggleComplete={() => props.onToggleCompleteSet(idx)}
+              onAdjustWeight={(delta) => props.onAdjustWeight(idx, delta)}
+              onSetWeight={(val) => props.onSetWeight(idx, val)}
+              onAdjustReps={(delta) => props.onAdjustReps(idx, delta)}
+              onSetReps={(val) => props.onSetReps(idx, val)}
+              onCycleKind={() => props.onCycleKind(idx)}
+              onRemoveSet={() => props.onRemoveSet(idx)}
             />
           )}
-        </For>
+        </Index>
       </div>
 
       {/* Add Set Button */}
