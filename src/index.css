@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/*
+ * `dark:` must follow the theme the user picked in the app, not the OS
+ * preference: on a phone set to dark mode the light theme was still painting
+ * `dark:` panels (e.g. the catalog gif box) almost black.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg: #000000;
   --surface-grouped: #1c1c1e;
