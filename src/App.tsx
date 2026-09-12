@@ -15,6 +15,7 @@ import { SettingsRepository } from './storage/repositories/SettingsRepository';
 import { initWebMCPPolyfill } from './webmcp/modelContextPolyfill';
 import { registerAllWebMCPTools } from './webmcp/tools';
 import { registerServiceWorker } from './pwa';
+import { startOfflineMediaWarmup } from './storage/offlineMedia';
 import type { Routine } from './domain/routine';
 import { DEFAULT_SAMPLE_ROUTINES } from './catalog/defaultRoutines';
 import { getSampleSessions } from './catalog/defaultSessions';
@@ -64,8 +65,10 @@ export const App: Component = () => {
       console.warn('WebMCP indisponível:', error);
     }
 
-    // 2. Register Service Worker
+    // 2. Register Service Worker and, on an installed PWA, make sure the
+    // exercise animations are available without a connection.
     registerServiceWorker();
+    startOfflineMediaWarmup();
 
     // 3. Initialize saved theme
     try {

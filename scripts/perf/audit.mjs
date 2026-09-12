@@ -89,6 +89,9 @@ const runLighthouse = async (port, url, { disableStorageReset = false } = {}) =>
       (lhr.audits['cumulative-layout-shift']?.numericValue ?? 0).toFixed(3)
     ),
     scriptTransferBytes: scriptBytes,
+    lcpElement:
+      lhr.audits['largest-contentful-paint-element']?.details?.items?.[0]?.items?.[0]?.node
+        ?.snippet ?? null,
     opportunities: (Object.values(lhr.audits) ?? [])
       .filter(
         (a) =>

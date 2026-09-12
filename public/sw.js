@@ -1,5 +1,13 @@
 const CACHE_NAME = 'lifta-app-shell-v2';
 
+/**
+ * Exercise animations are hosted off-origin. They live in their own cache so
+ * an app-shell upgrade never throws away ~23 MB the user already downloaded
+ * for offline use (see src/storage/offlineMedia.ts).
+ */
+const MEDIA_CACHE_NAME = 'lifta-media-v1';
+const MEDIA_HOSTS = ['raw.githubusercontent.com'];
+
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -22,7 +30,11 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME && key !== MEDIA_CACHE_NAME)
+            .map((key) => caches.delete(key))
+        )
       )
       .then(() => self.clients.claim())
   );
@@ -90,11 +102,36 @@ const cacheFirst = async (request) => {
   }
 };
 
+/**
+ * Exercise animations: cache-first against the media cache and stored on the
+ * way through, so browsing the catalogue online is enough to make those
+ * animations available in the gym with no signal.
+ */
+const mediaCacheFirst = async (request) => {
+  const cache = await caches.open(MEDIA_CACHE_NAME);
+  const cached = await cache.match(request.url);
+  if (cached) return cached;
+
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200) {
+      await cache.put(request.url, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch {
+    return new Response('', { status: 504, statusText: 'Offline media' });
+  }
+};
+
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Avoid caching non-GET or cross-origin requests
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin) {
+  if (event.request.method !== 'GET') return;
+
+  if (url.origin !== self.location.origin) {
+    if (MEDIA_HOSTS.includes(url.hostname) && url.pathname.endsWith('.gif')) {
+      event.respondWith(mediaCacheFirst(event.request));
+    }
     return;
   }
 

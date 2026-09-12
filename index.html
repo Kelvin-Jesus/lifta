@@ -7,6 +7,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Lifta — Treine. Registre. Evolua. O app de treino mobile-first com sensação de utilitário nativo de iPhone." />
+    <!-- Exercise animations are hosted off-origin: warm the connection so the
+         first gif is not stuck behind DNS + TLS on a slow mobile network. -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
+    <link rel="dns-prefetch" href="https://raw.githubusercontent.com" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/png" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />

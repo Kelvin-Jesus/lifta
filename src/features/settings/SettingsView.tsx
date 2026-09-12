@@ -1,7 +1,13 @@
-import { createSignal, createEffect, Show, type Component } from 'solid-js';
+import { createSignal, createEffect, onMount, Show, type Component } from 'solid-js';
 import { Effect } from 'effect';
 import { SettingsRepository, type Settings } from '../../storage/repositories/SettingsRepository';
 import { exportLiftaJson, exportSessionsCsv, importLiftaJson } from '../../storage/export-import';
+import {
+  clearExerciseMedia,
+  getOfflineMediaStatus,
+  prefetchExerciseMedia,
+  type OfflineMediaStatus,
+} from '../../storage/offlineMedia';
 
 export interface SettingsViewProps {
   onBack?: () => void;
@@ -18,6 +24,54 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
   });
 
   const [toastMessage, setToastMessage] = createSignal<string | null>(null);
+  const [mediaStatus, setMediaStatus] = createSignal<OfflineMediaStatus>({
+    total: 0,
+    cached: 0,
+    missing: 0,
+    approximateBytesRemaining: 0,
+  });
+  const [isDownloadingMedia, setIsDownloadingMedia] = createSignal(false);
+
+  const refreshMediaStatus = async () => {
+    setMediaStatus(await getOfflineMediaStatus());
+  };
+
+  onMount(() => {
+    void refreshMediaStatus();
+  });
+
+  const handleDownloadMedia = async () => {
+    setIsDownloadingMedia(true);
+    try {
+      const result = await prefetchExerciseMedia({
+        concurrency: 4,
+        onProgress: (progress) =>
+          setMediaStatus((prev) => ({
+            ...prev,
+            cached: progress.cached,
+            total: progress.total,
+            missing: Math.max(0, progress.total - progress.cached),
+            approximateBytesRemaining: Math.max(0, progress.total - progress.cached) * 95_000,
+          })),
+      });
+      await refreshMediaStatus();
+      showToast(
+        result.failed > 0
+          ? `${result.cached} animações salvas, ${result.failed} falharam.`
+          : 'Animações disponíveis offline.'
+      );
+    } catch {
+      showToast('Não foi possível baixar as animações.');
+    } finally {
+      setIsDownloadingMedia(false);
+    }
+  };
+
+  const handleClearMedia = async () => {
+    await clearExerciseMedia();
+    await refreshMediaStatus();
+    showToast('Animações removidas do aparelho.');
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -258,6 +312,69 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
               data-testid="input-import-backup"
             />
           </label>
+        </div>
+      </div>
+
+      {/* Section 3: Disponibilidade offline */}
+      <div class="bg-theme-surface border border-theme-separator rounded-2xl p-4 flex flex-col gap-3" data-testid="offline-media-section">
+        <h2 class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h10a4 4 0 001-7.874A5 5 0 007.1 9.1 4 4 0 003 15z" />
+          </svg>
+          Treino Offline
+        </h2>
+        <p class="text-xs text-theme-secondary leading-relaxed">
+          As animações dos exercícios ficam salvas no aparelho para treinar sem
+          internet. Baixe o pacote antes de ir para a academia.
+        </p>
+
+        <div class="flex items-center justify-between text-xs font-mono" data-testid="offline-media-status">
+          <span class="text-theme-primary">
+            {mediaStatus().cached}/{mediaStatus().total} animações salvas
+          </span>
+          <Show when={mediaStatus().missing > 0}>
+            <span class="text-theme-tertiary">
+              faltam ~{Math.round(mediaStatus().approximateBytesRemaining / 1_000_000)} MB
+            </span>
+          </Show>
+        </div>
+
+        <div class="h-1.5 w-full rounded-full bg-theme-elevated overflow-hidden">
+          <div
+            class="h-full rounded-full bg-blue-500 transition-all duration-300"
+            style={{
+              width: `${mediaStatus().total === 0 ? 0 : Math.round((mediaStatus().cached / mediaStatus().total) * 100)}%`,
+            }}
+            data-testid="offline-media-progress"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2 pt-1">
+          <button
+            type="button"
+            onClick={handleDownloadMedia}
+            disabled={isDownloadingMedia() || mediaStatus().missing === 0}
+            class="w-full h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            data-testid="btn-download-offline-media"
+          >
+            {isDownloadingMedia()
+              ? 'Baixando animações…'
+              : mediaStatus().missing === 0
+              ? 'Tudo disponível offline'
+              : 'Baixar animações para uso offline'}
+          </button>
+
+          <Show when={mediaStatus().cached > 0}>
+            <button
+              type="button"
+              onClick={handleClearMedia}
+              disabled={isDownloadingMedia()}
+              class="w-full h-10 rounded-xl btn-secondary text-xs font-bold disabled:opacity-50 transition-all cursor-pointer"
+              data-testid="btn-clear-offline-media"
+            >
+              Liberar espaço (remover animações)
+            </button>
+          </Show>
         </div>
       </div>
 
