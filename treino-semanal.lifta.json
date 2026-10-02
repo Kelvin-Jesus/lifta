@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-01T22:00:00.000Z",
+  "settings": {
+    "key": "app_settings",
+    "theme": "dark",
+    "accentColor": "blue",
+    "bodyWeightKg": 75.0,
+    "soundEnabled": true,
+    "vibrationEnabled": true,
+    "ollamaEndpoint": "http://localhost:11434"
+  },
+  "routines": [
+    {
+      "id": "routine-treino-a",
+      "name": "Treino A • Segunda-feira",
+      "description": "Leg Press 45°, Supino Reto com Halteres, Puxada Alta Aberta no Pulley, Cadeira Flexora.",
+      "scheduledDays": [
+        "monday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "leg-press-45",
+          "targetSets": 4,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 a 4 séries de 10 a 12 repetições. Dinâmica: Carga alta com ajuste rápido de anilhas entre vocês. Execução: https://musclewiki.com/exercises/male/quads/sled-45-leg-press"
+        },
+        {
+          "exerciseId": "dumbbell-bench-press",
+          "targetSets": 3,
+          "targetRepsMin": 8,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 8 a 12 repetições. Dinâmica: Substitui a barra com estabilidade independente para os punhos e ombros. Execução: https://musclewiki.com/exercises/male/chest/dumbbell-bench-press"
+        },
+        {
+          "exerciseId": "lat-pulldown",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: Troca de carga instantânea apenas mudando o pino da torre. Execução: https://musclewiki.com/exercises/male/lats/cable-lat-pulldown"
+        },
+        {
+          "exerciseId": "seated-leg-curl",
+          "targetSets": 3,
+          "targetRepsMin": 12,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "3 séries de 12 a 15 repetições. Dinâmica: Foco em posterior de coxa com ajuste rápido de regulagem e pino. Execução: https://musclewiki.com/exercises/male/hamstrings/lever-seated-leg-curl"
+        }
+      ],
+      "createdAt": "2026-10-01T22:00:00.000Z",
+      "updatedAt": "2026-10-01T22:00:00.000Z"
+    },
+    {
+      "id": "routine-treino-b",
+      "name": "Treino B • Quarta-feira",
+      "description": "Agachamento no Hack, Remada Baixa no Cabo, Elevação Pélvica na Máquina, Tríceps Francês com Barra W.",
+      "scheduledDays": [
+        "wednesday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "sled-hack-squat",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: Movimento guiado e seguro para as costas, sem uso de barra solta. Execução: https://musclewiki.com/exercises/male/quads/sled-hack-squat"
+        },
+        {
+          "exerciseId": "seated-cable-row",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: Sem apoio peitoral rígido, eliminando desconforto na região do tórax. Execução: https://musclewiki.com/exercises/male/middle-back/cable-seated-row"
+        },
+        {
+          "exerciseId": "lever-hip-thrust",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: Trabalho focado em glúteos e cadeia posterior com montagem simples. Execução: https://musclewiki.com/exercises/male/glutes/lever-hip-thrust"
+        },
+        {
+          "exerciseId": "ez-barbell-overhead-tricep-extension",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: A curvatura da barra W mantém os punhos em ângulo neutro enquanto isola a cabeça longa do tríceps. Execução: https://musclewiki.com/exercises/male/triceps/ez-barbell-overhead-tricep-extension"
+        }
+      ],
+      "createdAt": "2026-10-01T22:00:00.000Z",
+      "updatedAt": "2026-10-01T22:00:00.000Z"
+    },
+    {
+      "id": "routine-treino-c",
+      "name": "Treino C • Sexta-feira",
+      "description": "Cadeira Extensora, Supino Inclinado com Halteres, Remada Unilateral Serrote, Rosca Direta com Barra W.",
+      "scheduledDays": [
+        "friday"
+      ],
+      "exercises": [
+        {
+          "exerciseId": "leg-extension",
+          "targetSets": 3,
+          "targetRepsMin": 12,
+          "targetRepsMax": 15,
+          "suggestedRestSeconds": 60,
+          "notes": "3 séries de 12 a 15 repetições. Dinâmica: Isolamento de quadríceps sem fadiga articular na coluna para fechar a semana. Execução: https://musclewiki.com/exercises/male/quads/lever-leg-extension"
+        },
+        {
+          "exerciseId": "incline-dumbbell-press",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: Foco na porção superior do peito com pegada anatômica. Execução: https://musclewiki.com/exercises/male/chest/dumbbell-incline-bench-press"
+        },
+        {
+          "exerciseId": "dumbbell-single-arm-row",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições por lado. Dinâmica: Apoio no banco reto sem pressão no peito; descanso ativo de um enquanto o outro puxa. Execução: https://musclewiki.com/exercises/male/middle-back/dumbbell-row"
+        },
+        {
+          "exerciseId": "barbell-bicep-curl",
+          "targetSets": 3,
+          "targetRepsMin": 10,
+          "targetRepsMax": 12,
+          "suggestedRestSeconds": 90,
+          "notes": "3 séries de 10 a 12 repetições. Dinâmica: A pegada semi-pronada protege a região anterior do punho e foca totalmente no bíceps. Execução: https://musclewiki.com/exercises/male/biceps/ez-barbell-curl"
+        }
+      ],
+      "createdAt": "2026-10-01T22:00:00.000Z",
+      "updatedAt": "2026-10-01T22:00:00.000Z"
+    }
+  ],
+  "workoutSessions": []
+}
