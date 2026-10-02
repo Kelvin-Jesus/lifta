@@ -78,6 +78,7 @@ export const App: Component = () => {
         document.documentElement.setAttribute('data-theme', settings.theme);
         document.body.setAttribute('data-theme', settings.theme);
         document.documentElement.setAttribute('data-accent', settings.accentColor);
+        document.documentElement.style.setProperty('--color-accent', settings.accentColor === 'indigo' ? '#5856d6' : '#007aff');
         if (settings.theme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {

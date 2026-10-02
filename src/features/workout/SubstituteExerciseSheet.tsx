@@ -42,7 +42,7 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
       <div class="flex flex-col gap-3 py-1" data-testid="substitute-exercise-sheet">
         <p class="text-xs text-theme-secondary">
           Aparelho ou banco ocupado? Selecione um exercício equivalente para o mesmo grupo muscular:{' '}
-          <span class="text-blue-500 font-semibold">{formatMuscleName(primaryMuscle())}</span>.
+          <span class="text-theme-accent font-semibold">{formatMuscleName(primaryMuscle())}</span>.
         </p>
 
         {/* Search filter input */}
@@ -52,7 +52,7 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
             placeholder="Filtrar por nome do exercício..."
             value={searchQuery()}
             onInput={(e) => setSearchQuery(e.currentTarget.value)}
-            class="w-full h-10 px-3 pl-9 rounded-xl bg-theme-elevated border border-theme-subtle text-xs text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-blue-500"
+            class="w-full h-10 px-3 pl-9 rounded-xl bg-theme-elevated border border-theme-subtle text-xs text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-theme-accent"
             data-testid="input-substitute-search"
           />
           <svg
@@ -99,7 +99,7 @@ export const SubstituteExerciseSheet: Component<SubstituteExerciseSheetProps> = 
                   </div>
                 </div>
 
-                <span class="text-xs font-bold text-blue-500 flex items-center gap-1">
+                <span class="text-xs font-bold text-theme-accent flex items-center gap-1">
                   Selecionar
                   <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

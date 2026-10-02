@@ -50,7 +50,7 @@ export const WorkoutVictoryModal: Component<WorkoutVictoryModalProps> = (props) 
         <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
 
         {/* 1. Victory Laurel / Trophy Emblem */}
-        <div class="victory-stagger-1 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 via-emerald-500/20 to-blue-500/20 border border-emerald-500/30 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/10">
+        <div class="victory-stagger-1 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 via-emerald-500/20 to-theme-accent/20 border border-emerald-500/30 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/10">
           <svg class="w-8 h-8 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -130,7 +130,7 @@ export const WorkoutVictoryModal: Component<WorkoutVictoryModalProps> = (props) 
             triggerHaptic('medium');
             props.onDismiss();
           }}
-          class="victory-stagger-5 w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 active:scale-[0.97] transition-all cursor-pointer"
+          class="victory-stagger-5 w-full py-3.5 px-4 rounded-2xl bg-theme-accent hover:opacity-90 text-white font-bold text-sm shadow-lg shadow-theme-accent/25 active:scale-[0.97] transition-all cursor-pointer"
           data-testid="btn-victory-confirm"
         >
           Concluir Treino

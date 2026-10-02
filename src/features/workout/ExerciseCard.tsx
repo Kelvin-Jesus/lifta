@@ -82,7 +82,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
         <div class="flex flex-wrap gap-1.5 mt-2.5">
           <For each={catalogDetails()?.primaryMuscles ?? []}>
             {(muscle) => (
-              <span class="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-500 border border-blue-500/30">
+              <span class="text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full bg-theme-accent/15 text-theme-accent border border-theme-accent/30">
                 {formatMuscleName(muscle)}
               </span>
             )}
@@ -101,7 +101,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
           <div class="mt-3 p-3 rounded-xl bg-theme-bg border border-theme-subtle flex flex-col items-center gap-3 animate-in fade-in duration-200">
             <Show when={catalogDetails()?.gifUrl}>
               <div
-                class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-2.5 cursor-pointer group hover:border-blue-500/50 transition-all"
+                class="relative w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-2.5 cursor-pointer group hover:border-theme-accent/50 transition-all"
                 onClick={() => setIsGifModalOpen(true)}
                 title="Toque para ampliar demonstração da execução"
                 data-testid="exercise-card-gif-preview"
@@ -115,7 +115,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
                 <div class="mt-1.5 flex items-center gap-1.5 text-[10px] text-theme-secondary font-medium">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Demonstração do Movimento</span>
-                  <span class="text-blue-500 font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
+                  <span class="text-theme-accent font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                     </svg>
@@ -207,7 +207,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
               <button
                 type="button"
                 onClick={props.onNextExercise}
-                class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-950/50 transition-all flex items-center justify-center gap-2"
+                class="w-full h-12 rounded-xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-sm tracking-wide shadow-lg shadow-black/30 transition-all flex items-center justify-center gap-2"
                 data-testid="btn-next-exercise-primary"
               >
                 Próximo Exercício
@@ -226,7 +226,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
                 props.onToggleCompleteSet(targetIdx);
               }
             }}
-            class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-950/50 transition-all flex items-center justify-center gap-2"
+            class="w-full h-12 rounded-xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-sm tracking-wide shadow-lg shadow-black/30 transition-all flex items-center justify-center gap-2"
             data-testid="btn-complete-next-set"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

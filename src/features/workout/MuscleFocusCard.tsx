@@ -30,7 +30,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
   return (
     <>
       <div
-        class="w-full max-w-md mx-auto mb-3 bg-theme-surface border border-theme-separator rounded-2xl p-3 flex flex-col gap-2.5 cursor-pointer hover:border-blue-500/50 active:bg-theme-elevated transition-all select-none theme-transition"
+        class="w-full max-w-md mx-auto mb-3 bg-theme-surface border border-theme-separator rounded-2xl p-3 flex flex-col gap-2.5 cursor-pointer hover:border-theme-accent/50 active:bg-theme-elevated transition-all select-none theme-transition"
         onClick={() => setIsDetailOpen(true)}
         data-testid="muscle-focus-card"
         title="Toque para ver detalhes da técnica e anatomia"
@@ -42,8 +42,8 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
               when={mediaView() === 'execution'}
               fallback={
                 <>
-                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse flex-shrink-0" />
-                  <span class="text-[10px] uppercase font-mono tracking-wider text-blue-500 font-bold truncate">
+                  <span class="w-1.5 h-1.5 rounded-full bg-theme-accent animate-pulse flex-shrink-0" />
+                  <span class="text-[10px] uppercase font-mono tracking-wider text-theme-accent font-bold truncate">
                     Foco Muscular
                   </span>
                 </>
@@ -114,7 +114,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
           >
             {/* Execution GIF Thumbnail with Rounded-2xl and Expand Action */}
             <div
-              class="relative w-28 h-24 sm:w-32 bg-black/5 dark:bg-black/30 border border-theme-subtle rounded-2xl flex items-center justify-center p-1.5 overflow-hidden flex-shrink-0 cursor-pointer group hover:border-blue-500/50 transition-all select-none"
+              class="relative w-28 h-24 sm:w-32 bg-black/5 dark:bg-black/30 border border-theme-subtle rounded-2xl flex items-center justify-center p-1.5 overflow-hidden flex-shrink-0 cursor-pointer group hover:border-theme-accent/50 transition-all select-none"
               data-testid="exercise-gif-thumbnail"
               onClick={(e) => {
                 e.stopPropagation();
@@ -149,7 +149,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
 
                 {/* Visual Expand Affordance Badge */}
                 <div
-                  class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[9px] font-semibold text-white/90 flex items-center gap-0.5 border border-white/15 shadow-xs pointer-events-none group-hover:bg-blue-600 transition-colors"
+                  class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[9px] font-semibold text-white/90 flex items-center gap-0.5 border border-white/15 shadow-xs pointer-events-none group-hover:bg-theme-accent transition-colors"
                   data-testid="gif-expand-badge"
                 >
                   <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -168,7 +168,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
             </h3>
 
             <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
-              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-500 border border-blue-500/30">
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-theme-accent/15 text-theme-accent border border-theme-accent/30">
                 {formatMuscleName(mainMuscle())}
               </span>
               <Show when={exercise()?.equipment}>
@@ -239,7 +239,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
           {/* Looping Full-Fidelity Execution GIF with Expand Trigger */}
           <Show when={exercise()?.gifUrl}>
             <div
-              class="w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3 cursor-pointer group hover:border-blue-500/50 transition-colors"
+              class="w-full rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-theme-subtle flex flex-col items-center justify-center p-3 cursor-pointer group hover:border-theme-accent/50 transition-colors"
               onClick={() => setIsGifModalOpen(true)}
               title="Toque para ampliar execução em alta resolução"
               data-testid="sheet-gif-container"
@@ -254,7 +254,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
               <div class="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-theme-secondary">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Demonstração de Execução em Loop</span>
-                <span class="text-[10px] text-blue-500 font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
+                <span class="text-[10px] text-theme-accent font-bold ml-1 flex items-center gap-0.5 group-hover:underline">
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                   </svg>
@@ -288,13 +288,13 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
 
           <div class="w-full space-y-3">
             <div>
-              <span class="text-xs font-mono uppercase tracking-wider text-blue-500 font-bold block mb-1.5">
+              <span class="text-xs font-mono uppercase tracking-wider text-theme-accent font-bold block mb-1.5">
                 Músculos Primários (100% ativação)
               </span>
               <div class="flex flex-wrap gap-1.5">
                 <For each={primaryMuscles()}>
                   {(m) => (
-                    <span class="px-2.5 py-1 rounded-md bg-blue-500/15 text-blue-500 border border-blue-500/30 text-xs font-semibold">
+                    <span class="px-2.5 py-1 rounded-md bg-theme-accent/15 text-theme-accent border border-theme-accent/30 text-xs font-semibold">
                       {formatMuscleName(m)}
                     </span>
                   )}

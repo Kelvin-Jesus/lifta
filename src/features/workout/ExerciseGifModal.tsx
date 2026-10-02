@@ -102,7 +102,7 @@ export const ExerciseGifModal: Component<ExerciseGifModalProps> = (props) => {
             <div class="flex flex-wrap gap-1.5 w-full mt-1 mb-2">
               <For each={props.primaryMuscles}>
                 {(m) => (
-                  <span class="px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-500 border border-blue-500/30 text-[10px] font-semibold font-mono uppercase">
+                  <span class="px-2 py-0.5 rounded-md bg-theme-accent/15 text-theme-accent border border-theme-accent/30 text-[10px] font-semibold font-mono uppercase">
                     {formatMuscleName(m)}
                   </span>
                 )}

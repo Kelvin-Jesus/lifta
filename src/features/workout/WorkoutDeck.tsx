@@ -174,7 +174,7 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
                   onClick={() => scrollToExercise(idx)}
                   class={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
                     isCurrent()
-                      ? 'bg-blue-500 ring-2 ring-blue-500/40'
+                      ? 'bg-theme-accent ring-2 ring-theme-accent/40'
                       : isAllComplete()
                       ? 'bg-emerald-500'
                       : 'bg-theme-elevated'
@@ -188,14 +188,14 @@ export const WorkoutDeck: Component<WorkoutDeckProps> = (props) => {
         </div>
 
         {/* Progressive Overload Target Banner */}
-        <div class="mt-2 py-1 px-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-[11px]">
-          <span class="text-blue-400 font-medium flex items-center gap-1">
-            <svg class="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="mt-2 py-1 px-2.5 rounded-lg bg-theme-accent/10 border border-theme-accent/20 flex items-center justify-between text-[11px]">
+          <span class="text-theme-accent font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-theme-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
             Sobrecarga Progressiva
           </span>
-          <span class="font-mono text-blue-400 font-semibold text-[10px]">
+          <span class="font-mono text-theme-accent font-semibold text-[10px]">
             +2.5 kg ou +1 rep vs última sessão
           </span>
         </div>

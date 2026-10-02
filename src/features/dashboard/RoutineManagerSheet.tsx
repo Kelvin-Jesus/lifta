@@ -134,7 +134,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                               <span>{routine.exercises.length} exercícios</span>
                               <Show when={routine.scheduledDays && routine.scheduledDays.length > 0}>
                                 <span>•</span>
-                                <span class="text-blue-500 font-medium">
+                                <span class="text-theme-accent font-medium">
                                   {routine.scheduledDays!.map((d) => d.slice(0, 3)).join(', ')}
                                 </span>
                               </Show>
@@ -188,7 +188,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
               <button
                 type="button"
                 onClick={() => setIsCreating(true)}
-                class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition-all cursor-pointer"
+                class="w-full h-12 rounded-xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-black/30 transition-all cursor-pointer"
                 data-testid="btn-open-create-routine"
               >
                 + Criar Nova Rotina
@@ -207,7 +207,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                 placeholder="Ex: Treino A - Peito e Tríceps"
                 value={name()}
                 onInput={(e) => setName(e.currentTarget.value)}
-                class="w-full h-11 px-3 rounded-xl bg-theme-elevated border border-theme-subtle text-sm text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-blue-500"
+                class="w-full h-11 px-3 rounded-xl bg-theme-elevated border border-theme-subtle text-sm text-theme-primary placeholder-theme-tertiary focus:outline-none focus:border-theme-accent"
                 data-testid="input-routine-name"
               />
             </div>
@@ -225,7 +225,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                       onClick={() => toggleDay(item.key)}
                       class={`h-9 rounded-lg text-xs font-mono font-bold transition-all ${
                         selectedDays().includes(item.key)
-                          ? 'bg-blue-500 text-white'
+                          ? 'bg-theme-accent text-white'
                           : 'bg-theme-elevated border border-theme-subtle text-theme-secondary'
                       }`}
                     >
@@ -301,7 +301,7 @@ export const RoutineManagerSheet: Component<RoutineManagerSheetProps> = (props) 
                       data-testid={`catalog-item-${ex.id}`}
                     >
                       <span class="text-theme-primary font-medium">{ex.name}</span>
-                      <span class="text-[10px] font-mono text-blue-500 font-semibold">+ Adicionar</span>
+                      <span class="text-[10px] font-mono text-theme-accent font-semibold">+ Adicionar</span>
                     </button>
                   )}
                 </For>

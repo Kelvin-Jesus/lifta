@@ -66,7 +66,7 @@ export const ThemeSelector: Component<ThemeSelectorProps> = (props) => {
           onClick={() => handleUpdate('dark', accentColor())}
           class={`h-11 rounded-xl border flex items-center justify-center gap-2 text-xs font-semibold transition-all ${
             theme() === 'dark'
-              ? 'bg-theme-elevated border-blue-500 text-theme-primary shadow-md'
+              ? 'bg-theme-elevated border-theme-accent text-theme-primary shadow-md'
               : 'bg-theme-surface border-theme-subtle text-theme-secondary hover:text-theme-primary'
           }`}
           data-testid="btn-theme-dark"
@@ -81,7 +81,7 @@ export const ThemeSelector: Component<ThemeSelectorProps> = (props) => {
           onClick={() => handleUpdate('light', accentColor())}
           class={`h-11 rounded-xl border flex items-center justify-center gap-2 text-xs font-semibold transition-all ${
             theme() === 'light'
-              ? 'bg-theme-elevated border-blue-500 text-theme-primary shadow-md'
+              ? 'bg-theme-elevated border-theme-accent text-theme-primary shadow-md'
               : 'bg-theme-surface border-theme-subtle text-theme-secondary hover:text-theme-primary'
           }`}
           data-testid="btn-theme-light"

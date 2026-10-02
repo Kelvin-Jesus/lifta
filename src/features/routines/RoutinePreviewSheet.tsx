@@ -112,7 +112,7 @@ export const RoutinePreviewSheet: Component<RoutinePreviewSheetProps> = (props) 
               <button
                 type="button"
                 onClick={() => props.onStart(routine())}
-                class="w-full h-12 rounded-xl bg-blue-500 hover:bg-blue-400 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition-all cursor-pointer"
+                class="w-full h-12 rounded-xl bg-theme-accent hover:opacity-90 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-black/30 transition-all cursor-pointer"
                 data-testid="btn-preview-start-workout"
               >
                 <span>Iniciar Treino</span>

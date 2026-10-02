@@ -153,7 +153,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
               type="button"
               onDblClick={() => setIsEditingWeight(true)}
               onClick={() => setIsEditingWeight(true)}
-              class="w-16 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-blue-500 transition-colors"
+              class="w-16 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-theme-accent transition-colors"
               title="Toque para digitar carga"
               data-testid={`weight-display-${props.setIndex}`}
             >
@@ -182,7 +182,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
                 setIsEditingWeight(false);
               }
             }}
-            class="w-16 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-blue-500 font-semibold text-sm outline-none"
+            class="w-16 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-theme-accent font-semibold text-sm outline-none"
           />
         </Show>
 
@@ -224,7 +224,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
               type="button"
               onDblClick={() => setIsEditingReps(true)}
               onClick={() => setIsEditingReps(true)}
-              class="w-14 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-blue-500 transition-colors"
+              class="w-14 h-11 flex flex-col items-center justify-center rounded-lg bg-theme-elevated border border-theme-subtle hover:border-theme-separator active:border-theme-accent transition-colors"
               title="Toque para digitar reps"
               data-testid={`reps-display-${props.setIndex}`}
             >
@@ -252,7 +252,7 @@ export const SetRow: Component<SetRowProps> = (props) => {
                 setIsEditingReps(false);
               }
             }}
-            class="w-14 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-blue-500 font-semibold text-sm outline-none"
+            class="w-14 h-11 text-center bg-theme-elevated text-theme-primary rounded-lg border border-theme-accent font-semibold text-sm outline-none"
           />
         </Show>
 

@@ -7,6 +7,12 @@
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-theme-accent: var(--accent);
+  --color-theme-accent-subtle: var(--accent-subtle);
+  --color-theme-accent-active: var(--accent-active);
+}
+
 :root {
   --bg: #000000;
   --surface-grouped: #1c1c1e;
@@ -18,6 +24,7 @@
   --text-secondary: #8e8e93;
   --text-tertiary: #636366;
   --accent: #0a84ff;
+  --color-accent: #0a84ff;
   --accent-subtle: rgba(10, 132, 255, 0.15);
   --accent-active: #0066cc;
   --success: #30d158;
@@ -46,6 +53,7 @@
   --text-secondary: #6c6c70;
   --text-tertiary: #8e8e93;
   --accent: #007aff;
+  --color-accent: #007aff;
   --accent-subtle: rgba(0, 122, 255, 0.1);
   --accent-active: #0056b3;
   --success: #34c759;
@@ -57,12 +65,14 @@
 
 [data-accent="indigo"] {
   --accent: #5856d6;
+  --color-accent: #5856d6;
   --accent-subtle: rgba(88, 86, 214, 0.15);
   --accent-active: #4745b5;
 }
 
 [data-theme="light"][data-accent="indigo"] {
   --accent: #5856d6;
+  --color-accent: #5856d6;
   --accent-subtle: rgba(88, 86, 214, 0.12);
   --accent-active: #3e3ca0;
 }
@@ -98,6 +108,9 @@ html, body {
 .text-theme-accent { color: var(--accent); }
 .bg-theme-accent { background-color: var(--accent); }
 .border-theme-accent { border-color: var(--accent); }
+.bg-theme-accent-subtle { background-color: var(--accent-subtle); }
+.border-theme-accent-subtle { border-color: var(--accent-subtle); }
+.text-theme-accent-subtle { color: var(--accent-subtle); }
 
 .theme-transition {
   transition: background-color var(--duration-normal) var(--ease-apple),
@@ -242,7 +255,7 @@ html, body {
 
 .view-toggle-btn {
   background: var(--accent-subtle);
-  border: 0.5px solid rgba(10, 132, 255, 0.25);
+  border: 0.5px solid color-mix(in srgb, var(--accent) 25%, transparent);
   color: var(--accent);
   font-size: 0.75rem;
   font-weight: 600;
@@ -256,9 +269,9 @@ html, body {
 }
 
 [data-theme="light"] .view-toggle-btn {
-  background: rgba(0, 122, 255, 0.09);
-  border: 0.5px solid rgba(0, 122, 255, 0.22);
-  color: #007aff;
+  background: var(--accent-subtle);
+  border: 0.5px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
 }
 
 .view-toggle-btn:active {
@@ -308,7 +321,7 @@ html, body {
 
 [data-theme="light"] .metric-pill-btn.active {
   background: #ffffff;
-  color: #007aff;
+  color: var(--accent);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
@@ -344,7 +357,7 @@ html, body {
 }
 
 .agenda-day-row.today {
-  background: rgba(10, 132, 255, 0.08);
+  background: var(--accent-subtle);
   border-left: 2px solid var(--accent);
 }
 
@@ -543,7 +556,7 @@ html, body {
 .muscle-badge {
   font-size: 0.7rem;
   font-weight: 600;
-  background: rgba(10, 132, 255, 0.12);
+  background: var(--accent-subtle);
   color: var(--accent);
   padding: 2px 7px;
   border-radius: 6px;
@@ -611,7 +624,7 @@ html, body {
   background: var(--accent);
   color: #ffffff;
   border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.35);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .catalog-chip:not(.active) {

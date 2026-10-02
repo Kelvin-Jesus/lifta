@@ -88,6 +88,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
     const root = document.documentElement;
     root.setAttribute('data-theme', newTheme);
     root.setAttribute('data-accent', newAccent);
+    root.style.setProperty('--color-accent', newAccent === 'indigo' ? '#5856d6' : '#007aff');
     if (newTheme === 'dark') {
       root.classList.add('dark');
     } else {
@@ -150,6 +151,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
       setSettings(s);
       document.documentElement.setAttribute('data-theme', s.theme);
       document.documentElement.setAttribute('data-accent', s.accentColor);
+      document.documentElement.style.setProperty('--color-accent', s.accentColor === 'indigo' ? '#5856d6' : '#007aff');
     } catch {
       showToast('Arquivo de backup inválido ou incompatível');
     } finally {
@@ -198,7 +200,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
             onClick={() => handleUpdate('dark', settings().accentColor)}
             class={`h-12 rounded-xl border flex items-center justify-center gap-2.5 text-xs font-bold transition-all ${
               settings().theme === 'dark'
-                ? 'bg-theme-elevated border-blue-500 text-theme-primary shadow-sm'
+                ? 'bg-theme-elevated border-theme-accent text-theme-primary shadow-sm'
                 : 'bg-theme-surface border-theme-subtle text-theme-secondary hover:text-theme-primary'
             }`}
             data-testid="btn-theme-dark"
@@ -213,7 +215,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
             onClick={() => handleUpdate('light', settings().accentColor)}
             class={`h-12 rounded-xl border flex items-center justify-center gap-2.5 text-xs font-bold transition-all ${
               settings().theme === 'light'
-                ? 'bg-theme-elevated border-blue-500 text-theme-primary shadow-sm'
+                ? 'bg-theme-elevated border-theme-accent text-theme-primary shadow-sm'
                 : 'bg-theme-surface border-theme-subtle text-theme-secondary hover:text-theme-primary'
             }`}
             data-testid="btn-theme-light"
@@ -318,7 +320,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
       {/* Section 3: Disponibilidade offline */}
       <div class="bg-theme-surface border border-theme-separator rounded-2xl p-4 flex flex-col gap-3" data-testid="offline-media-section">
         <h2 class="text-xs font-mono uppercase tracking-wider text-theme-secondary font-semibold flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-4 h-4 text-theme-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h10a4 4 0 001-7.874A5 5 0 007.1 9.1 4 4 0 003 15z" />
           </svg>
           Treino Offline
@@ -341,7 +343,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
 
         <div class="h-1.5 w-full rounded-full bg-theme-elevated overflow-hidden">
           <div
-            class="h-full rounded-full bg-blue-500 transition-all duration-300"
+            class="h-full rounded-full bg-theme-accent transition-all duration-300"
             style={{
               width: `${mediaStatus().total === 0 ? 0 : Math.round((mediaStatus().cached / mediaStatus().total) * 100)}%`,
             }}
@@ -354,7 +356,7 @@ export const SettingsView: Component<SettingsViewProps> = (props) => {
             type="button"
             onClick={handleDownloadMedia}
             disabled={isDownloadingMedia() || mediaStatus().missing === 0}
-            class="w-full h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            class="w-full h-11 rounded-xl bg-theme-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
             data-testid="btn-download-offline-media"
           >
             {isDownloadingMedia()
