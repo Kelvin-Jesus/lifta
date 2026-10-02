@@ -8,12 +8,24 @@ const CACHE_NAME = 'lifta-app-shell-v2';
 const MEDIA_CACHE_NAME = 'lifta-media-v1';
 const MEDIA_HOSTS = ['raw.githubusercontent.com'];
 
+const getScopePath = () => {
+  try {
+    if (self.registration && self.registration.scope) {
+      const p = new URL(self.registration.scope).pathname;
+      return p.endsWith('/') ? p : p + '/';
+    }
+  } catch {}
+  return '/';
+};
+
+const BASE = getScopePath();
+
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon-192.svg',
-  '/icon-512.svg',
+  BASE,
+  `${BASE}index.html`,
+  `${BASE}manifest.webmanifest`,
+  `${BASE}icon-192.svg`,
+  `${BASE}icon-512.svg`,
 ];
 
 self.addEventListener('install', (event) => {
@@ -50,7 +62,13 @@ self.addEventListener('activate', (event) => {
 const isDocumentRequest = (request) => {
   if (request.mode === 'navigate') return true;
   const url = new URL(request.url);
-  return url.pathname === '/' || url.pathname.endsWith('/index.html');
+  const baseWithoutSlash = BASE.endsWith('/') && BASE.length > 1 ? BASE.slice(0, -1) : BASE;
+  return (
+    url.pathname === '/' ||
+    url.pathname === BASE ||
+    url.pathname === baseWithoutSlash ||
+    url.pathname.endsWith('/index.html')
+  );
 };
 
 const networkFirst = async (request) => {
@@ -63,7 +81,10 @@ const networkFirst = async (request) => {
     }
     return networkResponse;
   } catch {
-    const cached = (await caches.match(request)) ?? (await caches.match('/index.html'));
+    const cached =
+      (await caches.match(request)) ??
+      (await caches.match(`${BASE}index.html`)) ??
+      (await caches.match('/index.html'));
     return cached ?? new Response('Offline', { status: 503, statusText: 'Offline' });
   }
 };
@@ -95,7 +116,9 @@ const cacheFirst = async (request) => {
     return networkResponse;
   } catch {
     if (request.mode === 'navigate') {
-      const fallback = await caches.match('/index.html');
+      const fallback =
+        (await caches.match(`${BASE}index.html`)) ??
+        (await caches.match('/index.html'));
       if (fallback) return fallback;
     }
     return new Response('Offline', { status: 503, statusText: 'Offline' });

@@ -19,8 +19,9 @@ export function registerServiceWorker(): void {
   });
 
   window.addEventListener('load', () => {
+    const swUrl = `${import.meta.env.BASE_URL}sw.js`;
     navigator.serviceWorker
-      .register('/sw.js')
+      .register(swUrl)
       .then((reg) => {
         // Pick up a new deployment while the app stays open.
         reg.update().catch(() => {});

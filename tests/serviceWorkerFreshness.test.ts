@@ -38,6 +38,7 @@ const loadServiceWorker = (options: {
   network: Record<string, string> | null;
   mediaCached?: Record<string, string>;
   existingCacheNames?: string[];
+  scope?: string;
 }) => {
   const stores = new Map<string, Map<string, FakeResponse>>();
   stores.set(
@@ -102,6 +103,7 @@ const loadServiceWorker = (options: {
       listeners[type] = handler;
     },
     location: { origin: 'https://app.test' },
+    registration: options.scope ? { scope: options.scope } : undefined,
     skipWaiting: async () => undefined,
     clients: { claim: async () => undefined },
   };
@@ -177,6 +179,19 @@ describe('Service worker freshness regression', () => {
     // Background revalidation is allowed, but the response must not depend on it.
     expect(response).toBeInstanceOf(FakeResponse);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('[REGRESSION] handles subpath scope such as GitHub Pages /lifta/ correctly', async () => {
+    const { handleFetch, fetchImpl } = loadServiceWorker({
+      cached: { 'https://app.test/lifta/': '<script src="/lifta/assets/index-OLD.js">' },
+      network: { 'https://app.test/lifta/': '<script src="/lifta/assets/index-NEW.js">' },
+      scope: 'https://app.test/lifta/',
+    });
+
+    const response = await handleFetch('https://app.test/lifta/', 'navigate');
+
+    expect(response!.body).toContain('index-NEW.js');
+    expect(fetchImpl).toHaveBeenCalled();
   });
 });
 

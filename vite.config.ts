@@ -4,7 +4,10 @@ import solid from 'vite-plugin-solid';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
+const base = process.env.BASE_PATH || (process.env.GITHUB_ACTIONS ? '/lifta/' : '/');
+
 export default defineConfig({
+  base,
   plugins: [solid(), tailwindcss()],
   resolve: {
     alias: {
