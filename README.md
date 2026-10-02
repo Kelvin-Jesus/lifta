@@ -20,6 +20,12 @@
   <img src="https://img.shields.io/badge/data-local--first-34c759" alt="Local-first data">
 </p>
 
+<p align="center">
+  <a href="https://kelvin-jesus.github.io/lifta/">
+    <img src="https://img.shields.io/badge/📱_Acessar_Lifta-kelvin--jesus.github.io%2Flifta-007AFF?style=for-the-badge" alt="Acessar Lifta Web App">
+  </a>
+</p>
+
 `Lifta` is a mobile-first strength-training PWA with an iPhone-inspired
 interface, fast thumb-friendly controls, and no account standing between you
 and your workout. Your training data and settings stay in the browser on your
