@@ -254,6 +254,15 @@ const CORE_EXERCISE_CATALOG: readonly Exercise[] = [
     instructions: 'Dê passos longos controlados afundando o joelho de trás próximo ao chão mantendo estabilidade.',
     gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0054-t8iSghb.gif',
   },
+  {
+    id: 'sled-hack-squat',
+    name: 'Agachamento no Hack',
+    primaryMuscles: ['quadriceps'],
+    secondaryMuscles: ['glutes', 'calves'],
+    equipment: 'machine',
+    instructions: 'Apoie as costas e os ombros no encosto da máquina hack. Destrave a plataforma e agache até 90 graus de joelho. Empurre com os calcanhares sem travar as articulações.',
+    gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0046-5VCj6iH.gif',
+  },
 
   // POSTERIOR & GLÚTEOS / HAMSTRINGS & GLUTES
   {
@@ -290,6 +299,15 @@ const CORE_EXERCISE_CATALOG: readonly Exercise[] = [
     secondaryMuscles: ['hamstrings'],
     equipment: 'barbell',
     instructions: 'Escápulas apoiadas no banco, barra sobre a crista ilíaca com acolchoamento. Estenda o quadril até ficar paralelo ao chão.',
+    gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1409-qKBpF7I.gif',
+  },
+  {
+    id: 'lever-hip-thrust',
+    name: 'Elevação Pélvica na Máquina',
+    primaryMuscles: ['glutes'],
+    secondaryMuscles: ['hamstrings'],
+    equipment: 'machine',
+    instructions: 'Ajuste a almofada sobre o quadril e apoie as costas no suporte. Empurre estendendo o quadril até a linha reta com o tronco, contraindo os glúteos no topo.',
     gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1409-qKBpF7I.gif',
   },
   {
@@ -385,6 +403,15 @@ const CORE_EXERCISE_CATALOG: readonly Exercise[] = [
     equipment: 'cable',
     instructions: 'Braços estendidos para cima, cotovelos apontando para o teto, enfatiza a cabeça longa do tríceps.',
     gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0194-2IxROQ1.gif',
+  },
+  {
+    id: 'ez-barbell-overhead-tricep-extension',
+    name: 'Tríceps Francês com Barra W',
+    primaryMuscles: ['triceps'],
+    secondaryMuscles: ['forearms'],
+    equipment: 'barbell',
+    instructions: 'Sentado ou em pé, segure a barra W acima da cabeça. Flexione os cotovelos levando o peso atrás da cabeça e estenda os antebraços de volta para cima.',
+    gifUrl: 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0060-h8LFzo9.gif',
   },
   {
     id: 'close-grip-bench-press',
