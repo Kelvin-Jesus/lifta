@@ -135,10 +135,27 @@ const mediaCacheFirst = async (request) => {
   const cached = await cache.match(request.url);
   if (cached) return cached;
 
+  // 1. Try CORS fetch with request.url (raw.githubusercontent.com supports CORS)
+  try {
+    const networkResponse = await fetch(request.url, { mode: 'cors' });
+    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+      try {
+        await cache.put(request.url, networkResponse.clone());
+      } catch {}
+      return networkResponse;
+    }
+  } catch {
+    // CORS fetch failed; proceed to direct request fallback
+  }
+
+  // 2. Direct fetch fallback with original request
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse && networkResponse.status === 200) {
-      await cache.put(request.url, networkResponse.clone());
+    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+      try {
+        await cache.put(request.url, networkResponse.clone());
+      } catch {}
+      return networkResponse;
     }
     return networkResponse;
   } catch {

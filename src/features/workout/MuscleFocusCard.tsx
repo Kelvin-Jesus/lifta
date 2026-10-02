@@ -144,7 +144,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
                   src={exercise()!.gifUrl}
                   alt={`Execução de ${exercise()?.name ?? 'exercício'}`}
                   class="h-full w-full object-contain rounded-xl"
-                  loading="lazy"
+                  crossorigin="anonymous"
                 />
 
                 {/* Visual Expand Affordance Badge */}
@@ -248,7 +248,7 @@ export const MuscleFocusCard: Component<MuscleFocusCardProps> = (props) => {
                 src={exercise()!.gifUrl}
                 alt={`Execução técnica completa: ${exercise()?.name}`}
                 class="max-h-64 w-auto object-contain rounded-xl"
-                loading="lazy"
+                crossorigin="anonymous"
                 data-testid="sheet-execution-gif"
               />
               <div class="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-theme-secondary">

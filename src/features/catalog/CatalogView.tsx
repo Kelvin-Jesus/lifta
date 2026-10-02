@@ -157,8 +157,7 @@ export const CatalogView: Component = () => {
                               src={ex.gifUrl}
                               alt={`Demonstração de execução: ${ex.name}`}
                               class="max-h-60 max-w-full w-auto object-contain rounded-xl shadow-xs"
-                              loading="lazy"
-                              decoding="async"
+                              crossorigin="anonymous"
                             />
                           </div>
                           <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-theme-secondary">

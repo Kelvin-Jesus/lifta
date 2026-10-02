@@ -91,6 +91,7 @@ export const ExerciseGifModal: Component<ExerciseGifModalProps> = (props) => {
               alt={`Demonstração completa de ${props.exerciseName ?? 'exercício'}`}
               class="max-h-[50vh] sm:max-h-[55vh] w-full object-contain rounded-xl"
               loading="eager"
+              crossorigin="anonymous"
               data-testid="expanded-exercise-gif"
             />
             <span class="mt-1 text-[9px] text-theme-tertiary">{EXERCISE_MEDIA_ATTRIBUTION}</span>

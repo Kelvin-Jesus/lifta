@@ -110,7 +110,7 @@ export const ExerciseCard: Component<ExerciseCardProps> = (props) => {
                   src={catalogDetails()?.gifUrl}
                   alt={`Demonstração de ${props.exercise.exerciseName}`}
                   class="max-h-48 w-auto object-contain rounded-xl"
-                  loading="lazy"
+                  crossorigin="anonymous"
                 />
                 <div class="mt-1.5 flex items-center gap-1.5 text-[10px] text-theme-secondary font-medium">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
